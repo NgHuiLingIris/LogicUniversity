@@ -16,7 +16,7 @@ namespace LogicUniversity.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login","Login",new { });
             }
         }
 
