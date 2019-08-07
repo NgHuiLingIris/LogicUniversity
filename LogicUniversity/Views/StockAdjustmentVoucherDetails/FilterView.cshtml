@@ -5,17 +5,14 @@
     ViewBag.Title = "FilterView";
     var sDetailList = (List<StockAdjustmentVoucherDetail>)ViewData["sDetailList"];
 }
-<p style="text-align:left;">
-    <button align="left" onclick="window.location.href = '/';"> Home </button>
-    <span style="float:right;">
-        <text align="right">Hello</text>
-        <button align="right" onclick="window.location.href = '/';">Logout</button>
-    </span>
-</p>
+@{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+
 
 <h2>Voucher</h2>
 
-<table class="table">
+<table class="table" border="1">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.ItemCode)
@@ -47,53 +44,49 @@
         <th>
             @Html.DisplayNameFor(model => model.Approver)
         </th>
-        <th></th>
     </tr>
 
     @foreach (var item in sDetailList)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ItemCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.Category)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.Category)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StockAdjustmentVoucher.Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Reason)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.QuantityAdjusted)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ApproverRemarks)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Balance)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Approver)
-        </td>
-        @*
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-        *@
-    </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockAdjustmentVoucher.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reason)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuantityAdjusted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApproverRemarks)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Balance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Approver)
+            </td>
+            @*
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            *@
+        </tr>
     }
 
 </table>

@@ -8,20 +8,17 @@
     var Datetimelist = (List<DateTime>)ViewData["Datetimelist"];
     var Role = (String)ViewData["Role"];
 }
-<p style="text-align:left;">
-    <button align="left" onclick="window.location.href = '/';"> Home </button>
-    <span style="float:right;">
-        <text align="right">Hello</text>
-        <button align="right" onclick="window.location.href = '/';">Logout</button>
-    </span>
-</p>
+@{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+
 
 <h2 align="left">Stock Adjustment Voucher</h2>
 
 
 @using (Html.BeginForm("ApproverView", "StockAdjustmentVoucherDetails", FormMethod.Get))
 {
-    <input type="hidden" name="Role" value="@Role"/>
+    <input type="hidden" name="Role" value="@Role" />
     @Html.TextBox("SearchString")
     <button type="submit">Search Request</button>
 }
