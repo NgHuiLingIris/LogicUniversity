@@ -247,16 +247,17 @@ namespace LogicUniversity.Controllers //Written By Iris
             {
                 
                 v.ApproverRemarks = Remarks;
-                double NewBalance = v.Product.Balance + v.QuantityAdjusted;
-                v.Balance = NewBalance;
-                v.Product.Balance = NewBalance;
-                FinalProductBalance = NewBalance;
+                
                 if (Request.Form["Reject"] != null)
                 {
                     v.Status = "Rejected";
                 }
                 else if (Request.Form["Approve"] != null)
                 {
+                    double NewBalance = v.Product.Balance + v.QuantityAdjusted;
+                    v.Balance = NewBalance;
+                    v.Product.Balance = NewBalance;
+                    FinalProductBalance = NewBalance;
                     v.Status = "Approved";
                 }
                 db.Entry(v).State = EntityState.Modified;
