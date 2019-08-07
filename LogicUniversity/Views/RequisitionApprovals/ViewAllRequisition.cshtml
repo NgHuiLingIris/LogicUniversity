@@ -1,14 +1,43 @@
 ﻿@model IEnumerable<LogicUniversity.Models.Requisition>
 
 @{
-    Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Track Requesition</h2>
+<h2>Track Requisition</h2>
 
+<form>
+ 
+    <table>
+        <tr>
+            
+            <td>Requisition Id </td>
+            <td><input type="text" name="reqid" class="form-control" /></td>
+        </tr>
+        <tr>
+            <td>From date: </td>
+            <td><input type="datetime" name="fromdate" id="fromdate" class="form-control" /></td>
+            <td>To date: </td>
+            <td><input type="datetime" name="todate" id="todate" class="form-control" /></td>
+        </tr>
+
+        <tr>
+            <td>Status: </td>
+            <td><input type="datetime" name="status" id="status" class="form-control" /></td>
+           
+            <td></td>
+           
+        </tr>
+        <tr>
+           
+            <td><input type="submit" value="submit" class="btn btn-primary" /></td>
+        </tr>
+    </table>
+
+</form>
 
 <table class="table">
     <tr>

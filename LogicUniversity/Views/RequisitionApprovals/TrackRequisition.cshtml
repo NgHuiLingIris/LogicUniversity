@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<LogicUniversity.Models.Requisition>
 
 @{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Track Requesition</h2>
+<h2>Track Requisition</h2>
 
 
 <table class="table">
@@ -46,7 +46,7 @@
             </td>
 
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.RequisitionId })
+                @Html.ActionLink("Details", "TrackDetails", new { id = item.RequisitionId })
             </td>
         </tr>
     }
