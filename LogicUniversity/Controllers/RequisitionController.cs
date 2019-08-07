@@ -1,5 +1,6 @@
 ﻿using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
@@ -65,50 +66,10 @@ namespace LogicUniversity.Controllers
         {
             if (Session["UserID"] != null)
             {
-                string item_code = null;
-                string item_qty = null;
-                if (ModelState.IsValid)
-                {
-                    var username = Session["UserID"].ToString();
-                    Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-                    Requisition request = new Requisition();
-                    request.Date = DateTime.Now;
-                    request.Status = "PENDING";
-                    request.EmployeeId = obj.EmployeeId;
-                    request.ApproverId = obj.ApproverId;
-                    request.Department = obj.Department.DeptName;
+                var username = (string)Session["UserID"];
 
-                    db.Requisition.Add(request);
-                    db.SaveChanges();
-
-                    RequisitionDetails requestDetails = new RequisitionDetails();
-
-                    foreach (var key in CartItems.AllKeys)
-                    {
-
-                        item_code = CartItems["ItemCode"];
-                        item_qty = CartItems["Quantity"];
-
-                    }
-                    String[] item_code_s = item_code.Split(',');
-                    String[] item_qty_s = item_qty.Split(',');
-
-                    for (int i = 0; i < item_code_s.Length; i++)
-                    {
-                        requestDetails.RequisitionId = request.RequisitionId;
-                        requestDetails.ItemCode = item_code_s[i];
-                        requestDetails.Quantity = Int32.Parse(item_qty_s[i]);
-                        db.RequisitionDetails.Add(requestDetails);
-                        db.SaveChanges();
-                    }
-
-                    db.CartItems.RemoveRange(db.CartItems.Where(x =>x.EmployeeId==obj.EmployeeId));
-                    db.SaveChanges();
-
-
+                if(DepartmentRequestService.CartSubmission(username, CartItems))
                     return RedirectToAction("Index");
-                }
-
                 return RedirectToAction("AddtoCart");
             }
             else

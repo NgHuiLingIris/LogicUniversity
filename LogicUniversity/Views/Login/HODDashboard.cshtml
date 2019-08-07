@@ -1,43 +1,44 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout_D.cshtml";
-}
-
+﻿
 
 @{
-    ViewBag.Title = "Employee Dashboard";
+    ViewBag.Title = "Department Head Dashboard";
 }
 
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+@{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
 
 
 <h2>HOD Dashboard</h2>
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-            <p>
+<a href="@Url.Action("ViewRequisition","RequisitionApprovals")" class="button">Requistion Approvals</a>
+<a href="@Url.Action("ViewAllRequisition","RequisitionApprovals")" class="button">View all Requistion </a>
+<a href="@Url.Action("ManageCollection","CollectionPoint")" class="button">Manage Collection</a>
+<a href="@Url.Action("ManageCollection","CollectionPoint")" class="button">Manage Delegation </a>
 
-                <a href="@Url.Action("ViewRequesition","RequisitionApprovals")" class="btn btn-sq-lg btn-primary">
-                    <i class="fa fa-user fa-100x"></i><br />
-                    Approve/Reject Requistion Form <br><br>
-                </a>
+<style>
+    fieldset {
+        display: block;
+        margin-left: 2px;
+        margin-right: 2px;
+        padding-top: 0.35em;
+        padding-bottom: 0.625em;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+        border: 2px groove;
+    }
 
-                <a href="@Url.Action("Details","RequisitionApprovals")" class="btn btn-sq-lg btn-primary">
-                    <i class="fa fa-user fa-100x"></i><br />
-                    View all Requistion <br><br>
-                </a>
-                <a href="@Url.Action("ManageCollection","CollectionPoint")" class="btn btn-sq-lg btn-primary">
-                    <i class="fa fa-user fa-100x"></i><br />
-                    Manage Collection <br><br>
-                </a>
-                <a href="#" class="btn btn-sq-lg btn-primary">
-                    <i class="fa fa-user fa-100x"></i><br />
-                    Manage Delegation <br> <br>
-                </a>
-            </p>
-        </div>
-    </div>
-</div>
-
+    .button {
+        background-color: #0000ff; /* Green */
+        border: none;
+        color: white;
+        padding: 80px;
+        text-align: center;
+        display: inline-block;
+        font-size: 16px;
+        margin: 20px 20px;
+        cursor: pointer;
+        width: 20%;
+        border-radius: 2px;
+    }
+</style>

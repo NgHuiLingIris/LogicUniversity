@@ -8,10 +8,9 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
-<form>
+<form >
     <div>
-        <h4>Requisition</h4>
+        <h4>Requisition Details</h4>  @Html.ActionLink("Back to List", "ViewRequisition", "RequisitionApprovals")
         <hr />
         <table class="table">
             <tr>
@@ -38,17 +37,16 @@
 
 
 <textarea rows="4" cols="100" value="Remarks"></textarea>
+    <br />   <br /> <br />
 
-    <input type="submit" value="ACCEPTED" name="status" />
+    <input type="submit" value="APPROVED" name="status" id="accept"  class="btn btn-primary" />
 
-    <input type="submit" value="REJECTED" name="status" />
+    <input type="submit" value="REJECTED" name="status" id="reject"  class="btn btn-primary" />
 
 </form>
-
-
-RequisitionApprovals/ViewRequesition
-
-<p>
-
-    @Html.ActionLink("Back to List", "ViewRequesition","RequisitionApprovals")
-</p>
+@*<script>
+    function myFunction() {
+        document.getElementById("accept").disabled = true;
+        document.getElementById("reject").disabled = true;
+    }
+</script>*@

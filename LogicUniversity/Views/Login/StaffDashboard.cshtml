@@ -7,24 +7,21 @@
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
 
+   
+<h2>Staff Dashboard</h2>             
+<a href="@Url.Action("Index","Requisition")" class="button">
+    <i class="fa fa-user fa-100x"></i><br />
+    Make Requistion <br><br>
+</a>
+<a href="@Url.Action("TrackRequisition","RequisitionApprovals")" class="button">
+    <i class="fa fa-user fa-100x"></i><br />
+    Track Requisition <br><br>
+</a>
+<a href="@Url.Action("Display","CollectionPoint")" class="button">
+    <i class="fa fa-user fa-100x"></i><br />
+    Collection Point <br> <br>
+</a>
 
-
-
-        
-                
-                <a href="@Url.Action("Index","Requisition")" class="button">
-                    <i class="fa fa-user fa-100x"></i><br />
-                    Make Requistion <br><br>
-                </a>
-                <a href="@Url.Action("TrackRequesition","RequisitionApprovals")" class="button">
-                    <i class="fa fa-user fa-100x"></i><br />
-                    Track Requisition <br><br>
-                </a>
-                <a href="@Url.Action("Display","CollectionPoint")" class="button">
-                    <i class="fa fa-user fa-100x"></i><br />
-                    View Collection Point <br> <br>
-                </a>
-       
 
 
 <style>
@@ -40,7 +37,7 @@
     }
 
     .button {
-        background-color: #4CAF50; /* Green */
+        background-color: #0000ff; /* Green */
         border: none;
         color: white;
         padding: 100px;

@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
@@ -17,45 +18,38 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: Requisitions
-        public ActionResult ViewRequesition()
+        public ActionResult ViewRequisition()
         {
             var username = Session["UserID"].ToString();
             Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
             return View(db.Requisition.Where(x =>x.ApproverId==obj.EmployeeId && x.Status=="PENDING").ToList());
         }
 
-        //Requesition ALL Deyails for Store Clerk
+        public ActionResult ViewAllRequisition()
+        {
+            var username = Session["UserID"].ToString();
+            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList());
+        }
+
+        //Requisition ALL Deyails for Store Clerk
         public ActionResult SCRequisitionView()
         {
             List<Requisition> reqList = new List<Requisition>();
-
             reqList = db.Requisition.ToList();
-
             ViewData["reqList"] = reqList;
 
             return View();
         }
 
-        public ActionResult TrackRequesition()
+        public ActionResult TrackRequisition()
         {
             var username = Session["UserID"].ToString();
             Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
             return View(db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList());
         }
 
-        public ActionResult TrackRequesitionDH()
-        {
-            var username = Session["UserID"].ToString();
-            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-
-            //if (req != 0)
-            //{
-            //    return View(db.Requisition.Where(x => x.RequisitionId == req).ToList());
-            //}
-            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList());
-
-            
-        }
+        
         // GET: Requisitions/Details/5
         public ActionResult Details(int? id, string status, string Remarks)
         {
@@ -74,8 +68,8 @@ namespace LogicUniversity.Controllers
 
             db.Requisition.AddOrUpdate(requisition);
             db.SaveChanges();
-
-                return View(requisitionDetails);
+            EmailService.SendNotification(requisition.EmployeeId, requisition.Status, "Your request is" + requisition.Status);
+            return View("ViewRequisition");
             }
 
             if (requisitionDetails == null)
