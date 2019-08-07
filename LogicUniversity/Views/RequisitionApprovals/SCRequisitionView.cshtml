@@ -1,0 +1,68 @@
+﻿@using LogicUniversity.Models
+
+@{
+    var reqList = (List<Requisition>)ViewData["reqList"];
+}
+
+@{
+    ViewBag.Title = "Viewallrequisitions";
+}
+
+<head>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<h2>Viewallrequisitions</h2>
+
+@using (Html.BeginForm("Search", "Requisition", FormMethod.Get))
+{
+    <table>
+        <tr>
+            <td>From date: </td>
+            <td><input type="text" name="fromdate" id="fromdate" /></td>
+            <td>Collection Point: </td>
+            <td><input type="text" name="cp" id="cp" /></td>
+        </tr>
+        <tr>
+            <td>To date: </td>
+            <td><input type="text" name="todate" id="todate" /></td>
+            <td>Status: </td>
+            <td><input type="text" name="status" id="status" /></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="submit" /></td>
+        </tr>
+    </table>
+
+
+    <table>
+
+        <tr>
+            <td>Requisition Id </td>
+            <td>Employee Id </td>
+            <td>Date </td>
+            <td>Status </td>
+            <td>Remarkss </td>
+            <td>Approver Id </td>
+            <td>Department </td>
+        </tr>
+
+        @foreach (var requisition in reqList)
+        {
+            <tr>
+                <td>@Html.DisplayFor(model => requisition.RequisitionId)</td>
+                <td>@Html.DisplayFor(model => requisition.EmployeeId)</td>
+                <td>@Html.DisplayFor(model => requisition.Date)</td>
+                <td>@Html.DisplayFor(model => requisition.Status)</td>
+                <td>@Html.DisplayFor(model => requisition.Remarks)</td>
+                <td>@Html.DisplayFor(model => requisition.ApproverId)</td>
+                <td>@Html.DisplayFor(model => requisition.Department)</td>
+            </tr>
+        }
+    </table>
+}

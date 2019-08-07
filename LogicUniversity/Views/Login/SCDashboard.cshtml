@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "Storeclerkdash";
+}
+
+@{
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
+}
+
+
+<head>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+
+
+<h2>Storeclerkdash</h2>
+
+<table>
+    <tr>
+        <td>@Html.ActionLink("Requisition", "SCRequisitionView", "RequisitionApprovals")</td>
+        <td>@Html.ActionLink("Disbursements", "Disbursement")</td>
+        <td>@Html.ActionLink("Catalogue", "Catalogue")</td>
+    </tr>
+    <tr>
+        <td>@Html.ActionLink("Purchase Order", "PurchaseOrder")</td>
+        <td>@Html.ActionLink("Adjustment Voucher", "AdjustmentVoucher")</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>@Html.ActionLink("Requisitions History", "RequisitionHistory")</td>
+        <td>@Html.ActionLink("Supplier List", "Supplier")</td>
+        <td>@Html.ActionLink("View Tender", "Tender")</td>
+    </tr>
+    <tr>
+        <td>@Html.ActionLink("Charge Department", "ChargeDepartment")</td>
+        <td>@Html.ActionLink("View Department", "Department")</td>
+        <td></td>
+    </tr>
+</table>
+
+<table>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/Products';">Maintain Catalogue</button></td></tr>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/StockAdjustmentVouchers/Create';">Raise Stock Adjustment Voucher</button></td></tr>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/Suppliers/Index';">View Suppliers</button></td></tr>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/stockcards';">View StockCards</button></td></tr>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Supervisor';">Pending Approval/Rejection (Supervisor)</button></td></tr>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Manager';">Pending Approval/Rejection (Manager)</button></td></tr>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/PurchaseOrder/Index';">Create Purchase Order</button></td></tr>
+</table>

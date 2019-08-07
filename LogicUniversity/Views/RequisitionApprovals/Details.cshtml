@@ -1,0 +1,54 @@
+﻿@model IEnumerable<LogicUniversity.Models.RequisitionDetails>
+
+@{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+<form>
+    <div>
+        <h4>Requisition</h4>
+        <hr />
+        <table class="table">
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.RequisitionId)</td>
+                <td>@Html.DisplayNameFor(model => model.ItemCode)</td>
+                <td>@Html.DisplayNameFor(model => model.Quantity)</td>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td value="id"> @item.RequisitionId</td>
+                    <td>@item.ItemCode</td>
+                    <td> @item.Quantity</td>
+                </tr>
+
+            }
+
+
+        </table>
+    </div>
+
+
+
+
+<textarea rows="4" cols="100" value="Remarks"></textarea>
+
+    <input type="submit" value="ACCEPTED" name="status" />
+
+    <input type="submit" value="REJECTED" name="status" />
+
+</form>
+
+
+RequisitionApprovals/ViewRequesition
+
+<p>
+
+    @Html.ActionLink("Back to List", "ViewRequesition","RequisitionApprovals")
+</p>

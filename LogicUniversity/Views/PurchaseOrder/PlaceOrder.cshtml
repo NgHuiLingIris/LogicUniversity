@@ -1,0 +1,85 @@
+﻿@model LogicUniversity.Models.Supplier
+@{
+    /**/
+
+    ViewBag.Title = "Place Order";
+}
+
+@{
+    string SupplierName = (string)ViewData["SupplierName"];
+    string message = (string)ViewData["message"];
+    List<string> outcomes = (List<string>)ViewData["outcomes"];
+    var maxPO = ViewData["maxPO"];
+}
+
+<table style="width:100%">
+    <tr>
+        <td width="50%"><font size="4">Stationery Purchase Order Form</font></td>
+        <td width="50%" align="right"><font size="4">Purchase Order NO: @maxPO</font></td>
+    </tr>
+</table>
+<div align="center"><font size="7"><b>Logic University</b></font></div>
+<div align="center"><font size="4"><b>Stationery Purchase Center</b></font></div>
+
+<table style="width:100%">
+    <tr>
+        <td width="50%">
+            <font size="4">
+                <form action="/PurchaseOrder/PlaceOrder">
+                    Supplier: <input type="text" name="supplier" id="supplier">
+                    <input type="submit" value="Search">
+                </form>
+            </font>
+        </td>
+        <td width="50%" align="right">
+            <font size="4">Deliver to: </font>
+        </td>
+    </tr>
+</table>
+
+
+<br />
+
+
+@using (Html.BeginForm("PlaceOrderSuccess", "PurchaseOrder", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Supplier" id="Supplier" value=@SupplierName />
+    <table border="1">
+        <tr>
+            <th>Description</th>
+            <th>UOM</th>
+            <th>Quantity</th>
+            <th>Suggested value</th>
+        </tr>
+        @{
+            //To make unique Id
+            int i = 0;
+            foreach (var item in Model.Products.ToList())
+            {
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(o => o.Products[i].Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(o => o.Products[i].UOM)
+                    </td>
+                    <td>
+                        @Html.EditorFor(o => o.Products[i].ReorderQty, new { @id = "ReorderQty_" + i, htmlAttributes = new { type = "number", min = "0", max = "9999", @class = "form-control" } })
+                    </td>
+                    <td>
+                        @if (outcomes != null)
+                        {
+                            @outcomes[i]
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        }    
+    </table>
+    <p align="center"><input type="submit" value="Reorder" /></p>
+}
+
+<asp:TextBox runat="server" ID="txtDateFrom1" TextMode="Date"></asp:TextBox>

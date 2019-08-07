@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_D.cshtml";
+}
+
+
+@{
+    ViewBag.Title = "Employee Dashboard";
+}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+
+<h2>HOD Dashboard</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <p>
+
+                <a href="@Url.Action("ViewRequesition","RequisitionApprovals")" class="btn btn-sq-lg btn-primary">
+                    <i class="fa fa-user fa-100x"></i><br />
+                    Approve/Reject Requistion Form <br><br>
+                </a>
+
+                <a href="@Url.Action("Details","RequisitionApprovals")" class="btn btn-sq-lg btn-primary">
+                    <i class="fa fa-user fa-100x"></i><br />
+                    View all Requistion <br><br>
+                </a>
+                <a href="@Url.Action("ManageCollection","CollectionPoint")" class="btn btn-sq-lg btn-primary">
+                    <i class="fa fa-user fa-100x"></i><br />
+                    Manage Collection <br><br>
+                </a>
+                <a href="#" class="btn btn-sq-lg btn-primary">
+                    <i class="fa fa-user fa-100x"></i><br />
+                    Manage Delegation <br> <br>
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
