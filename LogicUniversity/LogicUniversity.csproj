@@ -318,6 +318,7 @@
     <Content Include="Views\Retrievals\Details.cshtml" />
     <Content Include="Views\Retrievals\Edit.cshtml" />
     <Content Include="Views\Retrievals\Index.cshtml" />
+    <Content Include="Views\Retrievals\AdjustRetrieval.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

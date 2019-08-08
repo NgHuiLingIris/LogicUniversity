@@ -126,7 +126,7 @@ namespace LogicUniversity.Controllers
 
             return View(stockAdjustmentVoucher);
         }
-
+        
         // GET: StockAdjustmentVouchers/Edit/5
         public ActionResult Edit(string id)
         {
@@ -205,17 +205,19 @@ namespace LogicUniversity.Controllers
             foreach (StockAdjustmentVoucherDetail d0 in sDetailList)
             {
                 string itemcode = d0.ItemCode;
-                var sDetailsFromDb = from v in db.StockAdjustmentVoucherDetails
+                var sDetailsFromDb0 = from v in db.StockAdjustmentVoucherDetails
                                      where v.ItemCode == itemcode && v.Status == "Pending"
                                      select v;
-
+                //added for retrieval
+                var sDetailsFromDb = sDetailsFromDb0.Include(s => s.Product);
+                //end retrieval
                 List<StockAdjustmentVoucherDetail> sDetailListPerProduct = new List<StockAdjustmentVoucherDetail>();
                 
                 foreach (var p in sDetailsFromDb)
                 {
                     sDetailListPerProduct.Add(p);
                 }
-
+                //Products p1 = db.Products.FirstOrDefault(s => s.ItemCode == itemcode);
                 double totalQuantity = sDetailListPerProduct.Sum(x => x.QuantityAdjusted);
                 double totalAdjustedCost = Math.Abs(totalQuantity * d0.Product.UnitPrice);
 
@@ -224,16 +226,28 @@ namespace LogicUniversity.Controllers
                         if (totalAdjustedCost < 250)
                         {
                             s.Approver = "Supervisor";
+                            //db.Entry(s).State = EntityState.Modified;
+                            //db.SaveChanges();
                         }
                         else
                         {
                             s.Approver = "Manager";
+                            //db.Entry(s).State = EntityState.Modified;
+                            //db.SaveChanges();
                         }
                     s.Balance = s.Product.Balance;
                     s.ApproverRemarks = "NA";
-                        db.Entry(stockAdjustmentVoucher).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
+                    //db.Entry(stockAdjustmentVoucher).State = EntityState.Added;
+                    //db.Entry(Products).State = EntityState.Modified;
+                    //db.StockAdjustmentVouchers.Remove(stockAdjustmentVoucher);
+                    //db.StockAdjustmentVouchers.Add(stockAdjustmentVoucher);
+                    //db.SaveChanges();
+                    //db.Entry(stockAdjustmentVoucher).State = EntityState.Added;
+                    db.Entry(stockAdjustmentVoucher).State = EntityState.Modified;
+                    //db.StockAdjustmentVouchers.Attach(stockAdjustmentVoucher);
+                    db.SaveChanges();
+                }
+                
             }
             return stockAdjustmentVoucher;
         }
