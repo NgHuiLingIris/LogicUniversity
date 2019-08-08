@@ -15,7 +15,7 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <table>
+        <table border="1">
             <tr>
                 <th>Product</th>
                 <th>Retrieved</th>
@@ -30,31 +30,43 @@
                 foreach (var item in ICRList)
                 {
 
-                   <tr>
-                       <td>
-                           @item.Product.Description
-                       </td>
-                       <td>
-                           
-                       </td>
-                       <td>
+                    <tr>
+                        <td>
+                            @item.Product.Description
+                        </td>
+                        <td>
+                            <input type="number" name="ICR[@i].retrieved" />
+                        </td>
+                        <td>
+                            @item.QtyInInventory
+                        </td>
+                        <td>
+                            @item.TotalNeeded
+                        </td>
+                        <td>
+                            <table>
+                                @foreach (Department j in item.DeptName)
+                                {
+                                    <tr>@j.DeptName</tr><br />
 
-                       </td>
-                       <td>
+                                }
+                            </table>
+                            </td>
+                            <td>
+                                <table>
+                                    @foreach (double k in item.NeededList)
+                                    {
+                                        <tr>@k</tr><br />
 
-                       </td>
-                       <td>
-
-                       </td>
-                       <td>
-
-                       </td>
-                   </tr>
-                    i++;
-                }
+                                    }
+                                </table>
+                                </td>
+                                </tr>
+                                i++;
+                            }
             }
 
-
+            
             @*<tr>
             <td colspan="2" align="right"><input type="submit" value="Create" /></td>
         </tr>*@
