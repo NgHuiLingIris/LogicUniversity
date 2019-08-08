@@ -42,6 +42,15 @@ namespace LogicUniversity.Context
         public DbSet<StockCard> StockCards { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-        
+        public Retrieval Retrieval { get; set; }
+        public DbSet<Retrieval> Retrievals { get; set; }
+        public RetrievalDetail RetrievalDetail { get; set; }
+        public DbSet<RetrievalDetail> RetrievalDetails { get; set; }
+        public Disbursement Disbursement { get; set; }
+        public DbSet<Disbursement> Disbursements { get; set; }
+        public DisbursementDetail DisbursementDetail { get; set; }
+        public DbSet<DisbursementDetail> DisbursementDetails { get; set; }
+
+
     }
 }
