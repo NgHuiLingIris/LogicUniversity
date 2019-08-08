@@ -3,8 +3,10 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Index</h2>
+@{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
+<h2>Viewx</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -20,31 +22,32 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <th>
-            <text value="ViewOnly" id="ViewOnly" onclick="window.location.href = '/StockAdjustmentVoucherDetails/FilterView?voucherId=@item.Id';"> @Html.DisplayFor(modelItem => item.Id) </text>
-            
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateCreated)
-        </td>
-        @*
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-            @Html.ActionLink(
-            linkText: "Details",
-            actionName: "FilterView",
-            controllerName: "StockAdjustmentVoucherDetails",
-            routeValues: new { voucherId = @item.Id},
-            htmlAttributes: null
-            )
+    @foreach (var item in Model)
+    {
+        <tr>
+            <th>
+                <text value="ViewOnly" id="ViewOnly" onclick="window.location.href = '/StockAdjustmentVoucherDetails/FilterView?voucherId=@item.Id';"> @Html.DisplayFor(modelItem => item.Id) </text>
+
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
             </td>
-        <td>
-            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-        </td>
-        *@
-    </tr>
-}
+            @*
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink(
+                    linkText: "Details",
+                    actionName: "FilterView",
+                    controllerName: "StockAdjustmentVoucherDetails",
+                    routeValues: new { voucherId = @item.Id},
+                    htmlAttributes: null
+                    )
+                    </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            *@
+        </tr>
+    }
 
 </table>

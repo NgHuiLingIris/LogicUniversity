@@ -8,13 +8,10 @@
     var ItemCodeString = (string)ViewData["ItemCodeString"];
     var Role = (string)ViewData["Role"];
 }
-<p style="text-align:left;">
-    <button align="left" onclick="window.location.href = '/';"> Home </button>
-    <span style="float:right;">
-        <text align="right">Hello</text>
-        <button align="right" onclick="window.location.href = '/';">Logout</button>
-    </span>
-</p>
+@{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+
 
 <h2>ApprovalAction</h2>
 
@@ -48,25 +45,25 @@
             int i = 0;
             foreach (var item in DetailList)
             {
-        <tr>
-            <td>
-                <text Id="StockAdjustmentVoucherDetails[@i].StockAdjustmentVoucherId" name="StockAdjustmentVoucherDetails[@i].StockAdjustmentVoucherId" typeof="text">@item.StockAdjustmentVoucherId</text>
-                @*@Html.DisplayFor(modelItem => item.StockAdjustmentVoucherId)*@
-            </td>
+                <tr>
+                    <td>
+                        <text Id="StockAdjustmentVoucherDetails[@i].StockAdjustmentVoucherId" name="StockAdjustmentVoucherDetails[@i].StockAdjustmentVoucherId" typeof="text">@item.StockAdjustmentVoucherId</text>
+                        @*@Html.DisplayFor(modelItem => item.StockAdjustmentVoucherId)*@
+                    </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Product.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuantityAdjusted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reason)
-            </td>
-        </tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ItemCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QuantityAdjusted)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Reason)
+                    </td>
+                </tr>
                 i++;
             }
 
