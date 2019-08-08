@@ -25,5 +25,7 @@ namespace LogicUniversity.Models
 
         [ForeignKey("DeptId")]
         public virtual Department dept { get; set; }
+        public Employee Employee { get; set; }
+
     }
 }

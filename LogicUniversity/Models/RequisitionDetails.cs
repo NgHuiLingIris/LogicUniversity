@@ -19,5 +19,6 @@ namespace LogicUniversity.Models
 
         [ForeignKey("RequisitionId")]
         public Requisition Requisition { get; set; }
+        public Products Products { get; set; }
     }
 }
