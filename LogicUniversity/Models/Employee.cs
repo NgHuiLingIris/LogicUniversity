@@ -23,8 +23,8 @@ namespace LogicUniversity.Models
         public int DeptId { get; set; }
         public string Isdelegateded { get; set; }
 
-        [ForeignKey("DeptId")]
-        public virtual Department Department { get; set; }
+
+        public Department Department { get; set; }
     }
 
 

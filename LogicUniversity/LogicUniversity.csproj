@@ -74,6 +74,7 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -141,11 +142,13 @@
     <Compile Include="Controllers\StockAdjustmentVouchersController.cs" />
     <Compile Include="Controllers\StockCardsController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
+    <Compile Include="Controllers\TrendController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CartItem.cs" />
     <Compile Include="Models\CollectionPoint.cs" />
+    <Compile Include="Models\DataPoint.cs" />
     <Compile Include="Models\Delegation.cs" />
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\Disbursement.cs" />
@@ -319,6 +322,7 @@
     <Content Include="Views\Retrievals\Edit.cshtml" />
     <Content Include="Views\Retrievals\Index.cshtml" />
     <Content Include="Views\Retrievals\AdjustRetrieval.cshtml" />
+    <Content Include="Views\Trend\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

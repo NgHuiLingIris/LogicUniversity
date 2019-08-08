@@ -23,8 +23,8 @@ namespace LogicUniversity.Models
 
         public virtual List<RequisitionDetails> RequisitionDetails { get; set; }
 
-        [ForeignKey("DeptId")]
-        public virtual Department dept { get; set; }
+
+        //public Department dept { get; set; }
         public Employee Employee { get; set; }
 
     }

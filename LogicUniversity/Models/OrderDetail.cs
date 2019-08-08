@@ -16,6 +16,6 @@ namespace LogicUniversity.Models
         public double Quantity { get; set; }
 
         public virtual Order Order { get; set; }
-        //public virtual Product Product { get; set; }
+        public Products Products { get; set; }
     }
 }

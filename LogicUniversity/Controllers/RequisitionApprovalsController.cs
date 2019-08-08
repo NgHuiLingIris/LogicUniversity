@@ -47,7 +47,7 @@ namespace LogicUniversity.Controllers
                 string deptName = r.Department;
                 var d0 = db.Departments.FirstOrDefault(a => a.DeptName == deptName);
                 Department d1 = d0;
-                r.dept = d1;
+                r.Employee.Department = d1;
 
                 if (reqByDept.Any(s => s.Department.Contains(r.Department)))
                 {

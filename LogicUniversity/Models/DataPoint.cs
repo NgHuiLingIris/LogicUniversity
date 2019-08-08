@@ -24,6 +24,9 @@ namespace LogicUniversity.Models
             //Explicitly setting the name to be used while serializing to JSON.
             [DataMember(Name = "y")]
             public Nullable<double> Y = null;
-        
-    }
+
+            //public int value1 { get; set; }
+            //public string value2 { get; set; }
+         
+        }
 }
