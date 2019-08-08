@@ -20,5 +20,6 @@ namespace LogicUniversity.Models
         public string Remarks { get; set; }
 
         public virtual List<RequisitionDetails> RequisitionDetails { get; set; }
+        public virtual Department dept { get; set; }
     }
 }

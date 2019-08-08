@@ -2,6 +2,7 @@
 
 @{
     var reqList = (List<Requisition>)ViewData["reqList"];
+    var count = (int)ViewData["count"];
 }
 
 @{
@@ -19,7 +20,7 @@
 
 <h2>Viewallrequisitions</h2>
 
-@using (Html.BeginForm("Search", "Requisition", FormMethod.Get))
+@using (Html.BeginForm())
 {
     <table>
         <tr>
@@ -35,14 +36,40 @@
             <td><input type="text" name="status" id="status" /></td>
         </tr>
         <tr>
-            <td><input type="submit" value="submit" /></td>
+
+            <td><input type="submit" value="search" name="search" id="search" /></td>
+            <td><input type="submit" value="retrieve" name="retrieve" id="retrieve" /></td>
         </tr>
     </table>
-
+    <input type="hidden" value=@count name=@count id="count" />
 
     <table>
 
         <tr>
+            <td></td>
+            <td>Date </td>
+            <td>Status </td>
+            <td>Department </td>
+        </tr>
+        @{
+            //To make unique Id
+            int i = 0;
+            foreach (var item in reqList)
+            {
+
+                <tr>
+                    <td>
+                        <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" />
+                    </td>
+                    <td>@Html.DisplayFor(model => item.Date)</td>
+                    <td>@Html.DisplayFor(model => item.Status)</td>
+                    <td>@Html.DisplayFor(model => item.Department)</td>
+                </tr>
+                i++;
+            }
+        }
+        @*
+            <tr>
             <td>Requisition Id </td>
             <td>Employee Id </td>
             <td>Date </td>
@@ -51,7 +78,6 @@
             <td>Approver Id </td>
             <td>Department </td>
         </tr>
-
         @foreach (var requisition in reqList)
         {
             <tr>
@@ -64,5 +90,6 @@
                 <td>@Html.DisplayFor(model => requisition.Department)</td>
             </tr>
         }
+        *@
     </table>
 }
