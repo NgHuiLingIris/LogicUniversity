@@ -17,7 +17,7 @@ namespace LogicUniversity.Controllers
     {
         private LogicUniversityContext db = new LogicUniversityContext();
 
-        // GET: Requisitions
+        // GET: View Requisition for Approve/reject for Department Head
         public ActionResult ViewRequisition()
         {
             var username = Session["UserID"].ToString();
@@ -25,6 +25,7 @@ namespace LogicUniversity.Controllers
             return View(db.Requisition.Where(x =>x.ApproverId==obj.EmployeeId && x.Status=="PENDING").ToList());
         }
 
+        // GET: View  ALL History for Department Head
         public ActionResult ViewAllRequisition()
         {
             var username = Session["UserID"].ToString();
@@ -42,6 +43,7 @@ namespace LogicUniversity.Controllers
             return View();
         }
 
+        // GET: View Requisition for Department Staff
         public ActionResult TrackRequisition()
         {
             var username = Session["UserID"].ToString();
@@ -61,15 +63,15 @@ namespace LogicUniversity.Controllers
             List<RequisitionDetails> requisitionDetails = db.RequisitionDetails.Where(x => x.RequisitionDetailsId == id).ToList();
             if (id != 0 && status !=null)
             { 
-            Requisition requisition = db.Requisition.Where(x => x.RequisitionId == id).FirstOrDefault();
+                Requisition requisition = db.Requisition.Where(x => x.RequisitionId == id).FirstOrDefault();
 
-            requisition.Status = status;
-            requisition.Remarks = Remarks;
+                requisition.Status = status;
+                requisition.Remarks = Remarks;
 
-            db.Requisition.AddOrUpdate(requisition);
-            db.SaveChanges();
-            EmailService.SendNotification(requisition.EmployeeId, requisition.Status, "Your request is" + requisition.Status);
-            return View("ViewRequisition");
+                db.Requisition.AddOrUpdate(requisition);
+                db.SaveChanges();
+                EmailService.SendNotification(requisition.EmployeeId, requisition.Status, "Your request is" + requisition.Status);
+                return RedirectToAction("ViewRequisition");
             }
 
             if (requisitionDetails == null)

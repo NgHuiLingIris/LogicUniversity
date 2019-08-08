@@ -16,11 +16,11 @@ namespace LogicUniversity.Models
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "StartDate is required")]
         [Display(Name = "StartDate")]
-        public string StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "EndDate is required")]
         [Display(Name = "EndDate")]
-        public string EndDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         [ForeignKey("EmployeeId")]
         public Employee Employee { get; set; }

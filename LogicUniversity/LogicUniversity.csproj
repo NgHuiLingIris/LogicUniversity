@@ -131,6 +131,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Context\LogicUniversityContext.cs" />
     <Compile Include="Controllers\CollectionPointController.cs" />
+    <Compile Include="Controllers\DelegationsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -302,6 +303,11 @@
     <Content Include="Views\PurchaseOrder\Index.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrder.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrderSuccess.cshtml" />
+    <Content Include="Views\Delegations\Create.cshtml" />
+    <Content Include="Views\Delegations\Delete.cshtml" />
+    <Content Include="Views\Delegations\Details.cshtml" />
+    <Content Include="Views\Delegations\Edit.cshtml" />
+    <Content Include="Views\Delegations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

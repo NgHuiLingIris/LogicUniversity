@@ -42,6 +42,6 @@ namespace LogicUniversity.Context
         public DbSet<StockCard> StockCards { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-
+        
     }
 }

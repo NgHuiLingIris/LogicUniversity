@@ -33,8 +33,8 @@ namespace LogicUniversity.Services
 
                 db.Requisition.Add(request);
                 db.SaveChanges();
-            EmailService.SendNotification(obj.ApproverId, "Waiting for Approval", "You have received an requisition. Waiting for Approval");
-            RequisitionDetails requestDetails = new RequisitionDetails();
+                EmailService.SendNotification(obj.ApproverId, "Waiting for Approval", "You have received an requisition. Waiting for Approval");
+                RequisitionDetails requestDetails = new RequisitionDetails();
 
                 foreach (var key in CartItems.AllKeys)
                 {
