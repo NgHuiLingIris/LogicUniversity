@@ -136,6 +136,7 @@
     <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\RequisitionController.cs" />
     <Compile Include="Controllers\RequisitionApprovalsController.cs" />
+    <Compile Include="Controllers\RetrievalsController.cs" />
     <Compile Include="Controllers\StockAdjustmentVoucherDetailsController.cs" />
     <Compile Include="Controllers\StockAdjustmentVouchersController.cs" />
     <Compile Include="Controllers\StockCardsController.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Models\Disbursement.cs" />
     <Compile Include="Models\DisbursementDetail.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\ItemCodeRequisition.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\PredictViewModel.cs" />
@@ -311,6 +313,11 @@
     <Content Include="Views\Delegations\Edit.cshtml" />
     <Content Include="Views\Delegations\Index.cshtml" />
     <Content Include="Views\Login\SMDashboard.cshtml" />
+    <Content Include="Views\Retrievals\Create.cshtml" />
+    <Content Include="Views\Retrievals\Delete.cshtml" />
+    <Content Include="Views\Retrievals\Details.cshtml" />
+    <Content Include="Views\Retrievals\Edit.cshtml" />
+    <Content Include="Views\Retrievals\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

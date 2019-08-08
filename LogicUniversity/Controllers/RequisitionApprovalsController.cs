@@ -41,14 +41,32 @@ namespace LogicUniversity.Controllers
             //should be grouped by department
 
             List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING").OrderByDescending(s => s.Date).ToList();
+            List<Requisition> reqByDept = new List<Requisition>();
+            foreach (Requisition r in reqListAll)
+            {
+                string deptName = r.Department;
+                var d0 = db.Departments.FirstOrDefault(a => a.DeptName == deptName);
+                Department d1 = d0;
+                r.dept = d1;
+
+                if (reqByDept.Any(s => s.Department.Contains(r.Department)))
+                {
+
+                }
+                else
+                {
+                    reqByDept.Add(r);
+                }
+            }
             //filter the top
+
             List<Requisition> reqList = new List<Requisition>();
-            foreach (Requisition req in reqListAll)
+            foreach (Requisition req in reqByDept)
             {
                 reqList.Add(req);
             }
             //reqList = db.Requisition.ToList();
-            int count = reqList.Count();
+            int count = reqByDept.Count();
             ViewData["count"] = count;
             ViewData["reqList"] = reqList;
 
@@ -74,18 +92,26 @@ namespace LogicUniversity.Controllers
                 List<Requisition> SelectedRequests = new List<Requisition>();
                 int count = int.Parse(Request.Form["count"]);
                 //for(int i = 0; i<)
+                string PendingDeptRequisition = "*";
                 for (int i = 0; i < count; i++)
                 {
-                    if (Request.Form["Requisition[" + i + "].toretrieve"] == "on")
+                    if (Request.Form["Requisition[" + i + "].toretrieve"] != null)
                     {
-                        Debug.WriteLine("");
+                        string dept = Request.Form["Requisition[" + i + "].toretrieve"];
+                        //Department d0 = new Department();
+                        //d0 = db.Departments.FirstOrDefault(d => d.DeptName == dept);
+                        PendingDeptRequisition = PendingDeptRequisition + dept + "*";
                         //retrieve the requisition id
+                        //redirect action to create retrieval
+
                     }
                     //string checking = Request.Form["Requisition[0].toretrieve"];//on
                     //string checking1 = Request.Form["Requisition[1].toretrieve"];//null
                 }
 
-                Debug.WriteLine("");
+                return RedirectToAction("Create", "Retrievals", new { PendingDeptRequisition = PendingDeptRequisition });
+
+                //Debug.WriteLine("");
             }
 
             ViewData["reqList"] = reqList;

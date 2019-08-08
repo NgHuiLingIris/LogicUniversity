@@ -19,7 +19,11 @@ namespace LogicUniversity.Models
         public int ApproverId { get; set; }
         public string Remarks { get; set; }
 
+        public int DeptId { get; set; }
+
         public virtual List<RequisitionDetails> RequisitionDetails { get; set; }
+
+        [ForeignKey("DeptId")]
         public virtual Department dept { get; set; }
     }
 }

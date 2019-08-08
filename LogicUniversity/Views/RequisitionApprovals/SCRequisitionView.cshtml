@@ -41,7 +41,7 @@
             <td><input type="submit" value="retrieve" name="retrieve" id="retrieve" /></td>
         </tr>
     </table>
-    <input type="hidden" value=@count name=@count id="count" />
+    <input type="hidden" value=@count name="count" id="count" />
 
     <table>
 
@@ -59,7 +59,7 @@
 
                 <tr>
                     <td>
-                        <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" />
+                        <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" value=@Html.DisplayFor(model => item.Department) />
                     </td>
                     <td>@Html.DisplayFor(model => item.Date)</td>
                     <td>@Html.DisplayFor(model => item.Status)</td>
