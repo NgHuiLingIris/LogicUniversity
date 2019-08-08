@@ -16,6 +16,10 @@ namespace LogicUniversity.Models
         public string ItemCode { get; set; }
         public int Quantity { get; set; }
 
-        
+        public Requisition Requisition { get; set; }
+        public Products Products { get; set; }
+
+
+
     }
 }

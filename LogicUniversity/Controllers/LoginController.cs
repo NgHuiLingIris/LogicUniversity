@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
-
+using LogicUniversity.Models;
 
 namespace LogicUniversity.Controllers
 {
@@ -23,7 +23,7 @@ namespace LogicUniversity.Controllers
         {
             if (ModelState.IsValid)
             {
-               var obj = db.Employees.Where(a => a.Username.Equals(username) && a.Password.Equals(password)).FirstOrDefault();
+               Employee obj = db.Employees.Where(a => a.Username == username && a.Password==password).FirstOrDefault();
                     if (obj != null)
                     {
                         Session["UserID"] = username.ToString();

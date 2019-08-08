@@ -18,7 +18,7 @@
         <table class="table">
             <tr>
                 <td>@Html.DisplayNameFor(model => model.RequisitionId)</td>
-                <td>@Html.DisplayNameFor(model => model.ItemCode)</td>
+                <td>@Html.DisplayNameFor(model => model.Products.Description)</td>
                 <td>@Html.DisplayNameFor(model => model.Quantity)</td>
             </tr>
 
@@ -26,7 +26,7 @@
             {
                 <tr>
                     <td value="id"> @item.RequisitionId</td>
-                    <td>@item.ItemCode</td>
+                    <td>@item.Products.Description</td>
                     <td> @item.Quantity</td>
                 </tr>
 
