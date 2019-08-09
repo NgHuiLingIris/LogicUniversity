@@ -16,7 +16,14 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: Delegations
-        public ActionResult Index()
+
+        public ActionResult ManageDelegation()
+        {
+            return View();
+        }
+
+
+        public ActionResult ViewDelegation()
         {
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
@@ -25,7 +32,7 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Delegations/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult GetDelegationDetails(int? id)
         {
             if (id == null)
             {
@@ -40,19 +47,22 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Delegations/Create
-        public ActionResult Create()
+        public ActionResult AppointDelegation()
         {
-            ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName");
+            int empId = (int)Session["empId"];
+            var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
+            ViewBag.EmployeeId = new SelectList(db.Employees.Where(d => d.Role == "DEP_STAFF" && d.DeptId == deptId), "EmployeeId", "EmployeeName");
+            ViewData["list"] = null;
             return View();
         }
 
-        // POST: Delegations/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+      
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
+        public ActionResult AppointDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
         {
+
             if (ModelState.IsValid)
             {
                 int empId = (int)Session["empId"];
@@ -61,7 +71,7 @@ namespace LogicUniversity.Controllers
                 int value = DateTime.Compare(delegation.StartDate, delegation.EndDate);
                 if (value > 0 || delegation.StartDate < DateTime.Now)
                 {
-                    return RedirectToAction("Create", "Delegations");
+                    return RedirectToAction("AppointDelegation", "Delegations");
                 }
                 else
                 {
@@ -90,61 +100,12 @@ namespace LogicUniversity.Controllers
                         //Client.Send(Message);
                         //Message.Dispose();
 
-                        return RedirectToAction("Index");
+                        return RedirectToAction("ViewDelegation");
                     }
                     else
                     {
-                        if (case1.Count != 0)
-                        {
-                            foreach (var item in case1)
-                            {
-                                if (item.StartDate > delegation.EndDate)
-                                {
-                                    Employee emp = db.Employees.Find(delegation.EmployeeId);
-                                    emp.Isdelegateded = "Y";
-                                    db.Delegations.Add(delegation);
-                                    db.SaveChanges();
-                                    return RedirectToAction("Index");
-                                }
-                                else
-                                {
-                                    string name = item.Employee.EmployeeName.ToString();
-                                    string startdate = (string)item.StartDate.ToString();
-                                    string enddate = (string)item.EndDate.ToString();
-                                    msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
-                                }
 
-                            }
-                            ViewData["list"] = msglist;
-                            return View("Create");
-                        }
-                        else if (case2.Count != 0)
-                        {
-
-                            foreach (var item in case2)
-                            {
-                                if (item.EndDate < delegation.StartDate)
-                                {
-                                    Employee emp = db.Employees.Find(delegation.EmployeeId);
-                                    emp.Isdelegateded = "Y";
-                                    db.Delegations.Add(delegation);
-                                    db.SaveChanges();
-                                    return RedirectToAction("Index");
-                                }
-                                else
-                                {
-                                    string name = item.Employee.EmployeeName.ToString();
-                                    string startdate = (string)item.StartDate.ToString();
-                                    string enddate = (string)item.EndDate.ToString();
-                                    msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
-                                }
-
-                            }
-                            ViewData["list"] = msglist;
-                            return View("Create");
-
-                        }
-                        else if (case3.Count != 0)
+                        if (case3.Count != 0)
                         {
 
                             foreach (var item in case3)
@@ -155,8 +116,9 @@ namespace LogicUniversity.Controllers
                                 msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
                             }
                             ViewData["list"] = msglist;
-                            return View("Create");
+                            return View("AppointDelegation");
                         }
+
                         else if (case4.Count != 0)
                         {
 
@@ -168,8 +130,63 @@ namespace LogicUniversity.Controllers
                                 msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
                             }
                             ViewData["list"] = msglist;
-                            return View("Create");
+                            return View("AppointDelegation");
                         }
+                  
+                        else if (case1.Count != 0)
+                        {
+                            foreach (var item in case1)
+                            {
+                                if (item.StartDate > delegation.EndDate)
+                                {
+                                    Employee emp = db.Employees.Find(delegation.EmployeeId);
+                                    emp.Isdelegateded = "Y";
+                                    db.Delegations.Add(delegation);
+                                    db.SaveChanges();
+                                    return RedirectToAction("ViewDelegation");
+                                }
+                                else
+                                {
+                                   
+                                    string name = item.Employee.EmployeeName.ToString();
+                                    string startdate = (string)item.StartDate.ToString();
+                                    string enddate = (string)item.EndDate.ToString();
+                                    msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
+                                }
+
+                            }
+                            ViewData["list"] = msglist;
+                            return View("AppointDelegation");
+                        }
+
+                        else if (case2.Count != 0)
+                        {
+
+                            foreach (var item in case2)
+                            {
+                                if (item.EndDate < delegation.StartDate)
+                                {
+                                    Employee emp = db.Employees.Find(delegation.EmployeeId);
+                                    emp.Isdelegateded = "Y";
+                                    db.Delegations.Add(delegation);
+                                    db.SaveChanges();
+                                    return RedirectToAction("ViewDelegation");
+                                }
+                                else
+                                {
+                                    string name = item.Employee.EmployeeName.ToString();
+                                    string startdate = (string)item.StartDate.ToString();
+                                    string enddate = (string)item.EndDate.ToString();
+                                    msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate + " ");
+
+                                }
+                            }
+                            ViewData["list"] = msglist;
+                            return View("AppointDelegation");
+
+
+                        }
+                       
                     }
 
 
@@ -177,13 +194,14 @@ namespace LogicUniversity.Controllers
                 }
 
             }
-
             ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", delegation.EmployeeId);
             return View(delegation);
         }
 
+
+
         // GET: Delegations/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult EditDelegation(int? id)
         {
             if (id == null)
             {
@@ -203,20 +221,20 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
+        public ActionResult EditDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(delegation).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ViewDelegation");
             }
             ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", delegation.EmployeeId);
             return View(delegation);
         }
 
         // GET: Delegations/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult CancelDelegation(int? id)
         {
             if (id == null)
             {
@@ -231,7 +249,7 @@ namespace LogicUniversity.Controllers
         }
 
         // POST: Delegations/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("cancelDelegation")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
@@ -263,4 +281,4 @@ namespace LogicUniversity.Controllers
             base.Dispose(disposing);
         }
     }
-}
+} 

@@ -310,11 +310,6 @@
     <Content Include="Views\PurchaseOrder\Index.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrder.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrderSuccess.cshtml" />
-    <Content Include="Views\Delegations\Create.cshtml" />
-    <Content Include="Views\Delegations\Delete.cshtml" />
-    <Content Include="Views\Delegations\Details.cshtml" />
-    <Content Include="Views\Delegations\Edit.cshtml" />
-    <Content Include="Views\Delegations\Index.cshtml" />
     <Content Include="Views\Login\SMDashboard.cshtml" />
     <Content Include="Views\Retrievals\Create.cshtml" />
     <Content Include="Views\Retrievals\Delete.cshtml" />
@@ -323,6 +318,16 @@
     <Content Include="Views\Retrievals\Index.cshtml" />
     <Content Include="Views\Retrievals\AdjustRetrieval.cshtml" />
     <Content Include="Views\Trend\Index.cshtml" />
+    <Content Include="Views\CollectionPoint\CreateNewCollectionPoint.cshtml" />
+    <Content Include="Views\CollectionPoint\DeleteCollectionPoint.cshtml" />
+    <Content Include="Views\CollectionPoint\EditCollectionPointDetails.cshtml" />
+    <Content Include="Views\CollectionPoint\GetCollectionPointDetails.cshtml" />
+    <Content Include="Views\CollectionPoint\ViewCollectionPoint.cshtml" />
+    <Content Include="Views\Delegations\AppointDelegation.cshtml" />
+    <Content Include="Views\Delegations\EditDelegation.cshtml" />
+    <Content Include="Views\Delegations\GetDelegationDetails.cshtml" />
+    <Content Include="Views\Delegations\ManageDelegation.cshtml" />
+    <Content Include="Views\Delegations\ViewDelegation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

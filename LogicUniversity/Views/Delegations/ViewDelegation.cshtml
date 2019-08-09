@@ -1,0 +1,56 @@
+﻿@model IEnumerable<LogicUniversity.Models.Delegation>
+
+@{
+    ViewBag.Title = "Index";
+}
+@{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+<br />
+<h4 style="text-align:center">View Delegation</h4>
+
+<p>
+    @Html.ActionLink("Create New", "AppointDelegation")
+</p>
+<script>
+    function back()
+    {
+         window.location.href = '@Url.Action("ManageDelegation", "Delegations")'
+    }
+</script>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Employee.EmployeeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Employee.EmployeeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditDelegation", new { id = item.DelegationId }) |
+                @Html.ActionLink("Details", "GetDelegationDetails", new { id = item.DelegationId }) |
+                @Html.ActionLink("Delete", "CancelDelegation", new { id = item.DelegationId })
+            </td>
+        </tr>
+    }
+
+</table>
+<input type="submit" value="Back" onclick="back()"/>

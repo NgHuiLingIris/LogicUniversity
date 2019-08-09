@@ -3,11 +3,13 @@
 @{
     ViewBag.Title = "Details";
 }
-
-<h2>Details</h2>
-
+@{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+<br />
+<br />
 <div>
-    <h4>Delegation</h4>
+    <h4 style="text-align:center">Delegation Detail</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -37,6 +39,9 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.DelegationId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Edit", "EditDelegation", new { id = Model.DelegationId }) |
+    @Html.ActionLink("Back to List", "ViewDelegation")
 </p>
+
+
+
