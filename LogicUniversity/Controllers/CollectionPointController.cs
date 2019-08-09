@@ -227,7 +227,7 @@ namespace LogicUniversity.Controllers
             CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
             db.CollectionPoints.Remove(collectionPoint);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("ViewCollectionPoint");
         }
 
 
