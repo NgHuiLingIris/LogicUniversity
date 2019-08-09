@@ -44,10 +44,16 @@ namespace LogicUniversity.Controllers
             List<Requisition> reqByDept = new List<Requisition>();
             foreach (Requisition r in reqListAll)
             {
+                Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
+                r.Employee = e;
+                r.Employee.Department = db.Departments.FirstOrDefault(c=>c.DeptId == e.DeptId);
+                r.Department = r.Employee.Department.DeptName;
                 string deptName = r.Department;
-                var d0 = db.Departments.FirstOrDefault(a => a.DeptName == deptName);
-                Department d1 = d0;
-                r.Employee.Department = d1;
+                //var d0 = db.Departments.FirstOrDefault(a => a.DeptName == deptName);
+                //Department d1 = d0;
+                //retrieve employee here
+                //Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
+                
 
                 if (reqByDept.Any(s => s.Department.Contains(r.Department)))
                 {

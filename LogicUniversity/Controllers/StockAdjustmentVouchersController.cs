@@ -237,14 +237,7 @@ namespace LogicUniversity.Controllers
                         }
                     s.Balance = s.Product.Balance;
                     s.ApproverRemarks = "NA";
-                    //db.Entry(stockAdjustmentVoucher).State = EntityState.Added;
-                    //db.Entry(Products).State = EntityState.Modified;
-                    //db.StockAdjustmentVouchers.Remove(stockAdjustmentVoucher);
-                    //db.StockAdjustmentVouchers.Add(stockAdjustmentVoucher);
-                    //db.SaveChanges();
-                    //db.Entry(stockAdjustmentVoucher).State = EntityState.Added;
                     db.Entry(stockAdjustmentVoucher).State = EntityState.Modified;
-                    //db.StockAdjustmentVouchers.Attach(stockAdjustmentVoucher);
                     db.SaveChanges();
                 }
                 
