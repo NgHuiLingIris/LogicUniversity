@@ -17,7 +17,7 @@ namespace LogicUniversity.Models
 
         public virtual List<RetrievalDetail> RetrievalDetails { get; set; }
 
-        [ForeignKey("StoreClerkId")]
+        //[ForeignKey("StoreClerkId")]
         public Employee StoreClerk { get; set; }
     }
 }

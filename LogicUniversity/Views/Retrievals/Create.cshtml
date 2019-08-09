@@ -46,15 +46,18 @@
                         </td>
                         <td>
                             @item.TotalNeeded
+                            <input type="hidden" name="ICR[@i].TotalNeeded" value="@item.TotalNeeded" />
                         </td>
                         <td>
                             <table>
+                                <tr>
                                 @foreach (Department j in item.DeptName)
                                 {
-                                    <tr>@j.DeptName</tr>
-                                    <br />
-
+                                    int k = 0;
+                                    <td>@j.DeptName <input type="hidden" name="ICR[@i][@k].Dept" value="@j.DeptName" /><br /></td>
+                                    k++;
                                 }
+                                </tr>
                             </table>
                         </td>
                         <td>

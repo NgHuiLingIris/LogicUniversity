@@ -60,6 +60,15 @@ namespace LogicUniversity.Controllers
             foreach (Department d in dList)
             {
                 List<RequisitionDetails> rdList1 = db.RequisitionDetails.Include(s => s.Requisition).ToList();
+                foreach(RequisitionDetails r in rdList1)
+                {
+                    Requisition r1 = db.Requisition.FirstOrDefault(s => s.RequisitionId == r.RequisitionId);
+                    Employee e = db.Employees.FirstOrDefault(x => x.EmployeeId == r1.EmployeeId);
+                    Department d1 = db.Departments.FirstOrDefault(f => f.DeptId == e.DeptId);
+                    r.Requisition = r1;
+                    r1.Department = d1.DeptName;
+
+                }
                 List<RequisitionDetails> rdList2 = rdList1.Where(rd => rd.Status == null).Where(rd => rd.Requisition.Department == d.DeptName).ToList();
                 //List<Requisition> requisitionByDept = db.Requisition.Where(r => r.Department == d.DeptName).Where(r => r.Status == "PENDING").ToList();
                 foreach (RequisitionDetails r in rdList2)
@@ -140,16 +149,25 @@ namespace LogicUniversity.Controllers
             s.Id = "V" + id;
             s.DateCreated = DateTime.Now;
 
+            Retrieval r = new Retrieval();
+            r.RetrievalId = db.Retrievals.Count() + 1;
+            r.DateRetrieved = DateTime.Today;
+            
+            List<RetrievalDetail> rdList = new List<RetrievalDetail>();
+
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i < count; i++)
             {
-                string itemcode = Request.Form["ICR[" +i+"].product"];
+                string itemdesc = Request.Form["ICR[" +i+"].product"];
+                Products p = db.Products.FirstOrDefault(o => o.Description == itemdesc);
+                string itemcode = p.ItemCode;
                 int retrievedqty = int.Parse(Request.Form["ICR[" + i + "].retrieved"]); 
                 int qtyininventory = int.Parse(Request.Form["ICR[" + i + "].qtyininventory"]);
-                if(qtyininventory != retrievedqty)
+                int TotalNeeded = int.Parse(Request.Form["ICR[" + i + "].TotalNeeded"]);
+                if (TotalNeeded != retrievedqty)
                 {
                     StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
-                    Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
+                    //Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
                     s0.Product = p;
                     s0.ItemCode = itemcode;
                     s0.QuantityAdjusted = retrievedqty - qtyininventory;
@@ -157,16 +175,64 @@ namespace LogicUniversity.Controllers
                     s0.Balance = qtyininventory;
                     sList.Add(s0);
                 }
+                else
+                {
+                    //requisition detail need to change
+                    //need to filter by department
+                    List<RequisitionDetails> requisitiondetaillist1 = new List<RequisitionDetails>();
+                    List<RequisitionDetails> requisitiondetaillist = new List<RequisitionDetails>();
+                    //db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").ToList();
+                    int j = 0;
+
+                    string dept1 = Request.Form["ICR[0][0].Dept"];
+
+                    while (Request.Form["ICR[" + i + "][" + j + "].Dept"] != null)
+                    {
+                        string dept = Request.Form["ICR[" + i + "][" + j + "].Dept"];
+                        requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
+                        foreach(RequisitionDetails d in requisitiondetaillist1)
+                        {
+                            Requisition r1 = db.Requisition.FirstOrDefault(d2 => d2.RequisitionId == d.RequisitionId);
+                            Employee e = db.Employees.FirstOrDefault(x => x.EmployeeId == r1.EmployeeId);
+                            Department d1 = db.Departments.FirstOrDefault(f => f.DeptId == e.DeptId);
+                            d.Requisition = r1;
+                            r1.Department = d1.DeptName;
+
+                        }
+                        requisitiondetaillist = requisitiondetaillist1.Where(d => d.Requisition.Department == dept).ToList();
+                        
+                        //}
+                        foreach (RequisitionDetails c in requisitiondetaillist)
+                        {
+                            c.Status = "Retrieved";
+                            db.Entry(c).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        j++;
+                    }
+                    //
+                    RetrievalDetail rd = new RetrievalDetail();
+                    rd.ItemCode = p.ItemCode;
+                    rd.QuantityRetrieved = retrievedqty;
+                    rd.QuantityNeeded = TotalNeeded;
+                    rd.AdjustmentVoucherId = null;
+                    rdList.Add(rd);
+                }
             }
             s.StockAdjustmentVoucherDetails = sList;
 
-            if (sList != null)
+            if (sList.Count() != 0)
             {
                 ViewData["s"] = s;
                 ViewData["count"] = sList.Count();
                 return View("AdjustRetrieval",s);
             }
-
+            else
+            {
+                r.RetrievalDetails = rdList;
+                db.Retrievals.Add(r);
+                db.SaveChanges();
+            }
             return View();
         }
 
@@ -213,12 +279,60 @@ namespace LogicUniversity.Controllers
             db.StockAdjustmentVouchers.Add(stockAdjustmentVoucher);
             db.SaveChanges();
             //D:
-            Dispose();
             StockAdjustmentVoucher s = new StockAdjustmentVoucher();
-            StockAdjustmentVouchersController c = new StockAdjustmentVouchersController();
-            c.AllocateAuthorizer(stockAdjustmentVoucher);
+            //StockAdjustmentVouchersController c = new StockAdjustmentVouchersController();
+            AllocateAuthorizer(stockAdjustmentVoucher);
+
             ViewData["count"] = count;
             return View();
+        }
+
+        //Retrieval allocate authorizer comes here
+        public StockAdjustmentVoucher AllocateAuthorizer(StockAdjustmentVoucher stockAdjustmentVoucher)
+        {
+            List<StockAdjustmentVoucherDetail> sDetailList = stockAdjustmentVoucher.StockAdjustmentVoucherDetails;
+
+            foreach (StockAdjustmentVoucherDetail d0 in sDetailList)
+            {
+                string itemcode = d0.ItemCode;
+                var sDetailsFromDb0 = from v in db.StockAdjustmentVoucherDetails
+                                      where v.ItemCode == itemcode && v.Status == "Pending"
+                                      select v;
+                //added for retrieval
+                var sDetailsFromDb = sDetailsFromDb0.Include(s => s.Product);
+                //end retrieval
+                List<StockAdjustmentVoucherDetail> sDetailListPerProduct = new List<StockAdjustmentVoucherDetail>();
+
+                foreach (var p in sDetailsFromDb)
+                {
+                    sDetailListPerProduct.Add(p);
+                }
+                //Products p1 = db.Products.FirstOrDefault(s => s.ItemCode == itemcode);
+                double totalQuantity = sDetailListPerProduct.Sum(x => x.QuantityAdjusted);
+                double totalAdjustedCost = Math.Abs(totalQuantity * d0.Product.UnitPrice);
+
+                foreach (StockAdjustmentVoucherDetail s in sDetailListPerProduct)
+                {
+                    if (totalAdjustedCost < 250)
+                    {
+                        s.Approver = "Supervisor";
+                        //db.Entry(s).State = EntityState.Modified;
+                        //db.SaveChanges();
+                    }
+                    else
+                    {
+                        s.Approver = "Manager";
+                        //db.Entry(s).State = EntityState.Modified;
+                        //db.SaveChanges();
+                    }
+                    s.Balance = s.Product.Balance;
+                    s.ApproverRemarks = "NA";
+                    db.Entry(stockAdjustmentVoucher).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+            }
+            return stockAdjustmentVoucher;
         }
         // GET: Retrievals/Edit/5
         public ActionResult Edit(int? id)
