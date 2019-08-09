@@ -39,5 +39,31 @@ namespace LogicUniversity.Controllers
             ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
             return View();
         }
+
+        //public ActionResult DepartmentTrend()
+        //{
+
+        //    List<OrderDetail> orderDetails = db.OrderDetails.ToList();
+        //    List<Products> products = db.Products.ToList();
+        //    List<DataPoint> dataPoints = new List<DataPoint>();
+
+
+        //    var result = from order in orderDetails
+        //                 group order by order.Products into prodCat
+        //                 select new
+        //                 {
+        //                     Category = prodCat.Key,
+        //                     Quantity = prodCat.Sum(x => x.Quantity),
+        //                 };
+
+        //    foreach (var x in result)
+        //    {
+        //        dataPoints.Add(new DataPoint(x.Category, x.Quantity));
+
+        //    }
+
+        //    ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
+        //    return View();
+        //}
     }
 }

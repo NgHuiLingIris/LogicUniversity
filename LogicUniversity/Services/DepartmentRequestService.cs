@@ -29,8 +29,8 @@ namespace LogicUniversity.Services
                 request.Status = "PENDING";
                 request.EmployeeId = obj.EmployeeId;
                 request.ApproverId = obj.ApproverId;
-                request.Department = obj.Department.DeptName;
-                request.DeptId = obj.Department.DeptId;
+                request.DeptId = obj.DeptId;
+                
                 db.Requisition.Add(request);
                 db.SaveChanges();
                 EmailService.SendNotification(obj.ApproverId, "Waiting for Approval", "You have received an requisition. Waiting for Approval");
