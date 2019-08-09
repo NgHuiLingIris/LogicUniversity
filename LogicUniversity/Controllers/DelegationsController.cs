@@ -269,7 +269,7 @@ namespace LogicUniversity.Controllers
 
             db.Delegations.Remove(delegation);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("ViewDelegation");
         }
 
         protected override void Dispose(bool disposing)

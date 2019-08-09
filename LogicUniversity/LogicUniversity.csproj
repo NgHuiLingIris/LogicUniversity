@@ -328,6 +328,7 @@
     <Content Include="Views\Delegations\GetDelegationDetails.cshtml" />
     <Content Include="Views\Delegations\ManageDelegation.cshtml" />
     <Content Include="Views\Delegations\ViewDelegation.cshtml" />
+    <Content Include="Views\Delegations\CancelDelegation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
