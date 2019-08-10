@@ -246,6 +246,10 @@ namespace LogicUniversity.Controllers
             {
                 ViewData["s"] = s;
                 ViewData["count"] = sList.Count();
+                //add for retrieval
+                r.RetrievalDetails = rdList;
+                db.Retrievals.Add(r);
+                db.SaveChanges();
                 return View("AdjustRetrieval",s);
             }
             else
@@ -285,7 +289,7 @@ namespace LogicUniversity.Controllers
                     sList.Add(s0);
                 }
             }
-            
+            //create new outstanding retrieval for partial fulfillment here;
             //C:
             stockAdjustmentVoucher.StockAdjustmentVoucherDetails = sList;
             db.StockAdjustmentVouchers.Add(stockAdjustmentVoucher);
@@ -296,7 +300,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(stockAdjustmentVoucher);
 
             ViewData["count"] = count;
-            return View();
+            return RedirectToAction("Select","Disbursements");
         }
         public void CheckRequisitionComplete()
         {

@@ -350,6 +350,7 @@
     <Content Include="Views\Disbursements\Index.cshtml" />
     <Content Include="Views\Disbursements\DisplayDisbursement.cshtml" />
     <Content Include="Views\Disbursements\AdjustDisbursement.cshtml" />
+    <Content Include="Views\Disbursements\Select.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

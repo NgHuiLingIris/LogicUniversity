@@ -274,6 +274,50 @@ namespace LogicUniversity.Controllers
             //return View();
             return View();
         }
+        [HttpGet]
+        public ActionResult Select()
+        {
+            //select retrieval id and select department
+            //need to add status to retrieval to select pending (or can do it by date)
+            List<Retrieval> rList = db.Retrievals.ToList();
+            List<Department> dList = db.Departments.ToList();
+            ViewData["rListCount"] = rList.Count();
+            ViewData["dListCount"] = dList.Count();
+            ViewData["rList"] = rList;
+            ViewData["dList"] = dList;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Select(FormCollection form)
+        {
+
+            int rListCount = int.Parse(Request.Form["rListCount"]);
+            int dListCount = int.Parse(Request.Form["dListCount"]);
+            string test = Request.Form["Retrieval[0]"];
+            Debug.WriteLine(test);
+            int RetrievalId = 0;
+            string DeptString = "";
+            for(int i = 0; i < rListCount; i++)
+            {
+                if (Request.Form["Retrieval[" + i + "]"] != null)
+                {
+                    RetrievalId = int.Parse(Request.Form["Retrieval[" + i + "]"]);
+                    break;
+                }
+            }
+            string dept = Request.Form["Department[0]"];
+            Debug.WriteLine(dept);
+            string[] deptArray = dept.Split(',');
+            for (int i = 0; i < dListCount; i++)
+            {
+                foreach(string d in deptArray)
+                {
+                    DeptString = DeptString + "*" + d;
+                }
+            }
+
+            return RedirectToAction("DisplayDisbursement",new { RetrievalId = RetrievalId , DeptString = DeptString });
+        }
         public ActionResult AdjustDisbursement([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
         {
             int count = int.Parse(Request.Form["count"]);
