@@ -6,8 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
+using PagedList.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
@@ -23,12 +26,13 @@ namespace LogicUniversity.Controllers
         }
 
 
-        public ActionResult ViewDelegation()
+        public ActionResult ViewDelegation(int ?page)
         {
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
-            var delegations = db.Delegations.Include(d => d.Employee).Where(d=>d.Employee.DeptId==deptId);
-            return View(delegations.ToList());
+            var delegations = db.Delegations.Include(d => d.Employee).Where(d=>d.Employee.DeptId==deptId).OrderByDescending(d=>d.StartDate);
+            ViewData["msg"] =null;
+            return View(delegations.ToPagedList(page ?? 1, 10));
         }
 
         // GET: Delegations/Details/5
@@ -87,19 +91,8 @@ namespace LogicUniversity.Controllers
                         emp.Isdelegateded = "Y";
                         db.Delegations.Add(delegation);
                         db.SaveChanges();
-                        //MailMessage Message = default(MailMessage);
-                        //SmtpClient Client = default(SmtpClient);
-                        //Message = new MailMessage();
-                        //Message.From = new MailAddress(" logicuniversity.t6@gmail.com ");//give your From address
-                        //Message.To.Add(new MailAddress("rnair.reshma31@gmail.com"));// give TO address
-                        //Message.Subject = "Delegation Assigned";
-                        //Message.Body = "Testing";
-                        //Client = new SmtpClient();
-                        //Client.Host = "LAPTOP-97C2OE7M";// give your host name
-                        //Client.Port = 50519; // give your port number
-                        //Client.Send(Message);
-                        //Message.Dispose();
-
+                        EmailService.SendNotification(delegation.EmployeeId,"Delegation Appointment reg.","You are delegated Department Head responsibility from "+delegation.StartDate+" to"+delegation.EndDate);
+                        EmailService.SendNotification(empId, "Delegation Appointment reg.",delegation.Employee.EmployeeName+" is delegated from "+ delegation.StartDate + "to" + delegation.EndDate);
                         return RedirectToAction("ViewDelegation");
                     }
                     else
@@ -143,6 +136,8 @@ namespace LogicUniversity.Controllers
                                     emp.Isdelegateded = "Y";
                                     db.Delegations.Add(delegation);
                                     db.SaveChanges();
+                                    EmailService.SendNotification(delegation.EmployeeId, "Delegation Appointment reg.", "You are delegated Department Head responsibility from " + delegation.StartDate + " to" + delegation.EndDate);
+                                    EmailService.SendNotification(empId, "Delegation Appointment reg.", delegation.Employee.EmployeeName + " is delegated from " + delegation.StartDate + "to" + delegation.EndDate);
                                     return RedirectToAction("ViewDelegation");
                                 }
                                 else
@@ -170,6 +165,8 @@ namespace LogicUniversity.Controllers
                                     emp.Isdelegateded = "Y";
                                     db.Delegations.Add(delegation);
                                     db.SaveChanges();
+                                    EmailService.SendNotification(delegation.EmployeeId, "Delegation Appointment reg.", "You are delegated Department Head responsibility from " + delegation.StartDate + " to" + delegation.EndDate);
+                                    EmailService.SendNotification(empId, "Delegation Appointment reg.", delegation.Employee.EmployeeName + " is delegated from " + delegation.StartDate + "to" + delegation.EndDate);
                                     return RedirectToAction("ViewDelegation");
                                 }
                                 else
@@ -223,11 +220,21 @@ namespace LogicUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
         {
+            int empId = (int)Session["empId"];
             if (ModelState.IsValid)
             {
-                db.Entry(delegation).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("ViewDelegation");
+                if (!(delegation.EndDate < DateTime.Now))
+                {
+                    db.Entry(delegation).State = EntityState.Modified;
+                    db.SaveChanges();
+                    EmailService.SendNotification(delegation.EmployeeId, "Delegation Modification reg.", "Assigned delegation from" + delegation.StartDate + " to" + delegation.EndDate + " is modified");
+                   
+                }
+                else
+                {
+                    ViewData["msg"] = "This cant be edited as it is a past history";
+                    return RedirectToAction("ViewDelegation");
+                }
             }
             ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", delegation.EmployeeId);
             return View(delegation);

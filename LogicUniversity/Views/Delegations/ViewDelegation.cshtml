@@ -1,14 +1,37 @@
-﻿@model IEnumerable<LogicUniversity.Models.Delegation>
+﻿@using PagedList.Mvc
+@using PagedList
+@model IPagedList<LogicUniversity.Models.Delegation>
 
 @{
     ViewBag.Title = "Index";
+    string msg = (string)ViewData["msg"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
 <br />
 <h4 style="text-align:center">View Delegation</h4>
+<style>
+    .pagination {
+        display: inline-block;
+    }
 
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .pagination a:hover:not(.active) {
+                background-color: #ddd;
+            }
+</style>
 <p>
     @Html.ActionLink("Create New", "AppointDelegation")
 </p>
@@ -18,16 +41,21 @@
          window.location.href = '@Url.Action("ManageDelegation", "Delegations")'
     }
 </script>
+@{ if (msg != null)
+{
+        @msg
+}
+}
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Employee.EmployeeName)
+            @Html.DisplayNameFor(model => model.First().Employee.EmployeeName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.StartDate)
+            @Html.DisplayNameFor(model => model.First().StartDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.EndDate)
+            @Html.DisplayNameFor(model => model.First().EndDate)
         </th>
         <th></th>
     </tr>
@@ -45,12 +73,18 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.ActionLink("Edit", "EditDelegation", new { id = item.DelegationId }) |
-                @Html.ActionLink("Details", "GetDelegationDetails", new { id = item.DelegationId }) |
-                @Html.ActionLink("Delete", "CancelDelegation", new { id = item.DelegationId })
+                @if (!(item.EndDate < DateTime.Now))
+                {
+                    @Html.ActionLink("Edit |", "EditDelegation", new { id = item.DelegationId })
+                    @Html.ActionLink("Details |", "GetDelegationDetails", new { id = item.DelegationId })
+                    @Html.ActionLink("Delete", "CancelDelegation", new { id = item.DelegationId })
+                }
             </td>
         </tr>
     }
 
 </table>
-<input type="submit" value="Back" onclick="back()"/>
+<div class="pagination">
+    @Html.PagedListPager(Model, page => Url.Action("ViewDelegation", new { page }))
+</div>
+    <input type="submit" value="Back" onclick="back()" />
