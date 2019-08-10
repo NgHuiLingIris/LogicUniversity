@@ -168,7 +168,7 @@ namespace LogicUniversity.Controllers
             Retrieval r = new Retrieval();
             r.RetrievalId = db.Retrievals.Count() + 1;
             r.DateRetrieved = DateTime.Now;
-
+            string DeptString = "";
             List<RetrievalDetail> rdList = new List<RetrievalDetail>();
 
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
@@ -204,6 +204,8 @@ namespace LogicUniversity.Controllers
                     requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
                     string dept = Request.Form["ICR[" + i + "].Dept"];
                     List<Department> dList = splitString(dept);
+                    DeptString = dept;
+
                     requisitiondetaillist1 = IncludeSaveAllRequisitionDetails(requisitiondetaillist1);
                     foreach (Department d in dList)
                     {
@@ -212,6 +214,7 @@ namespace LogicUniversity.Controllers
                         {
                             requisitiondetaillist.Add(r1);
                         }
+                        //DeptString = DeptString + "*" + d.DeptName;
 
                     }
                     //requisitiondetaillist = requisitiondetaillist1.Where(d => d.Requisition.Department == dept).ToList();
@@ -251,7 +254,7 @@ namespace LogicUniversity.Controllers
                 
                 db.Retrievals.Add(r);
                 db.SaveChanges();
-                return RedirectToAction("DisplayDisbursement", "Disbursements", new {RetrievalId = r.RetrievalId });
+                return RedirectToAction("DisplayDisbursement", "Disbursements", new {RetrievalId = r.RetrievalId, DeptString = DeptString });
             }
             //return View();
         }

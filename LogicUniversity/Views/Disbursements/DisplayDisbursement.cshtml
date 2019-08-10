@@ -4,7 +4,7 @@
     ViewBag.Title = "DisplayDisbursement";
     var ICDList = (List<ItemCodeDisbursement>)ViewData["ICDList"];
     var count = (int)ViewData["count"];
-    var DepartmentOrAll = (string)ViewData["DepartmentOrAll"];
+    var DeptString = (string)ViewData["DeptString"];
 }
 
 <h2>DisplayDisbursement</h2>
@@ -13,7 +13,7 @@
 {
     @Html.AntiForgeryToken()
     <input type="hidden" value="@count" name="count" id="count" />
-    <input type="hidden" value="@DepartmentOrAll" name="DepartmentOrAll" id="DepartmentOrAll" />
+    <input type="hidden" value="@DeptString" name="DeptString" id="DeptString" />
     <table>
         <thead>
         <td>Catalogue Item Code</td>

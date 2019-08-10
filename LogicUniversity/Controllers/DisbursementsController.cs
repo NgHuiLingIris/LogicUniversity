@@ -9,12 +9,14 @@ using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
     public class DisbursementsController : Controller
     {
         private LogicUniversityContext db = new LogicUniversityContext();
+        //StockAdjustSerivce stockAdjustSerivce = new StockAdjustSerivce();
 
         // GET: Disbursements
         public ActionResult Index()
@@ -125,7 +127,20 @@ namespace LogicUniversity.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        public List<Department> splitDString(string deptstring)
+        {
+            string[] PendingDeptList = deptstring.Split('*');
+            List<Department> dList = new List<Department>();
+            foreach (string d in PendingDeptList)
+            {
+                if (d != "")
+                {
+                    Department d0 = db.Departments.FirstOrDefault(i => i.DeptName == d);
+                    dList.Add(d0);
+                }
+            }
+            return dList;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -135,13 +150,23 @@ namespace LogicUniversity.Controllers
             base.Dispose(disposing);
         }
         [HttpGet]
-        public ActionResult DisplayDisbursement(int RetrievalId,string DepartmentOrAll)
+        public ActionResult DisplayDisbursement(int RetrievalId,string DeptString)
         {
+            List<Department> dList = splitDString(DeptString);
             Retrieval r = db.Retrievals.FirstOrDefault(s => s.RetrievalId == RetrievalId);
             List<RequisitionDetails> rdList = splitString(r.RequisitionString);
 
             rdList = SaveIncludeAllRD(rdList);
-            List<RequisitionDetails> rdListByDept = rdList.Where(s => s.Requisition.Department == DepartmentOrAll).ToList();
+            List<RequisitionDetails> rdListByDept = new List<RequisitionDetails>();
+            foreach(Department d in dList)
+            {
+                var rdDept = rdList.Where(s => s.Requisition.Department == d.DeptName);
+                foreach(RequisitionDetails rd1 in rdDept)
+                {
+                    rdListByDept.Add(rd1);
+                }
+            }
+
             List<ItemCodeDisbursement> ICDList = new List<ItemCodeDisbursement>();
             
             foreach(RequisitionDetails rd2 in rdListByDept)
@@ -159,7 +184,7 @@ namespace LogicUniversity.Controllers
                     ICDList.Add(ICD);
                 }
             }
-            ViewData["DepartmentOrAll"] = DepartmentOrAll;
+            ViewData["DeptString"] = DeptString;
             ViewData["count"] = ICDList.Count();
             ViewData["ICDList"] = ICDList;
             return View();
@@ -170,76 +195,170 @@ namespace LogicUniversity.Controllers
         {
             //create another submit button for the search department string
             int count = int.Parse(Request.Form["count"]);
-            
-
+            string dept = Request.Form["DeptString"];
+            List<Department> dList = splitDString(dept);
+            //for each dept, got one disbursement and one collection
             StockAdjustmentVoucher s = new StockAdjustmentVoucher();
-            int id = db.StockAdjustmentVouchers.Count() + 1;
-            s.Id = "V" + id;
-            s.DateCreated = DateTime.Now;
-
-            Disbursement r = new Disbursement();
-            r.DisbursementId = db.Disbursements.Count() + 1;
-            r.DateCreated = DateTime.Now;
-            r.DateDisbursed = DateTime.Now;
-            string dept = Request.Form["DepartmentOrAll"];
-            Department D = db.Departments.FirstOrDefault(d => d.DeptName == dept);
-            CollectionPoint C = db.CollectionPoints.FirstOrDefault(c => c.CollectionPointId == D.CollectionLocationId);
-            Employee E = db.Employees.FirstOrDefault(e => e.EmployeeName == D.ContactName);
-            r.Representative = E;
-            r.CollectionPoint = C;
-
-            List<DisbursementDetail> ddList = new List<DisbursementDetail>();
-
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
-            for (int i = 0; i < count; i++)
+            foreach (Department d in dList)
             {
-                string itemcode = Request.Form["Disbursement["+i+"].itemcode"];
-                Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
-                int quantity = int.Parse(Request.Form["Disbursement[" + i + "].quantity"]);
-                int collected = int.Parse(Request.Form["Disbursement[" + i + "].collected"]); ;
+                int id = db.StockAdjustmentVouchers.Count() + 1;
+                s.Id = "V" + id;
+                s.DateCreated = DateTime.Now;
+
+                Disbursement r = new Disbursement();
+                r.DisbursementId = db.Disbursements.Count() + 1;
+                r.DateCreated = DateTime.Now;
+                r.DateDisbursed = DateTime.Now;
+
+                //Department D = db.Departments.FirstOrDefault(d1 => d1.DeptName == dept);
+                CollectionPoint C = db.CollectionPoints.FirstOrDefault(c => c.CollectionPointId == d.CollectionLocationId);
+                Employee E = db.Employees.FirstOrDefault(e => e.EmployeeName == d.ContactName);
+                r.Representative = E;
+                r.CollectionPoint = C;
+
+                List<DisbursementDetail> ddList = new List<DisbursementDetail>();
+
                 
-                if (quantity != collected)
+                for (int i = 0; i < count; i++)
                 {
-                    StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
-                    //Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
-                    s0.Product = p;
-                    s0.ItemCode = itemcode;
-                    s0.QuantityAdjusted = quantity - collected;
-                    s0.Status = "Pending";
-                    s0.Balance = p.Balance + s0.QuantityAdjusted;
-                    sList.Add(s0);
+                    string itemcode = Request.Form["Disbursement[" + i + "].itemcode"];
+                    Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
+                    int quantity = int.Parse(Request.Form["Disbursement[" + i + "].quantity"]);
+                    int collected = int.Parse(Request.Form["Disbursement[" + i + "].collected"]); ;
+
+                    if (quantity != collected)
+                    {
+                        StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
+                        //Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
+                        s0.Product = p;
+                        s0.ItemCode = itemcode;
+                        s0.QuantityAdjusted = quantity - collected;
+                        s0.Status = "Pending";
+                        s0.Balance = p.Balance + s0.QuantityAdjusted;
+                        sList.Add(s0);
+                    }
+                    else
+                    {
+                        //create new disbursement and save
+                        DisbursementDetail dd = new DisbursementDetail();
+                        dd.ItemCode = p.ItemCode;
+                        dd.QuantityRequested = quantity;
+                        dd.QuantityReceived = collected;
+                        dd.AdjustmentVoucherId = null;
+                        ddList.Add(dd);
+                        
+                    }
                 }
-                else
+                if (ddList.Count() != 0)
                 {
-                    //create new disbursement and save
-                    DisbursementDetail dd = new DisbursementDetail();
-                    dd.ItemCode = p.ItemCode;
-                    dd.QuantityRequested = quantity;
-                    dd.QuantityReceived = collected;
-                    dd.AdjustmentVoucherId = null;
-                    ddList.Add(dd);
+                    r.DisbursementDetails = ddList;
+                    db.Disbursements.Add(r);
+                    db.SaveChanges();
                 }
+                s.StockAdjustmentVoucherDetails = sList;
             }
-            s.StockAdjustmentVoucherDetails = sList;
+            
             //CheckRequisitionComplete();
             if (sList.Count() != 0)
             {
                 //When there is a discrepancy between the disbursement and the collected
-
-                //ViewData["s"] = s;
-                //ViewData["count"] = sList.Count();
-                return View("AdjustRetrieval", s);
+                ViewData["s"] = s;
+                ViewData["count"] = sList.Count();
+                return View("AdjustDisbursement", s);
             }
             else
             {
-                r.DisbursementDetails = ddList;
-
-                db.Disbursements.Add(r);
-                db.SaveChanges();
                 return RedirectToAction("Index", "Disbursements");
             }
             //return View();
             return View();
+        }
+        public ActionResult AdjustDisbursement([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
+        {
+            int count = int.Parse(Request.Form["count"]);
+            List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
+            for (int i = 0; i < count; i++)
+            {
+                string itemcode = Request.Form["ItemCode[" + i + "]"];
+                int qtyadjusted = int.Parse(Request.Form["QuantityAdjusted[" + i + "]"]);
+                string reason = Request.Form["StockAdjustmentVoucherDetails[" + i + "].Reason"];
+
+                if (sList.Any(a => a.ItemCode.Contains(itemcode)))
+                {
+                    StockAdjustmentVoucherDetail s0 = sList.Find(b => b.ItemCode == itemcode);
+                    s0.QuantityAdjusted = s0.QuantityAdjusted + qtyadjusted;
+                }
+                else
+                {
+                    StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
+                    s0.ItemCode = itemcode;
+                    s0.QuantityAdjusted = qtyadjusted;
+                    s0.Reason = reason;
+                    s0.Status = "Pending";
+                    s0.Product = db.Products.FirstOrDefault(o => o.Description == itemcode);
+                    sList.Add(s0);
+                }
+            }
+
+            //C:
+            stockAdjustmentVoucher.StockAdjustmentVoucherDetails = sList;
+            db.StockAdjustmentVouchers.Add(stockAdjustmentVoucher);
+            db.SaveChanges();
+            //D:
+            StockAdjustmentVoucher s = new StockAdjustmentVoucher();
+            //StockAdjustmentVouchersController c = new StockAdjustmentVouchersController();
+            AllocateAuthorizer(stockAdjustmentVoucher);
+
+            ViewData["count"] = count;
+            return View("Index");
+        }
+        //Retrieval allocate authorizer comes here
+        public StockAdjustmentVoucher AllocateAuthorizer(StockAdjustmentVoucher stockAdjustmentVoucher)
+        {
+            List<StockAdjustmentVoucherDetail> sDetailList = stockAdjustmentVoucher.StockAdjustmentVoucherDetails;
+
+            foreach (StockAdjustmentVoucherDetail d0 in sDetailList)
+            {
+                string itemcode = d0.ItemCode;
+                var sDetailsFromDb0 = from v in db.StockAdjustmentVoucherDetails
+                                      where v.ItemCode == itemcode && v.Status == "Pending"
+                                      select v;
+                //added for retrieval
+                var sDetailsFromDb = sDetailsFromDb0.Include(s => s.Product);
+                //end retrieval
+                List<StockAdjustmentVoucherDetail> sDetailListPerProduct = new List<StockAdjustmentVoucherDetail>();
+
+                foreach (var p in sDetailsFromDb)
+                {
+                    sDetailListPerProduct.Add(p);
+                }
+                //Products p1 = db.Products.FirstOrDefault(s => s.ItemCode == itemcode);
+                double totalQuantity = sDetailListPerProduct.Sum(x => x.QuantityAdjusted);
+                double totalAdjustedCost = Math.Abs(totalQuantity * d0.Product.UnitPrice);
+
+                foreach (StockAdjustmentVoucherDetail s in sDetailListPerProduct)
+                {
+                    if (totalAdjustedCost < 250)
+                    {
+                        s.Approver = "Supervisor";
+                        //db.Entry(s).State = EntityState.Modified;
+                        //db.SaveChanges();
+                    }
+                    else
+                    {
+                        s.Approver = "Manager";
+                        //db.Entry(s).State = EntityState.Modified;
+                        //db.SaveChanges();
+                    }
+                    s.Balance = s.Product.Balance;
+                    s.ApproverRemarks = "NA";
+                    db.Entry(stockAdjustmentVoucher).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+            }
+            return stockAdjustmentVoucher;
         }
         public List<RequisitionDetails> SaveIncludeAllRD(List<RequisitionDetails> rdList)
         {
