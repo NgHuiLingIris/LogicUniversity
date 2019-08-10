@@ -168,7 +168,7 @@ namespace LogicUniversity.Controllers
             Retrieval r = new Retrieval();
             r.RetrievalId = db.Retrievals.Count() + 1;
             r.DateRetrieved = DateTime.Now;
-            
+
             List<RetrievalDetail> rdList = new List<RetrievalDetail>();
 
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
@@ -220,6 +220,7 @@ namespace LogicUniversity.Controllers
                     foreach (RequisitionDetails c in requisitiondetaillist)
                     {
                         c.Status = "Retrieved";
+                        r.RequisitionString = r.RequisitionString + "*"+ c.RequisitionDetailsId;
                         //will work on method to check if item is retrieved here, if not put 'PENDING'
                         //c.Requisition.Status = "COMPLETE";
                         db.Entry(c).State = EntityState.Modified;
@@ -247,6 +248,7 @@ namespace LogicUniversity.Controllers
             else
             {
                 r.RetrievalDetails = rdList;
+                
                 db.Retrievals.Add(r);
                 db.SaveChanges();
                 return RedirectToAction("DisplayDisbursement", "Disbursements", new {RetrievalId = r.RetrievalId });

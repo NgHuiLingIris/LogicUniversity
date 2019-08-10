@@ -163,6 +163,7 @@
     <Compile Include="Models\Disbursement.cs" />
     <Compile Include="Models\DisbursementDetail.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\ItemCodeDisbursement.cs" />
     <Compile Include="Models\ItemCodeRequisition.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />

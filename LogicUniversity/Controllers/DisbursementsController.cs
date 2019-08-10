@@ -135,13 +135,68 @@ namespace LogicUniversity.Controllers
             base.Dispose(disposing);
         }
         [HttpGet]
-        public ActionResult DisplayDisbursement(string RetrievalId)
+        public ActionResult DisplayDisbursement(int RetrievalId,string DepartmentOrAll)
         {
-            //split to a list of retrieval
-            //among the list of retrievals have a compiled list of retrievaldetails
-            //each retrieval should have a list of requisition details.
-            Debug.WriteLine(RetrievalId);
+            //RequisitionString refers to the requisitiondetails string
+            //retrieve the list of requisitiondetails
+            Retrieval r = db.Retrievals.FirstOrDefault(s => s.RetrievalId == RetrievalId);
+            List<RequisitionDetails> rdList = splitString(r.RequisitionString);
+
+            //Department or All means can disburse by the department in the retrievalid or by all.
+            //sayDepartment = CHEMICAL
+            //DepartmentOrAll = "CHEMICAL";
+
+            rdList = SaveIncludeAllRD(rdList);
+            List<RequisitionDetails> rdListByDept = rdList.Where(s => s.Requisition.Department == DepartmentOrAll).ToList();
+
+            //GROUP by products
+            List<ItemCodeDisbursement> ICDList = new List<ItemCodeDisbursement>();
+            
+            foreach(RequisitionDetails rd2 in rdListByDept)
+            {
+                if (ICDList.Any(i=>i.Product == rd2.Products))
+                {
+                    ItemCodeDisbursement ICD = ICDList.FirstOrDefault(i1 => i1.Product == rd2.Products);
+                    ICD.Quantity = ICD.Quantity+rd2.Quantity;
+                }
+                else
+                {
+                    ItemCodeDisbursement ICD = new ItemCodeDisbursement();
+                    ICD.Product = rd2.Products;
+                    ICD.Quantity = rd2.Quantity;
+                    ICDList.Add(ICD);
+                }
+            }
+            ViewData["ICDList"] = ICDList;
             return View();
+        }
+        public List<RequisitionDetails> SaveIncludeAllRD(List<RequisitionDetails> rdList)
+        {
+            foreach (RequisitionDetails rd1 in rdList)
+            {
+                Requisition rq = db.Requisition.FirstOrDefault(rq1 => rq1.RequisitionId == rd1.RequisitionId);
+                rd1.Requisition = rq;
+                Products p = db.Products.FirstOrDefault(p1 => p1.ItemCode == rd1.ItemCode);
+                rd1.Products = p;
+                db.Entry(rd1).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            return rdList;
+        }
+        public List<RequisitionDetails> splitString(string RequisitionString)
+        {
+            string[] PendingRequisitionDetailsList = RequisitionString.Split('*');
+            List<RequisitionDetails> rdList = new List<RequisitionDetails>();
+            foreach (string rd in PendingRequisitionDetailsList)
+            {
+                if (rd != "")
+                {
+                    int int_rd = int.Parse(rd);
+                    RequisitionDetails d0 = db.RequisitionDetails.FirstOrDefault(i => i.RequisitionDetailsId == int_rd);
+                    rdList.Add(d0);
+                }
+            }
+            return rdList;
         }
     }
 }

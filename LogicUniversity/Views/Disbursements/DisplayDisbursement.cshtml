@@ -1,7 +1,33 @@
-﻿
+﻿@using LogicUniversity.Models
+@model ItemCodeDisbursement
 @{
     ViewBag.Title = "DisplayDisbursement";
+    var ICDList = (List<ItemCodeDisbursement>)ViewData["ICDList"];
 }
 
 <h2>DisplayDisbursement</h2>
+<table>
+    <thead>
+    <td>Catalogue Item Code</td>
+    <td>Product Description</td>
+    <td>Quantity</td>
+    <td></td></thead>
+
+    @{
+        //To make unique Id
+        int i = 0;
+        foreach (var item in ICDList)
+        {
+            <tr>
+                <td>@Html.DisplayFor(model => item.Product.ItemCode)</td>
+                <td>@Html.DisplayFor(model => item.Product.Description)</td>
+                <td>@Html.DisplayFor(model => item.Quantity)</td>
+                <td>
+                    <input type="number" name="Disbursement[@i].todisburse" id="Disbursement[@i].todisburse" value=@Html.DisplayFor(model => item.Product.ItemCode) />
+                </td>
+            </tr>
+            i++;
+        }
+    }
+</table>
 

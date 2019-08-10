@@ -20,5 +20,6 @@ namespace LogicUniversity.Models
         [ForeignKey("RequisitionId")]
         public  Requisition Requisition { get; set; }
         public  virtual Products Products { get; set; }
+        
     }
 }
