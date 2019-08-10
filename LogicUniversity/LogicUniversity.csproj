@@ -138,6 +138,7 @@
     <Compile Include="Controllers\ChargeBackDepartmentController.cs" />
     <Compile Include="Controllers\CollectionPointController.cs" />
     <Compile Include="Controllers\DelegationsController.cs" />
+    <Compile Include="Controllers\DisbursementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -340,6 +341,12 @@
     <Content Include="Views\Delegations\CancelDelegation.cshtml" />
     <Content Include="Views\ChargeBackDepartment\ChargeBackDepartment.cshtml" />
     <Content Include="Views\ChargeBackDepartment\ShowChargeBackDepartment.cshtml" />
+    <Content Include="Views\Disbursements\Create.cshtml" />
+    <Content Include="Views\Disbursements\Delete.cshtml" />
+    <Content Include="Views\Disbursements\Details.cshtml" />
+    <Content Include="Views\Disbursements\Edit.cshtml" />
+    <Content Include="Views\Disbursements\Index.cshtml" />
+    <Content Include="Views\Disbursements\DisplayDisbursement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
