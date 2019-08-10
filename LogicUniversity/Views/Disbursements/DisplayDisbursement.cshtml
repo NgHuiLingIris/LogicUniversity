@@ -3,31 +3,49 @@
 @{
     ViewBag.Title = "DisplayDisbursement";
     var ICDList = (List<ItemCodeDisbursement>)ViewData["ICDList"];
+    var count = (int)ViewData["count"];
+    var DepartmentOrAll = (string)ViewData["DepartmentOrAll"];
 }
 
 <h2>DisplayDisbursement</h2>
-<table>
-    <thead>
-    <td>Catalogue Item Code</td>
-    <td>Product Description</td>
-    <td>Quantity</td>
-    <td></td></thead>
+@using (Html.BeginForm("DisplayDisbursement", "Disbursements"))
 
-    @{
-        //To make unique Id
-        int i = 0;
-        foreach (var item in ICDList)
-        {
-            <tr>
-                <td>@Html.DisplayFor(model => item.Product.ItemCode)</td>
-                <td>@Html.DisplayFor(model => item.Product.Description)</td>
-                <td>@Html.DisplayFor(model => item.Quantity)</td>
-                <td>
-                    <input type="number" name="Disbursement[@i].todisburse" id="Disbursement[@i].todisburse" value=@Html.DisplayFor(model => item.Product.ItemCode) />
-                </td>
-            </tr>
-            i++;
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" value="@count" name="count" id="count" />
+    <input type="hidden" value="@DepartmentOrAll" name="DepartmentOrAll" id="DepartmentOrAll" />
+    <table>
+        <thead>
+        <td>Catalogue Item Code</td>
+        <td>Product Description</td>
+        <td>Quantity</td>
+        <td></td></thead>
+
+        @{
+            //To make unique Id
+            int i = 0;
+            foreach (var item in ICDList)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => item.Product.ItemCode)
+                        <input type="hidden" name="Disbursement[@i].itemcode" id="Disbursement[@i].itemcode" value=@Html.DisplayFor(model => item.Product.ItemCode) />
+                    </td>
+
+                    <td>@Html.DisplayFor(model => item.Product.Description)</td>
+
+                    <td>
+                        @Html.DisplayFor(model => item.Quantity)
+                        <input type="hidden" name="Disbursement[@i].quantity" id="Disbursement[@i].quantity" value=@Html.DisplayFor(model => item.Quantity) />
+                    </td>
+                    <td>
+                        <input type="number" name="Disbursement[@i].collected" id="Disbursement[@i].collected" />
+                    </td>
+                </tr>
+                i++;
+            }
         }
-    }
-</table>
+    </table>
+    <input type="submit" id="submit" name="submit" />
+}
 
