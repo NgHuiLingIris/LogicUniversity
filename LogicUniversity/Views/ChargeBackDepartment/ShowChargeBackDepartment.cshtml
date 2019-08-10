@@ -1,6 +1,6 @@
 ﻿
+@model IEnumerable<LogicUniversity.Models.DisbursementDetail>
 
-@model IEnumerable<LogicUniversity.Models.Charge>
 @{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
@@ -8,7 +8,9 @@
 @{
     ViewBag.Title = "ChargeDepartment";
 
-
+    var deptname=(string)ViewData["dept"];
+    var year = (string)ViewData["year"];
+    var month = (string)ViewData["month"];
     var Department_List = (List<string>)ViewData["DepartmentName"];
     var months = (List<string>)ViewData["months"];
 }
@@ -45,7 +47,7 @@
 </head>
 <br />
 <body>
-    @using (Html.BeginForm("ShowChargeBackDepartment", "Disbursements", FormMethod.Post))
+    @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment", FormMethod.Post))
     {
         <table>
             <tr>
@@ -94,17 +96,18 @@
                 @{var total = 0.0; }
                 @foreach (var item in Model)
                 {
-                    var result = item.disburementDetail.QuantityReceived * item.product.UnitPrice;
+                    var result = item.QuantityReceived * item.Products.UnitPrice;
                     <tr>
-                        <td>@item.product.ItemCode</td>
-                        <td>@item.product.Description</td>
-                        <td id="box1">@item.disburementDetail.QuantityReceived</td>
-                        <td id="box2">@item.product.UnitPrice</td>
+                        <td>@item.Products.ItemCode</td>
+                        <td>@item.Products.Description</td>
+                        <td id="box1">@item.QuantityReceived</td>
+                        <td id="box2">@item.Products.UnitPrice</td>
                         <td id="result">@result  </td>
                     </tr>
                     total += result;
 
                 }
+
                 <tr>
                     <th colspan="4">Total</th>
                     <th>@total</th>
@@ -112,10 +115,8 @@
 
             </tbody>
         </table>
-
     </div>
+   
 
 </body>
 </html>
-
-

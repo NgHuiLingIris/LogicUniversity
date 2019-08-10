@@ -155,7 +155,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CartItem.cs" />
-    <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\CollectionPoint.cs" />
     <Compile Include="Models\DataPoint.cs" />
     <Compile Include="Models\Delegation.cs" />
@@ -342,7 +341,6 @@
     <Content Include="Views\Delegations\ViewDelegation.cshtml" />
     <Content Include="Views\Delegations\CancelDelegation.cshtml" />
     <Content Include="Views\ChargeBackDepartment\ChargeBackDepartment.cshtml" />
-    <Content Include="Views\ChargeBackDepartment\ShowChargeBackDepartment.cshtml" />
     <Content Include="Views\Disbursements\Create.cshtml" />
     <Content Include="Views\Disbursements\Delete.cshtml" />
     <Content Include="Views\Disbursements\Details.cshtml" />
@@ -351,6 +349,7 @@
     <Content Include="Views\Disbursements\DisplayDisbursement.cshtml" />
     <Content Include="Views\Disbursements\AdjustDisbursement.cshtml" />
     <Content Include="Views\Disbursements\Select.cshtml" />
+    <Content Include="Views\ChargeBackDepartment\ShowChargeBackDepartment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
