@@ -132,7 +132,7 @@ namespace LogicUniversity.Controllers
             s0.ItemCode = itemcode;
             s0.QuantityAdjusted = quantityadjusted;
             s0.Status = "Pending";
-            s0.Balance = s0.Product.Balance;
+            s0.Balance = s0.Product.Balance+quantityadjusted;
             sList.Add(s0);
             return sList;
         }
@@ -156,7 +156,8 @@ namespace LogicUniversity.Controllers
             StockAdjustmentVoucher s = PrepareVoucher();
             Retrieval r = PrepareRetrieval();
             List<RetrievalDetail> rdList = new List<RetrievalDetail>();
-
+            //Requisition SplitRequisition = new Requisition();
+            //List<RequisitionDetails> SplitRDList = new List<RequisitionDetails>();
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i < count; i++)
             {
@@ -166,29 +167,57 @@ namespace LogicUniversity.Controllers
                 int retrievedqty = int.Parse(Request.Form["ICR[" + i + "].retrieved"]); 
                 int qtyininventory = int.Parse(Request.Form["ICR[" + i + "].qtyininventory"]);
                 int TotalNeeded = int.Parse(Request.Form["ICR[" + i + "].TotalNeeded"]);
+                string dept = Request.Form["ICR[" + i + "].Dept"];
+                List<Department> dList = splitString(dept);
+                DeptString = dept;
+                List<RequisitionDetails> requisitiondetaillist = new List<RequisitionDetails>();
+                List<RequisitionDetails> requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
+                requisitiondetaillist = RetrieveRequisitionDetailsByDepartment(requisitiondetaillist, dList, requisitiondetaillist1);
+                requisitiondetaillist = IncludeSaveAllRequisitionDetails(requisitiondetaillist);
+                //the requisition detail list is already by department and itemcode
                 if (TotalNeeded != retrievedqty)
                     {
-                        sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, retrievedqty - qtyininventory);
-                    }
-                else
+                    sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, retrievedqty - qtyininventory);
+                    requisitiondetaillist = requisitiondetaillist.Where(q => q.ItemCode == itemcode).OrderBy(w=>w.Requisition.Date).ToList();
+                    //go down each list
+
+                    for(int j = 0; j< requisitiondetaillist.Count(); j++)
                     {
-                        string dept = Request.Form["ICR[" + i + "].Dept"];
-                        List<Department> dList = splitString(dept);
-                        DeptString = dept;
-                        List<RequisitionDetails> requisitiondetaillist = new List<RequisitionDetails>();
-                        List<RequisitionDetails> requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
-                        requisitiondetaillist = RetrieveRequisitionDetailsByDepartment(requisitiondetaillist,dList,requisitiondetaillist1);
-                        r = CreateRequisitionString(r, requisitiondetaillist);
+                        if (retrievedqty >= requisitiondetaillist[j].Quantity)
+                        {
+                            retrievedqty = retrievedqty - requisitiondetaillist[j].Quantity;
+                        }
+                        else
+                        {
+                            int newquantity = requisitiondetaillist[j].Quantity - retrievedqty;
+                            requisitiondetaillist[j].Quantity = retrievedqty;
+                            
+                            RequisitionDetails newRD = new RequisitionDetails();
+                            newRD.Quantity = newquantity;
+                            newRD.ItemCode = itemcode;
+                            newRD.RequisitionId = requisitiondetaillist[j].RequisitionId;
+
+                            db.Entry(newRD).State = EntityState.Added;
+                            db.Entry(requisitiondetaillist[j]).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+
                     }
+                }
+                r = CreateRequisitionString(r, requisitiondetaillist);
                 rdList = AddRetrievalDetailToRdList(rdList, p.ItemCode, retrievedqty, TotalNeeded);
             }
             s.StockAdjustmentVoucherDetails = sList;
             CheckRequisitionComplete();
             if (sList.Count() != 0)
             {
+
                 r = SaveRetrieval(r, rdList);
                 ViewData["s"] = s;
                 ViewData["count"] = sList.Count();
+                ViewData["RetrievalId"] = r.RetrievalId;
+                ViewData["DeptString"] = DeptString;
+                //can bring dept string here
                 return View("AdjustRetrieval",s);
             }
             else
@@ -220,6 +249,8 @@ namespace LogicUniversity.Controllers
         }
         public ActionResult AdjustRetrieval([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
         {
+            string DeptString = Request.Form["DeptString"];
+            int RetrievalId = int.Parse(Request.Form["RetrievalId"]);
             int count = int.Parse(Request.Form["count"]);
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i< count; i++)
@@ -249,7 +280,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(stockAdjustmentVoucher);
 
             ViewData["count"] = count;
-            return RedirectToAction("Select","Disbursements");
+            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RetrievalId = RetrievalId, DeptString = DeptString });
         }
         public void CheckRequisitionComplete()
         {
