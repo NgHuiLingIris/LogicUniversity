@@ -22,7 +22,7 @@ namespace LogicUniversity.Models
         public string Supplier2 { get; set; }
         public string Supplier3 { get; set; }
         public double UnitPrice { get; set; }
-
+        public string SupplierId { get; set; }
 
         public List<StockAdjustmentVoucherDetail> StockAdjustmentVoucherDetails { get; set; }
         public virtual Supplier Supplier { get; set; }

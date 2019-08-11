@@ -1,6 +1,7 @@
 ﻿
+
 @{
-    ViewBag.Title = "Storeclerkdash";
+    ViewBag.Title = "Store Clerk Dashboard";
 }
 
 @{
@@ -8,44 +9,51 @@
 }
 
 
-<head>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            text-align: center;
-        }
-    </style>
-</head>
+<h2>Store Clerk Dashboard</h2>
+
+<a href="@Url.Action("SCRequisitionView", "RequisitionApprovals")" class="button">Manage Requisitions</a>
+<a href="@Url.Action("ManageDelegation","Delegations")" class="button">Requisition History </a>
+
+<a href="@Url.Action("Index","Disbursements")" class="button">Manage Disbursement </a>
+<a href="@Url.Action("Index","PurchaseOrder")" class="button">Product Order</a>
+<a href="@Url.Action("Create","StockAdjustmentVouchers")" class="button">Adjustment Voucher </a>
+
+<a href="@Url.Action("Index","Suppliers")" class="button">Supplier List </a>
+<a href="@Url.Action("Index","Tender")" class="button">Tender List </a>
+<a href="@Url.Action("ShowChargeBackDepartment","ChargeBackDepartment")" class="button">Charge Department </a>
+
+<a href="@Url.Action("Index","Department")" class="button">Department List </a>
 
 
-<h2>Storeclerkdash</h2>
+<a href="@Url.Action("Index","Trend")" class="button">Trend Analysis </a>
 
-<table>
-    <tr>
-        <td>@Html.ActionLink("Requisition", "SCRequisitionView", "RequisitionApprovals")</td>
-        <td>@Html.ActionLink("Disbursements", "Disbursement")</td>
-        <td>@Html.ActionLink("Catalogue", "Index","Products")</td>
-    </tr>
-    <tr>
-        <td>@Html.ActionLink("Purchase Order", "PurchaseOrder")</td>
-        <td>@Html.ActionLink("Adjustment Voucher", "AdjustmentVoucher")</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>@Html.ActionLink("Requisitions History", "RequisitionHistory")</td>
-        <td>@Html.ActionLink("Supplier List", "Supplier")</td>
-        <td>@Html.ActionLink("View Tender", "Tender")</td>
-    </tr>
-    <tr>
-        <td>@Html.ActionLink("Charge Department", "ChargeDepartment")</td>
-        <td>@Html.ActionLink("View Department", "Department")</td>
-        <td></td>
-    </tr>
-</table>
 
-<table>
-        <tr><td><button class="btn-primary" onclick="window.location.href = '/StockAdjustmentVouchers/Create';">Raise Stock Adjustment Voucher</button></td></tr>
-    <tr><td><button class="btn-primary" onclick="window.location.href = '/Suppliers/Index';">View Suppliers</button></td></tr>
-    <tr><td><button class="btn-primary" onclick="window.location.href = '/stockcards/Index';">View StockCards</button></td></tr>
-    <tr><td><button class="btn-primary" onclick="window.location.href = '/PurchaseOrder/Index';">Create Purchase Order</button></td></tr>
-</table>
+
+
+<style>
+    fieldset {
+        display: block;
+        margin-left: 2px;
+        margin-right: 2px;
+        padding-top: 0.35em;
+        padding-bottom: 0.625em;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+        border: 2px groove;
+    }
+
+    .button {
+        background-color: #0000ff; /* Green */
+        border: none;
+        color: white;
+        padding: 80px;
+        text-align: center;
+        display: inline-block;
+        font-size: 16px;
+        margin: 20px 20px;
+        cursor: pointer;
+        width: 20%;
+        border-radius: 2px;
+     
+    }
+</style>

@@ -26,6 +26,13 @@
             });
         });
     </script>
+    <style>
+        #tabledropdown {
+            max-height: 470px;
+            overflow: auto;
+            overflow-y: scroll;
+        }
+    </style>
 
 </head>
 
@@ -45,41 +52,42 @@
 
 }
 <br />
-
-<div class="row" style="margin-bottom:100px;">
-    @if (Model != null)
-    {
-        <table class="table">
-            <tr>
-                <th> Category</th>
-                <th> Description </th>
-                <th> UOM </th>
-                <th> Button </th>
-                <th> Button </th>
-            </tr>
-            @foreach (var item in Model)
-            {
+<div id="tabledropdown">
+    <div class="row" style="margin-bottom:100px;">
+        @if (Model != null)
+        {
+            <table class="table">
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Category)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UOM)
-                    </td>
-                    <td></td>
-
-                    <td align="center">
-                        <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode })">Add to Cart</a>
-                    </td>
+                    <th> Category</th>
+                    <th> Description </th>
+                    <th> UOM </th>
+                    <th> Button </th>
+                    <th> Button </th>
                 </tr>
-            }
-        </table>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UOM)
+                        </td>
+                        <td></td>
+
+                        <td align="center">
+                            <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode })">Add to Cart</a>
+                        </td>
+                    </tr>
+                }
+            </table>
 
 
-    }
+        }
+    </div>
 </div>
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
@@ -102,4 +110,6 @@
         });
         $('.dataTables_length').addClass('bs-select');
     });
+
+    
 </script>

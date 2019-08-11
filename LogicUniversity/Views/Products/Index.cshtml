@@ -7,56 +7,60 @@
 @{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
-
+<style>
+    #tabledropdown {
+        max-height: 470px;
+        overflow: auto;
+        overflow-y: scroll;
+    }
+</style>
 <h2>Index</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Category)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReorderLevel)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReorderQty)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UOM)
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+<div id="tabledropdown">
+    <table class="table">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReorderLevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReorderQty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UOM)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ItemCode }) |
-                @Html.ActionLink("Details", "Details", new { id = item.ItemCode }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ItemCode })
-            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReorderLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReorderQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UOM)
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReorderLevel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReorderQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UOM)
+                </td>
+               
+            </tr>
+        }
+
+    </table>
+</div>
