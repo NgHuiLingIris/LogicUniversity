@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : SMController
     {
         private LogicUniversityContext db = new LogicUniversityContext();
         // GET: Login
@@ -26,25 +28,45 @@ namespace LogicUniversity.Controllers
                Employee obj = db.Employees.Where(a => a.Username == username && a.Password==password).FirstOrDefault();
                     if (obj != null)
                     {
-                        Session["UserID"] = username.ToString();
+                    string uname = username.ToString();
+
+                    Session["UserID"] = uname;
                         Session["UserName"] = password.ToString();
                         Session["role"] = obj.Role;
                         Session["empId"] = obj.EmployeeId;
+                    
+                    string pass = password.ToString();
+                    
 
+                       string sessionId = Guid.NewGuid().ToString();
+
+                        //if (obj.Username == uname && Session["id"] == Sessions.userSessions[uname])
+                       // {
+                            Sessions.userSessions.Add(uname, sessionId);
+
+                            Debug.WriteLine(sessionId);
+                            Session["id"] = sessionId;
+                    ViewData["sessionId"] = sessionId;
                     switch (Session["role"])
-                    {
-                        case "DEP_STAFF":
-                            return RedirectToAction("StaffDashboard","Login");
+                        {
+                            case "DEP_STAFF":
+                                return RedirectToAction("StaffDashboard", "Login", new { sessionId = sessionId });
+                        //return View("SCDashboard");
                         case "DEP_MNGR":
-                            return RedirectToAction("HODDashboard", "Login");
+                                return RedirectToAction("HODDashboard", "Login", new { sessionId = sessionId });
                         case "DEP_REP":
-                            return RedirectToAction("SampleView", "Login");
+                                return RedirectToAction("SampleView", "Login", new { sessionId = sessionId });
                         case "STORE_CLRK":
-                            return RedirectToAction("SCDashboard", "Login");
-                        case "STORE_MNGR":
-                            return RedirectToAction("SMDashboard", "Login");
+                                return RedirectToAction("SCDashboard", "Login",new { sessionId = sessionId});
+                                //return View("SCDashboard");
+                            case "STORE_MNGR":
+                                return RedirectToAction("SMDashboard", "Login", new { sessionId = sessionId });
 
                     }
+                    //}
+                  
+
+                      
                     return RedirectToAction("Login");
                     
                     }
@@ -53,44 +75,105 @@ namespace LogicUniversity.Controllers
             return View();
         }
 
-        public ActionResult StaffDashboard()
+        public ActionResult StaffDashboard(string sessionId)
         {
-            if (Session["UserID"] != null)
+            Debug.WriteLine("sddashboard is called");
+            Debug.WriteLine(sessionId);
+            try
             {
-                return View();
+                if (Session["UserID"] != null && Sessions.userSessions[Session["UserID"]].ToString() == sessionId)
+
+                {
+                    ViewData["sessionId"] = sessionId;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
             }
-            else
+            catch(NullReferenceException exception)
             {
-                return RedirectToAction("Login");
+                Debug.WriteLine("Session Id cannot be null");
             }
+
+            return RedirectToAction("Login");
         }
-        public ActionResult HODDashboard()
+        public ActionResult HODDashboard(string sessionId)
         {
-            if (Session["UserID"] != null)
+            try
             {
-                return View();
+                if (Session["UserID"] != null && Sessions.userSessions[Session["UserID"]].ToString() == sessionId)
+
+                {
+                    ViewData["sessionId"] = sessionId;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
             }
-            else
+            catch (NullReferenceException exception)
             {
-                return RedirectToAction("Login");
+                Debug.WriteLine("Session Id cannot be null");
             }
+            return RedirectToAction("Login");
         }
-        public ActionResult SMDashboard()
+        public ActionResult SMDashboard(string sessionId)
         {
-            if (Session["UserID"] != null)
+            try
             {
-                return View();
+                if (Session["UserID"] != null && Sessions.userSessions[Session["UserID"]].ToString() == sessionId)
+
+                {
+                    ViewData["sessionId"] = sessionId;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
             }
-            else
+            catch (NullReferenceException exception)
             {
-                return RedirectToAction("Login");
+                Debug.WriteLine("Session Id cannot be null");
             }
+            return RedirectToAction("Login");
         }
 
-        public ActionResult SampleView()
+        public ActionResult SampleView(string sessionId)
         {
-            if (Session["UserID"] != null)
+            try
             {
+                if (Session["UserID"] != null && Sessions.userSessions[Session["UserID"]].ToString() == sessionId)
+
+                {
+                    ViewData["sessionId"] = sessionId;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            }
+            catch (NullReferenceException exception)
+            {
+                Debug.WriteLine("Session Id cannot be null");
+            }
+            return RedirectToAction("Login");
+        }
+
+        public ActionResult SCDashboard(string sessionId)
+        {
+            //Debug.WriteLine(Sessions.userSessions[Session["UserID"]].ToString());
+            //Debug.WriteLine(uname);
+            if (Session["UserID"] != null && Sessions.userSessions[Session["UserID"]].ToString() == sessionId)
+            //string name = Request["Username"];
+            //Debug.WriteLine(name);
+            //if (Session["UserID"] != null )
+            {
+                ViewData["sessionId"] = sessionId;
                 return View();
             }
             else
@@ -98,17 +181,16 @@ namespace LogicUniversity.Controllers
                 return RedirectToAction("Login");
             }
         }
-
-        public ActionResult SCDashboard()
+        public ActionResult Logout()
         {
-            if (Session["UserID"] != null)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Login");
-            }
+            var username = Sessions.userSessions.Keys.OfType<String>().FirstOrDefault(s => Sessions.userSessions[s] == Session["id"]);
+            Debug.WriteLine("username is: " + username);
+            Session["id"] = null;
+            Sessions.userSessions.Remove(username);
+     
+            Debug.WriteLine("hashtable size is: " + Sessions.userSessions.Count);
+            Debug.WriteLine("sessionid is: " + Sessions.userSessions[username]);
+            return RedirectToAction("Login");
         }
     }
 }
