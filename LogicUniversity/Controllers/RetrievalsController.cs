@@ -132,7 +132,7 @@ namespace LogicUniversity.Controllers
             s0.ItemCode = itemcode;
             s0.QuantityAdjusted = quantityadjusted;
             s0.Status = "Pending";
-            s0.Balance = s0.Product.Balance;
+            s0.Balance = s0.Product.Balance+quantityadjusted;
             sList.Add(s0);
             return sList;
         }
@@ -211,13 +211,12 @@ namespace LogicUniversity.Controllers
             CheckRequisitionComplete();
             if (sList.Count() != 0)
             {
-                //SplitRequisition.RequisitionDetails = SplitRDList;
-                //db.Requisition.Add(SplitRequisition);
-                //db.SaveChanges();
 
                 r = SaveRetrieval(r, rdList);
                 ViewData["s"] = s;
                 ViewData["count"] = sList.Count();
+                ViewData["RetrievalId"] = r.RetrievalId;
+                ViewData["DeptString"] = DeptString;
                 //can bring dept string here
                 return View("AdjustRetrieval",s);
             }
@@ -250,6 +249,8 @@ namespace LogicUniversity.Controllers
         }
         public ActionResult AdjustRetrieval([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
         {
+            string DeptString = Request.Form["DeptString"];
+            int RetrievalId = int.Parse(Request.Form["RetrievalId"]);
             int count = int.Parse(Request.Form["count"]);
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i< count; i++)
@@ -279,7 +280,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(stockAdjustmentVoucher);
 
             ViewData["count"] = count;
-            return RedirectToAction("Select","Disbursements");
+            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RetrievalId = RetrievalId, DeptString = DeptString });
         }
         public void CheckRequisitionComplete()
         {

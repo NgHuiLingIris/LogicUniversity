@@ -3,6 +3,8 @@
 @{
     var v0 = (StockAdjustmentVoucher)ViewData["s"];
     var count = (int)ViewData["count"];
+    var RetrievalId = (int)ViewData["RetrievalId"];
+    var DeptString = (string)ViewData["DeptString"];
 }
 
 
@@ -30,6 +32,8 @@
 {
     @Html.AntiForgeryToken()
     <input type="hidden" value="@count" name="count" />
+    <input type="hidden" value="@RetrievalId" name="RetrievalId" />
+    <input type="hidden" value="@DeptString" name="DeptString" />
     <div class="form-group" align="center">
         <table>
             <tr>
@@ -73,7 +77,7 @@
 
     <div class="form-group" style="float:right;">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Submit" class="btn btn-default"/>Submit and Proceed to Disbursement
+            <input type="submit" value="Submit" class="btn btn-default" />Submit and Proceed to Disbursement
         </div>
     </div>
     <div>

@@ -16,116 +16,14 @@ namespace LogicUniversity.Controllers
     public class DisbursementsController : Controller
     {
         private LogicUniversityContext db = new LogicUniversityContext();
-        //StockAdjustSerivce stockAdjustSerivce = new StockAdjustSerivce();
 
         // GET: Disbursements
         public ActionResult Index()
         {
             var disbursements = db.Disbursements.Include(d => d.CollectionPoint).Include(d => d.Representative);
-            return View(disbursements.ToList());
-        }
-
-        // GET: Disbursements/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Disbursement disbursement = db.Disbursements.Find(id);
-            if (disbursement == null)
-            {
-                return HttpNotFound();
-            }
-            return View(disbursement);
-        }
-
-        // GET: Disbursements/Create
-        public ActionResult Create(int RetrievalId)
-        {
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName");
-            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName");
-            return View();
-        }
-
-        // POST: Disbursements/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DisbursementId,RepresentativeId,DateCreated,DateDisbursed,Status,CollectionPointId")] Disbursement disbursement)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Disbursements.Add(disbursement);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
-            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
-            return View(disbursement);
-        }
-
-        // GET: Disbursements/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Disbursement disbursement = db.Disbursements.Find(id);
-            if (disbursement == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
-            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
-            return View(disbursement);
-        }
-
-        // POST: Disbursements/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DisbursementId,RepresentativeId,DateCreated,DateDisbursed,Status,CollectionPointId")] Disbursement disbursement)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(disbursement).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
-            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
-            return View(disbursement);
-        }
-
-        // GET: Disbursements/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Disbursement disbursement = db.Disbursements.Find(id);
-            if (disbursement == null)
-            {
-                return HttpNotFound();
-            }
-            return View(disbursement);
-        }
-
-        // POST: Disbursements/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Disbursement disbursement = db.Disbursements.Find(id);
-            db.Disbursements.Remove(disbursement);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            List<Disbursement> dList = disbursements.ToList();
+            ViewData["dList"] = dList;
+            return View(dList);
         }
         public List<Department> splitDString(string deptstring)
         {
@@ -141,13 +39,18 @@ namespace LogicUniversity.Controllers
             }
             return dList;
         }
-        protected override void Dispose(bool disposing)
+        public List<RequisitionDetails> GetRequisitionDetailsBFromDList(List<Department> dList, List<RequisitionDetails> rdList)
         {
-            if (disposing)
+            List<RequisitionDetails> rdListByDept = new List<RequisitionDetails>();
+            foreach (Department d in dList)
             {
-                db.Dispose();
+                var rdDept = rdList.Where(s => s.Requisition.Department == d.DeptName);
+                foreach (RequisitionDetails rd1 in rdDept)
+                {
+                    rdListByDept.Add(rd1);
+                }
             }
-            base.Dispose(disposing);
+            return rdListByDept;
         }
         [HttpGet]
         public ActionResult DisplayDisbursement(int RetrievalId,string DeptString)
@@ -155,17 +58,8 @@ namespace LogicUniversity.Controllers
             List<Department> dList = splitDString(DeptString);
             Retrieval r = db.Retrievals.FirstOrDefault(s => s.RetrievalId == RetrievalId);
             List<RequisitionDetails> rdList = splitString(r.RequisitionString);
-
             rdList = SaveIncludeAllRD(rdList);
-            List<RequisitionDetails> rdListByDept = new List<RequisitionDetails>();
-            foreach(Department d in dList)
-            {
-                var rdDept = rdList.Where(s => s.Requisition.Department == d.DeptName);
-                foreach(RequisitionDetails rd1 in rdDept)
-                {
-                    rdListByDept.Add(rd1);
-                }
-            }
+            List<RequisitionDetails> rdListByDept = GetRequisitionDetailsBFromDList(dList, rdList);
 
             List<ItemCodeDisbursement> ICDList = new List<ItemCodeDisbursement>();
             
@@ -189,7 +83,48 @@ namespace LogicUniversity.Controllers
             ViewData["ICDList"] = ICDList;
             return View();
         }
+        public StockAdjustmentVoucher PrepareVoucher()
+        {
+            StockAdjustmentVoucher s = new StockAdjustmentVoucher();
+            int id = db.StockAdjustmentVouchers.Count() + 1;
+            s.Id = "V" + id;
+            s.DateCreated = DateTime.Now;
+            return s;
+        }
+        public Disbursement PrepareAndIncludeAllDisbursement(Disbursement d0, Department d)
+        {
+            d0.DisbursementId = db.Disbursements.Count() + 1;
+            d0.DateCreated = DateTime.Now;
+            d0.DateDisbursed = DateTime.Now;
 
+            CollectionPoint C = db.CollectionPoints.FirstOrDefault(c => c.CollectionPointId == d.CollectionLocationId);
+            Employee E = db.Employees.FirstOrDefault(e => e.EmployeeName == d.ContactName);
+            d0.Representative = E;
+            d0.CollectionPoint = C;
+
+            return d0;
+        }
+        public List<StockAdjustmentVoucherDetail> AddVoucherDetailToVoucherDetailList(List<StockAdjustmentVoucherDetail> sList, string itemcode, int quantityadjusted)
+        {
+            StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
+            s0.Product = db.Products.FirstOrDefault(p => p.ItemCode == itemcode);
+            s0.ItemCode = itemcode;
+            s0.QuantityAdjusted = quantityadjusted;
+            s0.Status = "Pending";
+            s0.Balance = s0.Product.Balance + s0.QuantityAdjusted;
+            sList.Add(s0);
+            return sList;
+        }
+        public List<DisbursementDetail> AddDisbursementDetailToDDList(List<DisbursementDetail> ddList, string itemcode, int quantity, int collected)
+        {
+            DisbursementDetail dd = new DisbursementDetail();
+            dd.ItemCode = itemcode;
+            dd.QuantityRequested = quantity;
+            dd.QuantityReceived = collected;
+            dd.AdjustmentVoucherId = null;
+            ddList.Add(dd);
+            return ddList;
+        }
         [HttpPost]
         public ActionResult DisplayDisbursement(FormCollection form)
         {
@@ -197,26 +132,13 @@ namespace LogicUniversity.Controllers
             int count = int.Parse(Request.Form["count"]);
             string dept = Request.Form["DeptString"];
             List<Department> dList = splitDString(dept);
-            //for each dept, got one disbursement and one collection
-            StockAdjustmentVoucher s = new StockAdjustmentVoucher();
+            StockAdjustmentVoucher s = PrepareVoucher();
+
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             foreach (Department d in dList)
             {
-                int id = db.StockAdjustmentVouchers.Count() + 1;
-                s.Id = "V" + id;
-                s.DateCreated = DateTime.Now;
-
-                Disbursement r = new Disbursement();
-                r.DisbursementId = db.Disbursements.Count() + 1;
-                r.DateCreated = DateTime.Now;
-                r.DateDisbursed = DateTime.Now;
-
-                //Department D = db.Departments.FirstOrDefault(d1 => d1.DeptName == dept);
-                CollectionPoint C = db.CollectionPoints.FirstOrDefault(c => c.CollectionPointId == d.CollectionLocationId);
-                Employee E = db.Employees.FirstOrDefault(e => e.EmployeeName == d.ContactName);
-                r.Representative = E;
-                r.CollectionPoint = C;
-
+                Disbursement disbursement = new Disbursement();
+                disbursement = PrepareAndIncludeAllDisbursement(disbursement, d);
                 List<DisbursementDetail> ddList = new List<DisbursementDetail>();
 
                 
@@ -225,44 +147,34 @@ namespace LogicUniversity.Controllers
                     string itemcode = Request.Form["Disbursement[" + i + "].itemcode"];
                     Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
                     int quantity = int.Parse(Request.Form["Disbursement[" + i + "].quantity"]);
-                    int collected = int.Parse(Request.Form["Disbursement[" + i + "].collected"]); ;
+                    int collected = int.Parse(Request.Form["Disbursement[" + i + "].collected"]);
 
                     if (quantity != collected)
                     {
-                        StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
-                        //Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
-                        s0.Product = p;
-                        s0.ItemCode = itemcode;
-                        s0.QuantityAdjusted = quantity - collected;
-                        s0.Status = "Pending";
-                        s0.Balance = p.Balance + s0.QuantityAdjusted;
-                        sList.Add(s0);
+                        //if any of the voucher in sList itemcode == itemcode
+                        if(sList.Any(sdv=>sdv.ItemCode == itemcode))
+                        {
+                            StockAdjustmentVoucherDetail sd1 = sList.FirstOrDefault(sdv1 => sdv1.ItemCode == itemcode);
+                            sd1.QuantityAdjusted = sd1.QuantityAdjusted + quantity - collected;
+                        }
+                        else
+                        {
+                            sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, quantity - collected);
+                        }
                     }
-                    else
-                    {
-                        //create new disbursement and save
-                        DisbursementDetail dd = new DisbursementDetail();
-                        dd.ItemCode = p.ItemCode;
-                        dd.QuantityRequested = quantity;
-                        dd.QuantityReceived = collected;
-                        dd.AdjustmentVoucherId = null;
-                        ddList.Add(dd);
-                        
-                    }
+                    ddList = AddDisbursementDetailToDDList(ddList, itemcode, quantity, collected);
                 }
                 if (ddList.Count() != 0)
                 {
-                    r.DisbursementDetails = ddList;
-                    db.Disbursements.Add(r);
+                    disbursement.DisbursementDetails = ddList;
+                    db.Disbursements.Add(disbursement);
                     db.SaveChanges();
                 }
                 s.StockAdjustmentVoucherDetails = sList;
             }
             
-            //CheckRequisitionComplete();
             if (sList.Count() != 0)
             {
-                //When there is a discrepancy between the disbursement and the collected
                 ViewData["s"] = s;
                 ViewData["count"] = sList.Count();
                 return View("AdjustDisbursement", s);
@@ -271,8 +183,6 @@ namespace LogicUniversity.Controllers
             {
                 return RedirectToAction("Index", "Disbursements");
             }
-            //return View();
-            return View();
         }
         [HttpGet]
         public ActionResult Select()
@@ -386,14 +296,10 @@ namespace LogicUniversity.Controllers
                     if (totalAdjustedCost < 250)
                     {
                         s.Approver = "Supervisor";
-                        //db.Entry(s).State = EntityState.Modified;
-                        //db.SaveChanges();
                     }
                     else
                     {
                         s.Approver = "Manager";
-                        //db.Entry(s).State = EntityState.Modified;
-                        //db.SaveChanges();
                     }
                     s.Balance = s.Product.Balance;
                     s.ApproverRemarks = "NA";
@@ -431,6 +337,119 @@ namespace LogicUniversity.Controllers
                 }
             }
             return rdList;
+        }
+
+        //-------------------------UNUSED METHODS------------------------
+        // GET: Disbursements/Details/5
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement disbursement = db.Disbursements.Find(id);
+            if (disbursement == null)
+            {
+                return HttpNotFound();
+            }
+            return View(disbursement);
+        }
+
+        // GET: Disbursements/Create
+        public ActionResult Create(int RetrievalId)
+        {
+            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName");
+            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName");
+            return View();
+        }
+
+        // POST: Disbursements/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "DisbursementId,RepresentativeId,DateCreated,DateDisbursed,Status,CollectionPointId")] Disbursement disbursement)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Disbursements.Add(disbursement);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
+            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
+            return View(disbursement);
+        }
+
+        // GET: Disbursements/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement disbursement = db.Disbursements.Find(id);
+            if (disbursement == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
+            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
+            return View(disbursement);
+        }
+
+        // POST: Disbursements/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "DisbursementId,RepresentativeId,DateCreated,DateDisbursed,Status,CollectionPointId")] Disbursement disbursement)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(disbursement).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
+            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
+            return View(disbursement);
+        }
+
+        // GET: Disbursements/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement disbursement = db.Disbursements.Find(id);
+            if (disbursement == null)
+            {
+                return HttpNotFound();
+            }
+            return View(disbursement);
+        }
+
+        // POST: Disbursements/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Disbursement disbursement = db.Disbursements.Find(id);
+            db.Disbursements.Remove(disbursement);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
