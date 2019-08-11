@@ -14,9 +14,10 @@ namespace LogicUniversity.Models
         public int RetrievalId { get; set; }
         public DateTime DateRetrieved { get; set; }
         public int StoreClerkId { get; set; }
+        public string RequisitionString { get; set; }
 
         public virtual List<RetrievalDetail> RetrievalDetails { get; set; }
-
+        
         //[ForeignKey("StoreClerkId")]
         public Employee StoreClerk { get; set; }
     }

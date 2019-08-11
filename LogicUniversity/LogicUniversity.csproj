@@ -65,6 +65,12 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -129,8 +135,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Context\LogicUniversityContext.cs" />
+    <Compile Include="Controllers\ChargeBackDepartmentController.cs" />
     <Compile Include="Controllers\CollectionPointController.cs" />
     <Compile Include="Controllers\DelegationsController.cs" />
+    <Compile Include="Controllers\DisbursementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -154,6 +162,7 @@
     <Compile Include="Models\Disbursement.cs" />
     <Compile Include="Models\DisbursementDetail.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\ItemCodeDisbursement.cs" />
     <Compile Include="Models\ItemCodeRequisition.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
@@ -171,6 +180,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DepartmentRequestService.cs" />
     <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\StockAdjustSerivce.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -179,6 +189,7 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="Content\styles.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -310,11 +321,6 @@
     <Content Include="Views\PurchaseOrder\Index.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrder.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrderSuccess.cshtml" />
-    <Content Include="Views\Delegations\Create.cshtml" />
-    <Content Include="Views\Delegations\Delete.cshtml" />
-    <Content Include="Views\Delegations\Details.cshtml" />
-    <Content Include="Views\Delegations\Edit.cshtml" />
-    <Content Include="Views\Delegations\Index.cshtml" />
     <Content Include="Views\Login\SMDashboard.cshtml" />
     <Content Include="Views\Retrievals\Create.cshtml" />
     <Content Include="Views\Retrievals\Delete.cshtml" />
@@ -323,7 +329,27 @@
     <Content Include="Views\Retrievals\Index.cshtml" />
     <Content Include="Views\Retrievals\AdjustRetrieval.cshtml" />
     <Content Include="Views\Trend\Index.cshtml" />
-    <Content Include="Views\Trend\DepartmentTrend.cshtml" />
+    <Content Include="Views\CollectionPoint\CreateNewCollectionPoint.cshtml" />
+    <Content Include="Views\CollectionPoint\DeleteCollectionPoint.cshtml" />
+    <Content Include="Views\CollectionPoint\EditCollectionPointDetails.cshtml" />
+    <Content Include="Views\CollectionPoint\GetCollectionPointDetails.cshtml" />
+    <Content Include="Views\CollectionPoint\ViewCollectionPoint.cshtml" />
+    <Content Include="Views\Delegations\AppointDelegation.cshtml" />
+    <Content Include="Views\Delegations\EditDelegation.cshtml" />
+    <Content Include="Views\Delegations\GetDelegationDetails.cshtml" />
+    <Content Include="Views\Delegations\ManageDelegation.cshtml" />
+    <Content Include="Views\Delegations\ViewDelegation.cshtml" />
+    <Content Include="Views\Delegations\CancelDelegation.cshtml" />
+    <Content Include="Views\ChargeBackDepartment\ChargeBackDepartment.cshtml" />
+    <Content Include="Views\Disbursements\Create.cshtml" />
+    <Content Include="Views\Disbursements\Delete.cshtml" />
+    <Content Include="Views\Disbursements\Details.cshtml" />
+    <Content Include="Views\Disbursements\Edit.cshtml" />
+    <Content Include="Views\Disbursements\Index.cshtml" />
+    <Content Include="Views\Disbursements\DisplayDisbursement.cshtml" />
+    <Content Include="Views\Disbursements\AdjustDisbursement.cshtml" />
+    <Content Include="Views\Disbursements\Select.cshtml" />
+    <Content Include="Views\ChargeBackDepartment\ShowChargeBackDepartment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

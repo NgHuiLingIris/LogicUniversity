@@ -1,14 +1,15 @@
 ﻿@model LogicUniversity.Models.Delegation
 
 @{
-    ViewBag.Title = "Delete";
+    ViewBag.Title = "Details";
 }
-
-<h2>Delete</h2>
-
-<h3>Are you sure you want to delete this?</h3>
+@{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+<br />
+<br />
 <div>
-    <h4>Delegation</h4>
+    <h4 style="text-align:center">Delegation Detail</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -36,15 +37,11 @@
         </dd>
 
     </dl>
-
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
-        </div>
-    }
 </div>
+<p>
+    @Html.ActionLink("Edit", "EditDelegation", new { id = Model.DelegationId }) |
+    @Html.ActionLink("Back to List", "ViewDelegation")
+</p>
+
+
 

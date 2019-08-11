@@ -2,7 +2,9 @@
 using LogicUniversity.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -112,6 +114,122 @@ namespace LogicUniversity.Controllers
             ViewData["cp"] = currentCollectionPoint;
             return View();
         }
+
+
+
+
+
+        //store
+        // GET: CollectionPoints
+        public ActionResult ViewCollectionPoint()
+        {
+            var collectionPoints = db.CollectionPoints.Include(c => c.Employee);
+            return View(collectionPoints.ToList());
+        }
+
+        // GET: CollectionPoints/Details/5
+        public ActionResult GetCollectionPointDetails(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CollectionPoint collectionPoint = (db.CollectionPoints).Find(id);
+
+            if (collectionPoint == null)
+            {
+                return HttpNotFound();
+            }
+            return View(collectionPoint);
+        }
+
+        // GET: CollectionPoints/Create
+        public ActionResult CreateNewCollectionPoint()
+        {
+            ViewBag.StoreClerkId = new SelectList(db.Employees.Where(x => x.Role == "STORE_CLRK"), "EmployeeId", "EmployeeName");
+            return View();
+        }
+
+        // POST: CollectionPoints/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateNewCollectionPoint([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint)
+        {
+            if (ModelState.IsValid)
+            {
+                db.CollectionPoints.Add(collectionPoint);
+                db.SaveChanges();
+                return RedirectToAction("ViewCollectionPoint");
+            }
+
+            ViewBag.StoreClerkId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
+            return View(collectionPoint);
+        }
+
+        // GET: CollectionPoints/Edit/5
+        public ActionResult EditCollectionPointDetails(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
+            Employee emp = db.Employees.Find(collectionPoint.StoreClerkId);
+
+            if (collectionPoint == null)
+            {
+                return HttpNotFound();
+            }
+            ViewData["Employee"] = emp;
+            ViewBag.StoreClerkId = new SelectList(db.Employees.Where(x => x.Role == "STORE_CLRK"), "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
+            return View(collectionPoint);
+        }
+
+        // POST: CollectionPoints/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditCollectionPointDetails([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(collectionPoint).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("ViewCollectionPoint");
+            }
+            ViewBag.StoreClerkId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
+            return View(collectionPoint);
+        }
+
+        // GET: CollectionPoints/Delete/5
+        public ActionResult DeleteCollectionPoint(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
+            if (collectionPoint == null)
+            {
+                return HttpNotFound();
+            }
+            return View(collectionPoint);
+        }
+
+        // POST: CollectionPoints/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(string id)
+        {
+            CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
+            db.CollectionPoints.Remove(collectionPoint);
+            db.SaveChanges();
+            return RedirectToAction("ViewCollectionPoint");
+        }
+
 
         protected override void Dispose(bool disposing)
         {
