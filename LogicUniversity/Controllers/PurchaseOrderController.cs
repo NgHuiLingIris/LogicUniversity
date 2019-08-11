@@ -19,14 +19,14 @@ namespace LogicUniversity.Controllers
 
         public ActionResult Index()
         {
-            Order order = new Order
-            {
-                POnumber = 10000,
-                DateOrdered = DateTime.Now,
-                DateDelivery = DateTime.Now.AddDays(3)
-            };
-            db.Orders.Add(order);
-            db.SaveChanges();
+            //Order order = new Order
+            //{
+            //    POnumber = 10000,
+            //    DateOrdered = DateTime.Now,
+            //    DateDelivery = DateTime.Now.AddDays(3)
+            //};
+            //db.Orders.Add(order);
+            //db.SaveChanges();
             return View();
         }
 
@@ -133,13 +133,26 @@ namespace LogicUniversity.Controllers
 
             ViewData["Products"] = tempList;
 
+            string date = Request["datepicker"];
+            string time = Request["SelectedTime"];
+
+            //get date 
+            DateTime datetime = DateTime.Parse(date);
+            //calculate hours and minutes
+            int hours = int.Parse(time.Substring(0, 2));
+            int minutes = int.Parse(time.Substring(3, 2));
+            //add hours and minutes to date
+            datetime = datetime.AddHours(hours);
+            datetime = datetime.AddMinutes(minutes);
+            ViewData["date"] = datetime;
+
             //update database
             Order order = new Order
             {
                 SupplierCode = supplier,
                 Status = "Pending",
                 DateOrdered = DateTime.Now,
-                DateDelivery = DateTime.Now.AddDays(3)
+                DateDelivery = datetime,
             };
             db.Orders.Add(order);
             List<OrderDetail> orderDetails = new List<OrderDetail>();
