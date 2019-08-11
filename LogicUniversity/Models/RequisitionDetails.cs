@@ -18,7 +18,7 @@ namespace LogicUniversity.Models
         public string Status { get; set; }
 
         [ForeignKey("RequisitionId")]
-        public  Requisition Requisition { get; set; }
+        public virtual Requisition Requisition { get; set; }
         public  virtual Products Products { get; set; }
     }
 }

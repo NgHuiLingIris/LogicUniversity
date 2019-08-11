@@ -323,6 +323,7 @@
     <Content Include="Views\Retrievals\Index.cshtml" />
     <Content Include="Views\Retrievals\AdjustRetrieval.cshtml" />
     <Content Include="Views\Trend\Index.cshtml" />
+    <Content Include="Views\Trend\DepartmentTrend.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

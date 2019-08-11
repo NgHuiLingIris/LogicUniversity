@@ -13,7 +13,7 @@
     <header>
 
         <div class="topnav">
-            <label>@Html.ActionLink("Home", "StaffDashboard","Login") |  @Html.ActionLink("Product Catalogue", "Index","Products") | @Html.ActionLink("Store Feedback", "StaffDashboard")</label> <label style="float: right;"> @Html.ActionLink("Logout", "Login","Login") </label>
+            <label>@Html.ActionLink("Home", "StaffDashboard", "Login") |  @Html.ActionLink("Product Catalogue", "Index", "Products") | @Html.ActionLink("Store Feedback", "StaffDashboard")</label> <label style="float: right;"> @Html.ActionLink("Logout", "Login", "Login") </label>
 
         </div>
 
@@ -23,7 +23,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - Logic University Application</p>
         </footer>
     </div>
 
@@ -32,3 +32,4 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
