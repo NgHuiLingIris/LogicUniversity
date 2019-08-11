@@ -178,6 +178,7 @@
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Models\TempRetrieval.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DelegationService.cs" />
     <Compile Include="Services\DepartmentRequestService.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\StockAdjustSerivce.cs" />
