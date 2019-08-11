@@ -9,7 +9,7 @@ namespace LogicUniversity.Context
 {
     public class LogicUniversityContext:DbContext
     {
-        public LogicUniversityContext() : base("Server=LAPTOP-97C2OE7M" + "\\" + "RESHMA; Database=InventoryDB; Integrated Security = True")
+        public LogicUniversityContext() : base("Server=LAPTOP-MH5LDLUL; Database=LogicUniversity; Integrated Security = True")
         {
             Database.SetInitializer(new InventoryDBInitializer<LogicUniversityContext>());
         }
