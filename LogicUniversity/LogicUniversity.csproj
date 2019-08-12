@@ -185,6 +185,7 @@
     <Compile Include="Services\DelegationService.cs" />
     <Compile Include="Services\DepartmentRequestService.cs" />
     <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\Sessions.cs" />
     <Compile Include="Services\StockAdjustSerivce.cs" />
   </ItemGroup>
   <ItemGroup>
