@@ -2,34 +2,28 @@
 @{
     ViewBag.Title = "Storeclerkdash";
 }
-
 @{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 
-
 <head>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="~/css/newst.css">
+
 </head>
 
-
 <h2>Storeclerkdash</h2>
-
-<table>
+<table class="container">
     <tr>
         <td>@Html.ActionLink("Requisition", "SCRequisitionView", "RequisitionApprovals")</td>
-        <td>@Html.ActionLink("Disbursements", "Disbursement")</td>
-        <td>@Html.ActionLink("Catalogue", "Index","Products")</td>
+        <td>@Html.ActionLink("DisplayDisbursement", "DisplayDisbursement", "Disbursements")</td>
+        <td>@Html.ActionLink("Catalogue", "Index", "Products")</td>
     </tr>
     <tr>
         <td>@Html.ActionLink("Purchase Order", "PurchaseOrder")</td>
         <td>@Html.ActionLink("Adjustment Voucher", "AdjustmentVoucher")</td>
-        <td></td>
+        <td>@Html.ActionLink("AdjustDisbursement", "AdjustDisbursement", "Disbursements")</td>
+
+
     </tr>
     <tr>
         <td>@Html.ActionLink("Requisitions History", "RequisitionHistory")</td>
@@ -41,10 +35,15 @@
         <td>@Html.ActionLink("View Department", "Department")</td>
         <td></td>
     </tr>
+    <tr>
+        <td>@Html.ActionLink("Raise Stock Adjustment Voucher", "Create", "StockAdjustmentVouchers")</td>
+        <td>@Html.ActionLink("View Suppliers", "Index", "Suppliers")</td>
+        <td>@Html.ActionLink("View StockCards", "Index", "Stockcards")</td>
+        <td>@Html.ActionLink("Create Purchase Order", "Index", "PurchaseOrder")</td>
+    </tr>
 </table>
-
 <table>
-        <tr><td><button class="btn-primary" onclick="window.location.href = '/StockAdjustmentVouchers/Create';">Raise Stock Adjustment Voucher</button></td></tr>
+    <tr><td><button class="btn-primary" onclick="window.location.href = '/StockAdjustmentVouchers/Create';">Raise Stock Adjustment Voucher</button></td></tr>
     <tr><td><button class="btn-primary" onclick="window.location.href = '/Suppliers/Index';">View Suppliers</button></td></tr>
     <tr><td><button class="btn-primary" onclick="window.location.href = '/stockcards/Index';">View StockCards</button></td></tr>
     <tr><td><button class="btn-primary" onclick="window.location.href = '/PurchaseOrder/Index';">Create Purchase Order</button></td></tr>

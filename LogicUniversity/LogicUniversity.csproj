@@ -195,6 +195,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\styles.css" />
+    <Content Include="css\newst.css" />
     <Content Include="css\pikaday.css" />
     <Content Include="css\site.css" />
     <Content Include="css\theme.css" />
@@ -288,12 +289,8 @@
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Requisition\Index.cshtml" />
     <Content Include="Views\Requisition\AddtoCart.cshtml" />
-    <Content Include="Views\Login\Login.cshtml" />
-    <Content Include="Views\Login\StaffDashboard.cshtml" />
-    <Content Include="Views\Login\HODDashboard.cshtml" />
     <Content Include="Views\RequisitionApprovals\Details.cshtml" />
     <Content Include="Views\RequisitionApprovals\ViewRequisition.cshtml" />
-    <Content Include="Views\Login\SampleView.cshtml" />
     <Content Include="Views\RequisitionApprovals\TrackRequisition.cshtml" />
     <Content Include="Views\RequisitionApprovals\TrackDetails.cshtml" />
     <Content Include="Views\CollectionPoint\ManageCollection.cshtml" />
@@ -306,7 +303,6 @@
     <Content Include="Views\Shared\_Layout_SC.cshtml" />
     <Content Include="Views\Shared\_Layout_DR.cshtml" />
     <Content Include="Views\RequisitionApprovals\ViewAllRequisition.cshtml" />
-    <Content Include="Views\Login\SCDashboard.cshtml" />
     <Content Include="Views\RequisitionApprovals\SCRequisitionView.cshtml" />
     <Content Include="Views\RequisitionApprovals\RetrievalList.cshtml" />
     <Content Include="Views\Suppliers\Create.cshtml" />
@@ -335,7 +331,6 @@
     <Content Include="Views\PurchaseOrder\Index.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrder.cshtml" />
     <Content Include="Views\PurchaseOrder\PlaceOrderSuccess.cshtml" />
-    <Content Include="Views\Login\SMDashboard.cshtml" />
     <Content Include="Views\Retrievals\Create.cshtml" />
     <Content Include="Views\Retrievals\Delete.cshtml" />
     <Content Include="Views\Retrievals\Details.cshtml" />
@@ -366,6 +361,12 @@
     <Content Include="Views\ChargeBackDepartment\ShowChargeBackDepartment.cshtml" />
     <Content Include="TimePicker\LICENSE" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Login\HODDashboard.cshtml" />
+    <Content Include="Views\Login\Login.cshtml" />
+    <Content Include="Views\Login\SampleView.cshtml" />
+    <Content Include="Views\Login\SCDashboard.cshtml" />
+    <Content Include="Views\Login\SMDashboard.cshtml" />
+    <Content Include="Views\Login\StaffDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
