@@ -368,6 +368,8 @@
     <Content Include="Views\Login\SCDashboard.cshtml" />
     <Content Include="Views\Login\SMDashboard.cshtml" />
     <Content Include="Views\Login\StaffDashboard.cshtml" />
+    <Content Include="Views\Login\SSDashboard.cshtml" />
+    <Content Include="Views\Shared\_Layout_SS.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

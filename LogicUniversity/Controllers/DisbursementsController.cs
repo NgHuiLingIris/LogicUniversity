@@ -265,7 +265,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(stockAdjustmentVoucher);
 
             ViewData["count"] = count;
-            return View("Index");
+            return RedirectToAction("Index");
         }
         //Retrieval allocate authorizer comes here
         public StockAdjustmentVoucher AllocateAuthorizer(StockAdjustmentVoucher stockAdjustmentVoucher)

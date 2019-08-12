@@ -6,7 +6,9 @@
     var count = (int)ViewData["count"];
     var DeptString = (string)ViewData["DeptString"];
 }
-
+@{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
 <h2>DisplayDisbursement</h2>
 @using (Html.BeginForm("DisplayDisbursement", "Disbursements"))
 
