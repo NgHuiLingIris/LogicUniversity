@@ -73,7 +73,7 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @if (!(item.EndDate < DateTime.Now))
+                @if (!(item.EndDate < DateTime.Today))
                 {
                     @Html.ActionLink("Edit |", "EditDelegation", new { id = item.DelegationId })
                     @Html.ActionLink("Details |", "GetDelegationDetails", new { id = item.DelegationId })

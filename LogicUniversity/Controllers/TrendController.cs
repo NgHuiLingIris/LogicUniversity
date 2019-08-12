@@ -101,6 +101,8 @@ namespace LogicUniversity.Controllers
 
             }
             ViewBag.DataPoints_1 = JsonConvert.SerializeObject(dataPoints_1);
+
+            
             return View();
         }
     }
