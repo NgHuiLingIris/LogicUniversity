@@ -316,7 +316,7 @@ namespace LogicUniversity.Controllers
                     StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
                     s0.ItemCode = itemcode;
                     s0.QuantityAdjusted = qtyadjusted;
-                    s0.Reason = reason;
+                    s0.Reason = "DISBURSEMENT: " + reason;
                     s0.Status = "Pending";
                     s0.Product = db.Products.FirstOrDefault(o => o.Description == itemcode);
                     sList.Add(s0);

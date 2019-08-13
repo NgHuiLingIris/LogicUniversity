@@ -23,7 +23,7 @@ namespace LogicUniversity.Controllers
         {
             var username = Session["UserID"].ToString();
             Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId && x.Status == "PENDING").ToList());
+            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId && x.Status == "PENDING" && x.Status == "OUTSTANDING").ToList());
         }
 
         public ActionResult ViewAllRequisition()
@@ -55,11 +55,7 @@ namespace LogicUniversity.Controllers
                 //Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
                 
 
-                if (reqByDept.Any(s => s.Department.Contains(r.Department)))
-                {
-
-                }
-                else
+                if (!reqByDept.Any(s => s.Department.Contains(r.Department)))
                 {
                     reqByDept.Add(r);
                 }
@@ -88,7 +84,6 @@ namespace LogicUniversity.Controllers
                 string cp = Request.Form["cp"];
                 string todate = Request.Form["todate"];
                 string status = Request.Form["status"];
-                Debug.WriteLine("");
                 //check the search then bring it over to the logic
                 //check if this redirect action actually brings back to same list
                 reqList = Search(fromdate, todate, cp, status);
