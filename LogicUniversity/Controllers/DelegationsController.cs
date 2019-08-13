@@ -20,9 +20,17 @@ namespace LogicUniversity.Controllers
 
         // GET: Delegations
 
-        public ActionResult ManageDelegation()
+        public ActionResult ManageDelegation(string sessionId)
         {
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 

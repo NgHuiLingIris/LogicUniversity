@@ -19,18 +19,34 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: Requisitions
-        public ActionResult ViewRequisition()
+        public ActionResult ViewRequisition(string sessionId)
         {
-            var username = Session["UserID"].ToString();
-            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId && x.Status == "PENDING").ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var username = Session["UserID"].ToString();
+                Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId && x.Status == "PENDING").ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
-        public ActionResult ViewAllRequisition()
+        public ActionResult ViewAllRequisition(string sessionId)
         {
-            var username = Session["UserID"].ToString();
-            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var username = Session["UserID"].ToString();
+                Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         //Requisition ALL Details for Store Clerk
@@ -55,11 +71,7 @@ namespace LogicUniversity.Controllers
                 //Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
                 
 
-                if (reqByDept.Any(s => s.Department.Contains(r.Department)))
-                {
-
-                }
-                else
+                if (!reqByDept.Any(s => s.Department.Contains(r.Department)))
                 {
                     reqByDept.Add(r);
                 }
@@ -88,7 +100,6 @@ namespace LogicUniversity.Controllers
                 string cp = Request.Form["cp"];
                 string todate = Request.Form["todate"];
                 string status = Request.Form["status"];
-                Debug.WriteLine("");
                 //check the search then bring it over to the logic
                 //check if this redirect action actually brings back to same list
                 reqList = Search(fromdate, todate, cp, status);
@@ -98,7 +109,7 @@ namespace LogicUniversity.Controllers
                 List<Requisition> SelectedRequests = new List<Requisition>();
                 int count = int.Parse(Request.Form["count"]);
                 //for(int i = 0; i<)
-                string PendingDeptRequisition = "*";
+                string PendingDeptRequisition = ",";
                 for (int i = 0; i < count; i++)
                 {
                     if (Request.Form["Requisition[" + i + "].toretrieve"] != null)
@@ -106,7 +117,7 @@ namespace LogicUniversity.Controllers
                         string dept = Request.Form["Requisition[" + i + "].toretrieve"];
                         //Department d0 = new Department();
                         //d0 = db.Departments.FirstOrDefault(d => d.DeptName == dept);
-                        PendingDeptRequisition = PendingDeptRequisition + dept + "*";
+                        PendingDeptRequisition = PendingDeptRequisition + dept + ",";
                         //retrieve the requisition id
                         //redirect action to create retrieval
 
@@ -125,11 +136,19 @@ namespace LogicUniversity.Controllers
             return View();
         }
 
-        public ActionResult TrackRequisition()
+        public ActionResult TrackRequisition(string sessionId)
         {
-            var username = Session["UserID"].ToString();
-            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-            return View(db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var username = Session["UserID"].ToString();
+                Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                return View(db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 
