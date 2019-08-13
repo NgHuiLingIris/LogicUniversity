@@ -18,29 +18,36 @@ namespace LogicUniversity.Controllers
         // Action Result for Listing/ Searching the values from the Products Table and adding to Cart
         public ActionResult Index(String search,String Id,string sessionId)
         {
-            
-            if (Id != null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                var username = Session["UserID"].ToString();
-                Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-                Products p = db.Products.Where(x => x.ItemCode == Id).SingleOrDefault();
-                CartItem c = new CartItem();
-                c.ItemCode = p.ItemCode;
-                c.Category = p.Category;
-                c.Description = p.Description;
-                c.UOM = p.UOM;
-                c.EmployeeId = obj.EmployeeId;
+                ViewData["sessionId"] = sessionId;
 
-                          
-                db.CartItems.AddOrUpdate(c);
-                db.SaveChanges();
+                if (Id != null)
+                {
+                    var username = Session["UserID"].ToString();
+                    Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                    Products p = db.Products.Where(x => x.ItemCode == Id).SingleOrDefault();
+                    CartItem c = new CartItem();
+                    c.ItemCode = p.ItemCode;
+                    c.Category = p.Category;
+                    c.Description = p.Description;
+                    c.UOM = p.UOM;
+                    c.EmployeeId = obj.EmployeeId;
+
+
+                    db.CartItems.AddOrUpdate(c);
+                    db.SaveChanges();
+                }
+                if (search != null)
+                {
+                    return View(db.Products.Where(x => x.Category == search).ToList());
+                }
+                return View(db.Products.OrderBy(x => x.Category).ToList());
             }
-            if (search !=null)
+            else
             {
-                return View(db.Products.Where(x => x.Category == search).ToList());
+                return RedirectToAction("Login","Login");
             }
-            return View(db.Products.OrderBy(x => x.Category).ToList());
-
         }
 
         

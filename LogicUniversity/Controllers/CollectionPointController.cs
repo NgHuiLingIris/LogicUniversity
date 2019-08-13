@@ -1,5 +1,6 @@
 ﻿using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -102,17 +103,25 @@ namespace LogicUniversity.Controllers
 
         }
 
-        public ActionResult Display()
+        public ActionResult Display(string sessionId)
         {
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
 
-            int empId = (int)Session["empId"];
-            var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
-            var currentRepresentative = db.Employees.Where(r => r.DeptId == deptId && r.Role == "DEP_REP").Select(x => x.EmployeeName).SingleOrDefault();
-            var collectionPoint = db.Departments.Where(r => r.DeptId == deptId).Select(r => r.CollectionLocationId).SingleOrDefault();
-            var currentCollectionPoint = db.CollectionPoints.Where(r => r.CollectionPointId.Equals(collectionPoint)).Select(r => r.LocationName).SingleOrDefault();
-            ViewData["rep"] = currentRepresentative;
-            ViewData["cp"] = currentCollectionPoint;
-            return View();
+                int empId = (int)Session["empId"];
+                var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
+                var currentRepresentative = db.Employees.Where(r => r.DeptId == deptId && r.Role == "DEP_REP").Select(x => x.EmployeeName).SingleOrDefault();
+                var collectionPoint = db.Departments.Where(r => r.DeptId == deptId).Select(r => r.CollectionLocationId).SingleOrDefault();
+                var currentCollectionPoint = db.CollectionPoints.Where(r => r.CollectionPointId.Equals(collectionPoint)).Select(r => r.LocationName).SingleOrDefault();
+                ViewData["rep"] = currentRepresentative;
+                ViewData["cp"] = currentCollectionPoint;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 

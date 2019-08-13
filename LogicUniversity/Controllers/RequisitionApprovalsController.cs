@@ -125,11 +125,19 @@ namespace LogicUniversity.Controllers
             return View();
         }
 
-        public ActionResult TrackRequisition()
+        public ActionResult TrackRequisition(string sessionId)
         {
-            var username = Session["UserID"].ToString();
-            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-            return View(db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var username = Session["UserID"].ToString();
+                Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                return View(db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 
