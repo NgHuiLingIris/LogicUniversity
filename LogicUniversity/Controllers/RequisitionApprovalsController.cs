@@ -19,18 +19,34 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: Requisitions
-        public ActionResult ViewRequisition()
+        public ActionResult ViewRequisition(string sessionId)
         {
-            var username = Session["UserID"].ToString();
-            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId && x.Status == "PENDING").ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var username = Session["UserID"].ToString();
+                Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId && x.Status == "PENDING").ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
-        public ActionResult ViewAllRequisition()
+        public ActionResult ViewAllRequisition(string sessionId)
         {
-            var username = Session["UserID"].ToString();
-            Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-            return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var username = Session["UserID"].ToString();
+                Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         //Requisition ALL Details for Store Clerk

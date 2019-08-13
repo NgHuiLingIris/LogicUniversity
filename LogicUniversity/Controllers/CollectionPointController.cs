@@ -1,12 +1,9 @@
 ﻿using LogicUniversity.Context;
 using LogicUniversity.Models;
 using LogicUniversity.Services;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace LogicUniversity.Controllers
@@ -17,9 +14,17 @@ namespace LogicUniversity.Controllers
 
         private LogicUniversityContext db = new LogicUniversityContext();
 
-        public ActionResult ManageCollection()
+        public ActionResult ManageCollection(string sessionId)
         {
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 
@@ -130,10 +135,18 @@ namespace LogicUniversity.Controllers
 
         //store
         // GET: CollectionPoints
-        public ActionResult ViewCollectionPoint()
+        public ActionResult ViewCollectionPoint(string sessionId)
         {
-            var collectionPoints = db.CollectionPoints.Include(c => c.Employee);
-            return View(collectionPoints.ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var collectionPoints = db.CollectionPoints.Include(c => c.Employee);
+                return View(collectionPoints.ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: CollectionPoints/Details/5

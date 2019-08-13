@@ -2,6 +2,9 @@
 @{
     ViewBag.Title = "Store Manager Dashboard";
 }
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
@@ -17,25 +20,25 @@
 <table class="container">
 
     <tr>
-        <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder")</td>
-        <td>@Html.ActionLink("Catalogue", "Index", "Products")</td>
+        <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Catalogue", "Index", "Products",new {sessionId = sessionId},null)</td>
         <td><button class="btn" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Manager';">Pending Approval/Rejection</button></td>
-
+        @*<td>@Html.ActionLink("Pending Approval","ApproverView", "StockAdjustmentVoucherDetails",new { Role = "Manager" })</td>*@
     </tr>
     <tr>
-        <td>@Html.ActionLink("Manage Collection Point", "ViewCollectionPoint", "CollectionPoint")</td>
-        <td>@Html.ActionLink("Supplier List", "Index", "Suppliers")</td>
-        <td>@Html.ActionLink("View Tender", "Tender")</td>
+        <td>@Html.ActionLink("Manage Collection Point", "ViewCollectionPoint", "CollectionPoint", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Supplier List", "Index", "Suppliers", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("View Tender", "Tender", new { sessionId = sessionId }, null)</td>
     </tr>
     <tr>
-        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals")</td>
-        <td>@Html.ActionLink("View Department", "Department")</td>
-        <td>@Html.ActionLink("Charge Department", "ChargeBackDepartment", "ChargeBackDepartment")</td>
+        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("View Department", "Department", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Charge Department", "ChargeBackDepartment", "ChargeBackDepartment", new { sessionId = sessionId }, null)</td>
     </tr>
     <tr>
-        <td>@Html.ActionLink("Trend Analysis", "Index", "Trend")</td>
-        <td>@Html.ActionLink("Reorder Report", "Department","")</td>
-        <td>@Html.ActionLink("Inventory Status Report", "ChargeBackDepartment", "ChargeBackDepartment")</td>
+        <td>@Html.ActionLink("Trend Analysis", "Index", "Trend", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Reorder Report", "Department","", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Inventory Status Report", "ChargeBackDepartment", "ChargeBackDepartment", new { sessionId = sessionId }, null)</td>
         <td></td>
     </tr>
 

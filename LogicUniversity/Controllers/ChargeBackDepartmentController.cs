@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 using PagedList;
 using PagedList.Mvc;
 
@@ -17,18 +18,22 @@ namespace LogicUniversity.Controllers
     {
         private LogicUniversityContext db = new LogicUniversityContext();
 
-        public ActionResult ChargeBackDepartment()
+        public ActionResult ChargeBackDepartment(string sessionId)
         {
-
-            List<String> dep = db.Departments.Select(r => r.DeptName).ToList();
-            //ViewData["DepartmentName"] = dep;
-            ViewData["DepartmentName"] = db.Departments.ToList();
-            var Dept_Name = (db.Departments.Select(r => r.DeptName).First()).ToString();
-            List<string> months = (System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames).ToList();
-            ViewData["months"] = months;
-          
-           
-        
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                List<String> dep = db.Departments.Select(r => r.DeptName).ToList();
+                //ViewData["DepartmentName"] = dep;
+                ViewData["DepartmentName"] = db.Departments.ToList();
+                var Dept_Name = (db.Departments.Select(r => r.DeptName).First()).ToString();
+                List<string> months = (System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames).ToList();
+                ViewData["months"] = months;
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
             return View();
         }
 
