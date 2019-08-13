@@ -177,7 +177,7 @@ namespace LogicUniversity.Controllers
                 //the requisition detail list is already by department and itemcode
                 if (TotalNeeded != retrievedqty)
                     {
-                    sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, retrievedqty - qtyininventory);
+                    sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, retrievedqty - TotalNeeded);
                     requisitiondetaillist = requisitiondetaillist.Where(q => q.ItemCode == itemcode).OrderBy(w=>w.Requisition.Date).ToList();
                     //go down each list
 
@@ -215,7 +215,8 @@ namespace LogicUniversity.Controllers
                 r = SaveRetrieval(r, rdList);
                 ViewData["s"] = s;
                 ViewData["count"] = sList.Count();
-                ViewData["RetrievalId"] = r.RetrievalId;
+                ViewData["RequisitionDetailsString"] = r.RequisitionString;
+                //ViewData["RetrievalId"] = r.RetrievalId;
                 ViewData["DeptString"] = DeptString;
                 //can bring dept string here
                 return View("AdjustRetrieval",s);
@@ -223,8 +224,8 @@ namespace LogicUniversity.Controllers
             else
             {
                 r = SaveRetrieval(r, rdList);
-                string RetrievalString = r.RetrievalId.ToString();
-                return RedirectToAction("DisplayDisbursement", "Disbursements", new { RetrievalString = RetrievalString, DeptString = DeptString });
+                string RequisitionDetailsString = r.RequisitionString;
+                return RedirectToAction("DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = DeptString });
             }
 
         }
@@ -251,8 +252,8 @@ namespace LogicUniversity.Controllers
         public ActionResult AdjustRetrieval([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
         {
             string DeptString = Request.Form["DeptString"];
-            int RetrievalId = int.Parse(Request.Form["RetrievalId"]);
-            string RetrievalString = Request.Form["RetrievalId"];
+            //int RetrievalId = int.Parse(Request.Form["RetrievalId"]);
+            string RequisitionDetailsString = Request.Form["RequisitionDetailsString"];
             int count = int.Parse(Request.Form["count"]);
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i< count; i++)
@@ -282,7 +283,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(stockAdjustmentVoucher);
 
             ViewData["count"] = count;
-            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RetrievalString = RetrievalString, DeptString = DeptString });
+            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = DeptString });
         }
         public void CheckRequisitionComplete()
         {
