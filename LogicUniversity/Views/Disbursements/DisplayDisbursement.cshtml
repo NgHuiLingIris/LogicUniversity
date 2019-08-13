@@ -7,6 +7,7 @@
     var DeptString = (string)ViewData["DeptString"];
     var RequisitionDetailsString = (string)ViewData["RequisitionDetailsString"];
     var dListAll = (List<Department>)ViewData["dListAll"];
+    var CpListAll = (List<CollectionPoint>)ViewData["CpListAll"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
@@ -22,20 +23,35 @@
     
         //make a unique id
         int j = 0;
-        <table name="search">
+    <table name="search">
         <tr>
             <td>
                 <select name="SearchDeptName">
-                                @foreach (Department dept in dListAll)
-                                {
-                                    <option Id="SearchDeptName[@j]" name="SearchDeptName[@j]" typeof="text">
-                                        @dept.DeptName
-                                    </option>
-                                }
-                            </select>
+                    @foreach (Department dept in dListAll)
+                    {
+                        <option Id="SearchDeptName[@j]" name="SearchDeptName[@j]" typeof="text">
+                            @dept.DeptName
+                        </option>
+                    }
+                </select>
             </td>
             <td>
                 <input type="submit" name="SearchDept" value="SearchDept" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select name="SearchCPId">
+                    @foreach (CollectionPoint Cp in CpListAll)
+                    {
+                        <option Id="SearchCP[@j]" name="SearchCP[@j]" typeof="text">
+                            @Cp.CollectionPointId
+                        </option>
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="submit" name="SearchCP" value="SearchCP" />
             </td>
         </tr>
     </table>

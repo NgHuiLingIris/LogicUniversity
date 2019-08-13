@@ -71,6 +71,7 @@ namespace LogicUniversity.Controllers
         {
             
             List<Department> dListAll = db.Departments.ToList();
+            List<CollectionPoint> CpListAll = db.CollectionPoints.ToList();
             List<Department> dList = splitDString(DeptString);
             List<RequisitionDetails> rdList = new List<RequisitionDetails>();
             if (RequisitionDetailsString == "All")
@@ -114,6 +115,7 @@ namespace LogicUniversity.Controllers
                     ICDList.Add(ICD);
                 }
             }
+            ViewData["CpListAll"] = CpListAll;
             ViewData["DeptString"] = DeptString;
             ViewData["count"] = ICDList.Count();
             ViewData["ICDList"] = ICDList;
@@ -171,10 +173,17 @@ namespace LogicUniversity.Controllers
             {
                 string deptname = Request.Form["SearchDeptName"];
                 return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = "All", DeptString = deptname });
-                //post to GetDisplayDisbursement retrievalstring = all, deptstring = dept name
-                //then in GetDisplayDisbursement, if retrievalstring = all, then list of requisition by that dept, get all retrievals;
-                //get the string of requisition which are not yet disbursed, but retrieved
-                //loop through the string. filter requisition made by that department
+            }
+            if (Request.Form["SearchCP"] != null)
+            {
+                string CPId = Request.Form["SearchCPId"];
+                List<Department> dListByCp = db.Departments.Where(d => d.CollectionLocationId == CPId).ToList();
+                string deptname = "";
+                foreach (Department d in dListByCp)
+                {
+                    deptname = deptname + "," + d.DeptName;
+                }
+                return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = "All", DeptString = deptname });
             }
             int count = int.Parse(Request.Form["count"]);
             string dept = Request.Form["DeptString"];
