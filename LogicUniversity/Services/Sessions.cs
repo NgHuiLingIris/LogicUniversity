@@ -11,6 +11,12 @@ namespace LogicUniversity.Services
     {
         public static Hashtable userSessions = new Hashtable();
 
-    
+        public static bool IsValidSession(string sessionId)
+        {
+            HttpContext context = HttpContext.Current;
+            return (context.Session["UserID"] != null &&
+                Sessions.userSessions[context.Session["UserID"]] != null &&
+                Sessions.userSessions[context.Session["UserID"]].ToString() == sessionId);
+        }
     }
 }

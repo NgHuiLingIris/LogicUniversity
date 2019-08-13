@@ -16,8 +16,9 @@ namespace LogicUniversity.Controllers
       
 
         // Action Result for Listing/ Searching the values from the Products Table and adding to Cart
-        public ActionResult Index(String search,String Id)
+        public ActionResult Index(String search,String Id,string sessionId)
         {
+            
             if (Id != null)
             {
                 var username = Session["UserID"].ToString();
