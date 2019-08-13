@@ -22,8 +22,8 @@
     <tr>
         <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)</td>
         <td>@Html.ActionLink("Catalogue", "Index", "Products",new {sessionId = sessionId},null)</td>
-        <td><button class="btn" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Manager';">Pending Approval/Rejection</button></td>
-        @*<td>@Html.ActionLink("Pending Approval","ApproverView", "StockAdjustmentVoucherDetails",new { Role = "Manager" })</td>*@
+        @*<td><button class="btn" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Manager';">Pending Approval/Rejection</button></td>*@
+        <td>@Html.ActionLink("Pending Approval","ApproverView", "StockAdjustmentVoucherDetails",new { Role = "Manager",sessionId=sessionId},null)</td>
     </tr>
     <tr>
         <td>@Html.ActionLink("Manage Collection Point", "ViewCollectionPoint", "CollectionPoint", new { sessionId = sessionId }, null)</td>
