@@ -23,7 +23,7 @@
 <table>
     <tr>
         <td>@Html.ActionLink("Requisition", "SCRequisitionView", "RequisitionApprovals")</td>
-        <td>@Html.ActionLink("Disbursements", "Select", "Disbursements")</td>
+        <td>@Html.ActionLink("Disbursement","DisplayDisbursement","Disbursements",new { RequisitionDetailsString ="All", DeptString ="All"},null)</td>
         <td>@Html.ActionLink("Catalogue", "Index", "Products")</td>
     </tr>
     <tr>
