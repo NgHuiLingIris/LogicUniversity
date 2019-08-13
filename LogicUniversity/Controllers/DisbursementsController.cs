@@ -27,7 +27,7 @@ namespace LogicUniversity.Controllers
         }
         public List<Department> splitDString(string deptstring)
         {
-            string[] PendingDeptList = deptstring.Split('*');
+            string[] PendingDeptList = deptstring.Split(',');
             List<Department> dList = new List<Department>();
             foreach (string d in PendingDeptList)
             {
@@ -53,11 +53,24 @@ namespace LogicUniversity.Controllers
             return rdListByDept;
         }
         [HttpGet]
-        public ActionResult DisplayDisbursement(int RetrievalId,string DeptString)
+        public ActionResult DisplayDisbursement(string RetrievalString, string DeptString)
         {
+            //get retrievalID
             List<Department> dList = splitDString(DeptString);
-            Retrieval r = db.Retrievals.FirstOrDefault(s => s.RetrievalId == RetrievalId);
-            List<RequisitionDetails> rdList = splitString(r.RequisitionString);
+            string[] RetrievalIdArray = RetrievalString.Split(',');
+            List<RequisitionDetails> rdList = new List<RequisitionDetails>();
+            foreach (string RetrievalIdString in RetrievalIdArray)
+            {
+                int RetrievalId = int.Parse(RetrievalIdString);
+                Retrieval r = db.Retrievals.FirstOrDefault(s => s.RetrievalId == RetrievalId);
+                List<RequisitionDetails> RdListPerRetrieval = splitString(r.RequisitionString);
+                foreach(RequisitionDetails rd in RdListPerRetrieval)
+                {
+                    rdList.Add(rd);
+                }
+            }
+            //List<RequisitionDetails> rdList = splitString(r.RequisitionString);
+
             rdList = SaveIncludeAllRD(rdList);
             List<RequisitionDetails> rdListByDept = GetRequisitionDetailsBFromDList(dList, rdList);
 
@@ -205,13 +218,15 @@ namespace LogicUniversity.Controllers
             int dListCount = int.Parse(Request.Form["dListCount"]);
             string test = Request.Form["Retrieval[0]"];
             Debug.WriteLine(test);
-            int RetrievalId = 0;
+            //int RetrievalId = 0;
+            string RetrievalString = "";
             string DeptString = "";
             for(int i = 0; i < rListCount; i++)
             {
                 if (Request.Form["Retrieval[" + i + "]"] != null)
                 {
-                    RetrievalId = int.Parse(Request.Form["Retrieval[" + i + "]"]);
+                    RetrievalString = Request.Form["Retrieval[" + i + "]"];
+                    //RetrievalId = int.Parse(Request.Form["Retrieval[" + i + "]"]);
                     break;
                 }
             }
@@ -222,11 +237,11 @@ namespace LogicUniversity.Controllers
             {
                 foreach(string d in deptArray)
                 {
-                    DeptString = DeptString + "*" + d;
+                    DeptString = DeptString + "," + d;
                 }
             }
 
-            return RedirectToAction("DisplayDisbursement",new { RetrievalId = RetrievalId , DeptString = DeptString });
+            return RedirectToAction("DisplayDisbursement",new { RetrievalString = RetrievalString, DeptString = DeptString });
         }
         public ActionResult AdjustDisbursement([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
         {
@@ -325,7 +340,7 @@ namespace LogicUniversity.Controllers
         }
         public List<RequisitionDetails> splitString(string RequisitionString)
         {
-            string[] PendingRequisitionDetailsList = RequisitionString.Split('*');
+            string[] PendingRequisitionDetailsList = RequisitionString.Split(',');
             List<RequisitionDetails> rdList = new List<RequisitionDetails>();
             foreach (string rd in PendingRequisitionDetailsList)
             {

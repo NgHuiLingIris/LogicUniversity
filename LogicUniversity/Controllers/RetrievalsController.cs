@@ -18,7 +18,7 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
         public List<Department> splitString(string deptstring)
         {
-            string[] PendingDeptList = deptstring.Split('*');
+            string[] PendingDeptList = deptstring.Split(',');
             List<Department> dList = new List<Department>();
             foreach (string d in PendingDeptList)
             {
@@ -223,7 +223,8 @@ namespace LogicUniversity.Controllers
             else
             {
                 r = SaveRetrieval(r, rdList);
-                return RedirectToAction("DisplayDisbursement", "Disbursements", new {RetrievalId = r.RetrievalId, DeptString = DeptString });
+                string RetrievalString = r.RetrievalId.ToString();
+                return RedirectToAction("DisplayDisbursement", "Disbursements", new { RetrievalString = RetrievalString, DeptString = DeptString });
             }
 
         }
@@ -239,7 +240,7 @@ namespace LogicUniversity.Controllers
             foreach (RequisitionDetails c in requisitiondetaillist)
             {
                 c.Status = "Retrieved";
-                r.RequisitionString = r.RequisitionString + "*" + c.RequisitionDetailsId;
+                r.RequisitionString = r.RequisitionString + "," + c.RequisitionDetailsId;
                 //will work on method to check if item is retrieved here, if not put 'PENDING'
                 //c.Requisition.Status = "COMPLETE";
                 db.Entry(c).State = EntityState.Modified;
@@ -251,6 +252,7 @@ namespace LogicUniversity.Controllers
         {
             string DeptString = Request.Form["DeptString"];
             int RetrievalId = int.Parse(Request.Form["RetrievalId"]);
+            string RetrievalString = Request.Form["RetrievalId"];
             int count = int.Parse(Request.Form["count"]);
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i< count; i++)
@@ -280,7 +282,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(stockAdjustmentVoucher);
 
             ViewData["count"] = count;
-            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RetrievalId = RetrievalId, DeptString = DeptString });
+            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RetrievalString = RetrievalString, DeptString = DeptString });
         }
         public void CheckRequisitionComplete()
         {

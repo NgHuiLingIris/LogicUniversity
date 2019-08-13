@@ -98,7 +98,7 @@ namespace LogicUniversity.Controllers
                 List<Requisition> SelectedRequests = new List<Requisition>();
                 int count = int.Parse(Request.Form["count"]);
                 //for(int i = 0; i<)
-                string PendingDeptRequisition = "*";
+                string PendingDeptRequisition = ",";
                 for (int i = 0; i < count; i++)
                 {
                     if (Request.Form["Requisition[" + i + "].toretrieve"] != null)
@@ -106,7 +106,7 @@ namespace LogicUniversity.Controllers
                         string dept = Request.Form["Requisition[" + i + "].toretrieve"];
                         //Department d0 = new Department();
                         //d0 = db.Departments.FirstOrDefault(d => d.DeptName == dept);
-                        PendingDeptRequisition = PendingDeptRequisition + dept + "*";
+                        PendingDeptRequisition = PendingDeptRequisition + dept + ",";
                         //retrieve the requisition id
                         //redirect action to create retrieval
 

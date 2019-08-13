@@ -10,7 +10,7 @@ using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
-    public class LoginController : SMController
+    public class LoginController : Controller
     {
         private LogicUniversityContext db = new LogicUniversityContext();
         // GET: Login
