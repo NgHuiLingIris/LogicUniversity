@@ -59,14 +59,17 @@ namespace LogicUniversity.Controllers
                         case "STORE_CLRK":
                                 return RedirectToAction("SCDashboard", "Login",new { sessionId = sessionId});
                                 //return View("SCDashboard");
-                            case "STORE_MNGR":
+                        case "STORE_MNGR":
                                 return RedirectToAction("SMDashboard", "Login", new { sessionId = sessionId });
+                        case "STORE_SUP":
+                            return RedirectToAction("SSDashboard", "Login", new { sessionId = sessionId });
+
 
                     }
                     //}
-                  
 
-                      
+
+
                     return RedirectToAction("Login");
                     
                     }
@@ -74,7 +77,27 @@ namespace LogicUniversity.Controllers
             }
             return View();
         }
+        public ActionResult SSDashboard(string sessionId)
+        {
+            try
+            {
+                if (Session["UserID"] != null)// && Sessions.userSessions[Session["UserID"]].ToString() == sessionId)
 
+                {
+                    ViewData["sessionId"] = sessionId;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            }
+            catch (NullReferenceException exception)
+            {
+                Debug.WriteLine("Session Id cannot be null");
+            }
+            return RedirectToAction("Login");
+        }
         public ActionResult StaffDashboard(string sessionId)
         {
             Debug.WriteLine("sddashboard is called");

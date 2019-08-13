@@ -52,13 +52,9 @@ namespace LogicUniversity.Controllers
             }
             return rdListByDept;
         }
-        [HttpGet]
-        public ActionResult DisplayDisbursement(string RequisitionDetailsString, string DeptString)
+        public List<RequisitionDetails> SplitRDString(string RequisitionDetailsString, List<RequisitionDetails> rdList)
         {
-            List<Department> dListAll = db.Departments.ToList();
-            List<Department> dList = splitDString(DeptString);
             string[] RequisitionDetailsArray = RequisitionDetailsString.Split(',');
-            List<RequisitionDetails> rdList = new List<RequisitionDetails>();
             foreach (string Rdstring in RequisitionDetailsArray)
             {
                 if (Rdstring != "")
@@ -68,8 +64,36 @@ namespace LogicUniversity.Controllers
                     rdList.Add(Rd);
                 }
             }
-            //List<RequisitionDetails> rdList = splitString(r.RequisitionString);
-
+            return rdList;
+        }
+        [HttpGet]
+        public ActionResult DisplayDisbursement(string RequisitionDetailsString, string DeptString)
+        {
+            
+            List<Department> dListAll = db.Departments.ToList();
+            List<Department> dList = splitDString(DeptString);
+            List<RequisitionDetails> rdList = new List<RequisitionDetails>();
+            if (RequisitionDetailsString == "All")
+            {
+                foreach (Department d in dList)
+                {
+                    //rd that are retrieved and from the dept - all disbursement string (have disbursed)
+                    string dept = d.DeptName;
+                    List<Requisition> RequisitionsThatAreFromDept = db.Requisition.Where(s => s.Department == dept).ToList();
+                    foreach (Requisition r in RequisitionsThatAreFromDept)
+                    {
+                        List<RequisitionDetails> AllRdByDept = db.RequisitionDetails.Where(rd => rd.RequisitionId == r.RequisitionId).Where(rd1 => rd1.Status == "Retrieved").ToList();
+                        foreach (RequisitionDetails rd2 in AllRdByDept)
+                        {
+                            rdList.Add(rd2);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                rdList = SplitRDString(RequisitionDetailsString, rdList);
+            }
             rdList = SaveIncludeAllRD(rdList);
             List<RequisitionDetails> rdListByDept = GetRequisitionDetailsBFromDList(dList, rdList);
 
@@ -146,6 +170,7 @@ namespace LogicUniversity.Controllers
             if (Request.Form["SearchDept"] != null)
             {
                 string deptname = Request.Form["SearchDeptName"];
+                return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = "All", DeptString = deptname });
                 //post to GetDisplayDisbursement retrievalstring = all, deptstring = dept name
                 //then in GetDisplayDisbursement, if retrievalstring = all, then list of requisition by that dept, get all retrievals;
                 //get the string of requisition which are not yet disbursed, but retrieved
