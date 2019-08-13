@@ -18,6 +18,7 @@ namespace LogicUniversity.Controllers
         // Action Result for Listing/ Searching the values from the Products Table and adding to Cart
         public ActionResult Index(String search,String Id)
         {
+            ViewBag.Message = TempData["message"];
             if (Id != null)
             {
                 var username = Session["UserID"].ToString();
@@ -56,6 +57,7 @@ namespace LogicUniversity.Controllers
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
                 List<CartItem> cartItem = db.CartItems.OrderBy(x => x.EmployeeId == obj.EmployeeId).ToList();
+                ViewBag.Message = "Items added to cart";
                 return View(cartItem);
             }
             return View();
@@ -68,8 +70,12 @@ namespace LogicUniversity.Controllers
             {
                 var username = (string)Session["UserID"];
 
-                if(DepartmentRequestService.CartSubmission(username, CartItems))
+                if (DepartmentRequestService.CartSubmission(username, CartItems))
+                {
+                    TempData["message"] = "Requistion Successful";
                     return RedirectToAction("Index");
+                }
+                                   
                 return RedirectToAction("AddtoCart");
             }
             else

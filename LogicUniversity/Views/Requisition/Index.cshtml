@@ -5,12 +5,25 @@
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
 
-
 @{
     /**/
 
     ViewBag.Title = "Index";
 }
+
+@if (ViewBag.Message != null)
+{
+    @section scripts{
+        <script src="~/Scripts/toastr.js"></script>
+        <script>
+        $(document).ready(function () {
+            toastr.success('@ViewBag.Message')
+        });
+        </script>
+    }
+
+}
+
 <head>
     <meta name="viewport" content="width=device-width" />
 
@@ -111,5 +124,5 @@
         $('.dataTables_length').addClass('bs-select');
     });
 
-    
+
 </script>

@@ -53,6 +53,7 @@ namespace LogicUniversity.Controllers
             //set to the new collectionpoint
             cp.CollectionLocationId = selection.ToString();
             db.SaveChanges();
+            TempData["successmsg"] = "Successfully changed the collection point";
             return RedirectToAction("Display", "CollectionPoint");
         }
 
@@ -93,10 +94,9 @@ namespace LogicUniversity.Controllers
                 Employee newrep = db.Employees.Find(emp.EmployeeId);
                 newrep.Role = "DEP_REP";
                 db.SaveChanges();
+                TempData["successmsg"] = "Successfully changed the representative";
                 return RedirectToAction("Display", "CollectionPoint");
             }
-
-
             return RedirectToAction("UpdateRepresentative", "CollectionPoint");
 
 
@@ -112,6 +112,7 @@ namespace LogicUniversity.Controllers
             var currentCollectionPoint = db.CollectionPoints.Where(r => r.CollectionPointId.Equals(collectionPoint)).Select(r => r.LocationName).SingleOrDefault();
             ViewData["rep"] = currentRepresentative;
             ViewData["cp"] = currentCollectionPoint;
+            ViewBag.Message = TempData["successmsg"];
             return View();
         }
 

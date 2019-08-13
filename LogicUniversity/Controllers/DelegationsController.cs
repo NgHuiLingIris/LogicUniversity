@@ -32,7 +32,8 @@ namespace LogicUniversity.Controllers
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             var delegations = db.Delegations.Include(d => d.Employee).Where(d=>d.Employee.DeptId==deptId).OrderByDescending(d=>d.StartDate);
             ViewData["msg"] =null;
-            return View(delegations.ToPagedList(page ?? 1, 10));
+            ViewBag.Message = TempData["toastmessage"];
+            return View(delegations.ToPagedList(page ?? 1, 5));
         }
 
         // GET: Delegations/Details/5
@@ -99,6 +100,7 @@ namespace LogicUniversity.Controllers
                     if (case1.Count == 0 && case2.Count == 0 && case3.Count == 0 && case4.Count == 0)
                     {
                         ds.AddDelegation(delegation, empId);
+                        TempData["toastmessage"] = "Success";
                         return RedirectToAction("ViewDelegation");
                     }
                     else
@@ -147,6 +149,7 @@ namespace LogicUniversity.Controllers
                             if(flag==case1.Count&&case2.Count==0)
                             {
                                 ds.AddDelegation(delegation, empId);
+                                TempData["toastmessage"] = "Success";
                                 return RedirectToAction("ViewDelegation");
                             }
                             else if(flag == case1.Count && case2.Count != 0)
@@ -168,6 +171,7 @@ namespace LogicUniversity.Controllers
                                 if (flag1 == case2.Count)
                                 {
                                     ds.AddDelegation(delegation, empId);
+                                    TempData["toastmessage"] = "Success";
                                     return RedirectToAction("ViewDelegation");
                                 }
                                 else
@@ -205,6 +209,7 @@ namespace LogicUniversity.Controllers
                             if (flag == case2.Count)
                             {
                                 ds.AddDelegation(delegation, empId);
+                                TempData["toastmessage"] = "Success";
                                 return RedirectToAction("ViewDelegation");
                             }
                             else
@@ -311,8 +316,9 @@ namespace LogicUniversity.Controllers
 
                             if (case1.Count == 0 && case2.Count == 0 && case3.Count == 0 && case4.Count == 0)
                             {
-                                ds.saveDelegationChanges(delegation);
-                                return RedirectToAction("EditDelegation");
+                                ds.saveDelegationChanges(delegation,empId);
+                                TempData["toastmessage"] = "Success";
+                                return RedirectToAction("ViewDelegation");
                             }
                             else
                             {
@@ -359,7 +365,8 @@ namespace LogicUniversity.Controllers
                                     }
                                     if (flag == case1.Count && case2.Count == 0)
                                     {
-                                        ds.saveDelegationChanges(delegation);
+                                        ds.saveDelegationChanges(delegation, empId);
+                                        TempData["toastmessage"] = "Success";
                                         return RedirectToAction("ViewDelegation");
                                     }
                                     else if (flag == case1.Count && case2.Count != 0)
@@ -380,7 +387,8 @@ namespace LogicUniversity.Controllers
                                         }
                                         if (flag1 == case2.Count)
                                         {
-                                            ds.saveDelegationChanges(delegation);
+                                            ds.saveDelegationChanges(delegation, empId);
+                                            TempData["toastmessage"] = "Success";
                                             return RedirectToAction("ViewDelegation");
                                         }
                                         else
@@ -417,7 +425,8 @@ namespace LogicUniversity.Controllers
                                     }
                                     if (flag == case2.Count)
                                     {
-                                        ds.saveDelegationChanges(delegation);
+                                        ds.saveDelegationChanges(delegation, empId);
+                                        TempData["toastmessage"] = "Success";
                                         return RedirectToAction("ViewDelegation");
                                     }
                                     else
@@ -463,8 +472,9 @@ namespace LogicUniversity.Controllers
 
                         if (case1.Count == 0 && case2.Count == 0 && case3.Count == 0 && case4.Count == 0)
                         {
-                            ds.saveDelegationChanges( delegation);
-                            return RedirectToAction("EditDelegation");
+                            ds.saveDelegationChanges( delegation, empId);
+                            TempData["toastmessage"] = "Success";
+                            return RedirectToAction("ViewDelegation");
                         }
                         else
                         {
@@ -511,7 +521,8 @@ namespace LogicUniversity.Controllers
                                 }
                                 if (flag == case1.Count && case2.Count == 0)
                                 {
-                                    ds.saveDelegationChanges(delegation);
+                                    ds.saveDelegationChanges(delegation, empId);
+                                    TempData["toastmessage"] = "Success";
                                     return RedirectToAction("ViewDelegation");
                                 }
                                 else if (flag == case1.Count && case2.Count != 0)
@@ -532,7 +543,8 @@ namespace LogicUniversity.Controllers
                                     }
                                     if (flag1 == case2.Count)
                                     {
-                                        ds.saveDelegationChanges(delegation);
+                                        ds.saveDelegationChanges(delegation, empId);
+                                        TempData["toastmessage"] = "Success";
                                         return RedirectToAction("ViewDelegation");
                                     }
                                     else
@@ -569,7 +581,8 @@ namespace LogicUniversity.Controllers
                                 }
                                 if (flag == case2.Count)
                                 {
-                                    ds.saveDelegationChanges(delegation);
+                                    ds.saveDelegationChanges(delegation, empId);
+                                    TempData["toastmessage"] = "Success";
                                     return RedirectToAction("ViewDelegation");
                                 }
                                 else
@@ -643,7 +656,9 @@ namespace LogicUniversity.Controllers
 
                 db.Delegations.Remove(delegation);
                 db.SaveChanges();
+                EmailService.SendNotification(delegation.EmployeeId, "Delegation Cancellation Reg.", "Delegation("+delegation.StartDate+"-"+delegation.EndDate+" is cancelled hereafter");
             }
+            TempData["toastmessage"] = "Successfully Cancelled";
             return RedirectToAction("ViewDelegation");
         }
 

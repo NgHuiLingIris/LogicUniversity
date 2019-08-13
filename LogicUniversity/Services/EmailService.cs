@@ -37,7 +37,7 @@ namespace LogicUniversity.Services
             WebMail.From = "logicuniversity.t6@gmail.com";
 
             //Send email  
-            WebMail.Send(to: obj.Email, subject: sub, body: msg, isBodyHtml: true);
+            WebMail.Send(to: "rnair.reshma31@gmail.com", subject: sub, body: msg, isBodyHtml: true);
 
 
             return true;

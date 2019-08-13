@@ -32,14 +32,17 @@ namespace LogicUniversity.Services
             return details;
         }
 
-        public void saveDelegationChanges(Delegation delegation)
+        public void saveDelegationChanges(Delegation delegation,int id)
         {
             var originalDelegation = db.Delegations.Find(delegation.DelegationId);
+
+            string[] delg = { (originalDelegation.StartDate).ToString(),(originalDelegation.EndDate).ToString()};
             originalDelegation.StartDate = delegation.StartDate;
             originalDelegation.EndDate = delegation.EndDate;
             originalDelegation.EmployeeId = delegation.EmployeeId;
             db.SaveChanges();
-            //EmailService.SendNotification(delegation.EmployeeId, "Delegation Modification reg.", "Assigned delegation from" + delegation.StartDate + " to" + delegation.EndDate + " is modified");
+            EmailService.SendNotification(delegation.EmployeeId, "Change of delegation date","Delegation date has been changed from "+delg[0]+" - "+delg[1]+" to "+delegation.StartDate+" - "+delegation.EndDate);
+            EmailService.SendNotification(id, "Change of delegation date", "Delegation date has been changed from " + delg[0] + " - " + delg[1] + " to " + delegation.StartDate + " - " + delegation.EndDate);
         }
     }
 }

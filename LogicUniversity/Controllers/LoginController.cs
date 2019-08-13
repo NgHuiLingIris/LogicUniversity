@@ -10,7 +10,7 @@ using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
-    public class LoginController : SMController
+    public class LoginController :Controller
     {
         private LogicUniversityContext db = new LogicUniversityContext();
         // GET: Login
@@ -30,7 +30,7 @@ namespace LogicUniversity.Controllers
                     {
                     string uname = username.ToString();
 
-                    Session["UserID"] = uname;
+                        Session["UserID"] = uname;
                         Session["UserName"] = password.ToString();
                         Session["role"] = obj.Role;
                         Session["empId"] = obj.EmployeeId;
