@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
@@ -18,11 +19,19 @@ namespace LogicUniversity.Controllers
 
         // GET: Suppliers
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(string sessionId)
         {
-            List<Supplier> SupplierList = new List<Supplier>(db.Suppliers);
-            ViewData["SupplierList"] = SupplierList;
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                List<Supplier> SupplierList = new List<Supplier>(db.Suppliers);
+                ViewData["SupplierList"] = SupplierList;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         [HttpPost]

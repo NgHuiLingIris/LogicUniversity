@@ -55,6 +55,8 @@ namespace LogicUniversity.Controllers
                             return RedirectToAction("SCDashboard", "Login", new { sessionId = sessionId });
                         case "STORE_MNGR":
                             return RedirectToAction("SMDashboard", "Login", new { sessionId = sessionId });
+                        case "STORE_SUP":
+                            return RedirectToAction("SSDashboard", "Login", new { sessionId = sessionId });
                     }
 
                     return RedirectToAction("Login");
@@ -117,6 +119,20 @@ namespace LogicUniversity.Controllers
         }
 
         public ActionResult SCDashboard(string sessionId)
+        {
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+
+
+        public ActionResult SSDashboard(string sessionId)
         {
             if (Sessions.IsValidSession(sessionId))
             {

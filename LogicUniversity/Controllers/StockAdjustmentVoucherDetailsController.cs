@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers //Written By Iris
 {
@@ -162,34 +163,43 @@ namespace LogicUniversity.Controllers //Written By Iris
 		        An improvement could be done to allow the use of one list with multiple object types.
          */
         [HttpGet]
-        public ActionResult ApproverView(string Role, string SearchString)
+        public ActionResult ApproverView(string Role, string SearchString,string sessionId)
         {
-            List<StockAdjustmentVoucherDetail> VoucherDetailList = RetrieveApproverList(Role);
-            
-            if(SearchString != null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                var SearchResult = VoucherDetailList.Where(x => x.Product.Description.Contains(SearchString));
-                VoucherDetailList = SearchResult.ToList();
-            }
-            List<Products> PendingItemList = new List<Products>();
-            List<string> StatusList = new List<string>();
-            List<DateTime> Datetimelist = new List<DateTime>();
+                ViewData["sessionId"] = sessionId;
 
-            foreach (StockAdjustmentVoucherDetail p in VoucherDetailList)
-            {
-                if (!PendingItemList.Contains(p.Product))
+                List<StockAdjustmentVoucherDetail> VoucherDetailList = RetrieveApproverList(Role);
+
+                if (SearchString != null)
                 {
-                    PendingItemList.Add(p.Product);
-                    StatusList.Add(p.Status);
-                    Datetimelist.Add(p.StockAdjustmentVoucher.DateCreated);
+                    var SearchResult = VoucherDetailList.Where(x => x.Product.Description.Contains(SearchString));
+                    VoucherDetailList = SearchResult.ToList();
                 }
-                
+                List<Products> PendingItemList = new List<Products>();
+                List<string> StatusList = new List<string>();
+                List<DateTime> Datetimelist = new List<DateTime>();
+
+                foreach (StockAdjustmentVoucherDetail p in VoucherDetailList)
+                {
+                    if (!PendingItemList.Contains(p.Product))
+                    {
+                        PendingItemList.Add(p.Product);
+                        StatusList.Add(p.Status);
+                        Datetimelist.Add(p.StockAdjustmentVoucher.DateCreated);
+                    }
+
+                }
+                ViewData["PendingItemList"] = PendingItemList;
+                ViewData["StatusList"] = StatusList;
+                ViewData["Datetimelist"] = Datetimelist;
+                ViewData["Role"] = Role;
+                return View();
             }
-            ViewData["PendingItemList"] = PendingItemList;
-            ViewData["StatusList"] = StatusList;
-            ViewData["Datetimelist"] = Datetimelist;
-            ViewData["Role"] = Role;
-            return View();
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         /*
          * ApproverAction
