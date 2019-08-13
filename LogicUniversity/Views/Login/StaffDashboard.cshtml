@@ -14,15 +14,15 @@
 </head>
 
 <h2>Staff Dashboard</h2>
-<a href="@Url.Action("Index","Requisition",new { sessionId=sessionId})" class="button">
+<a href="@Url.Action("Index","Requisition",new {sessionId = sessionId})" class="button">
     <i class="fa fa-user fa-100x"></i><br />
     Make Requistion <br><br>
 </a>
-<a href="@Url.Action("TrackRequisition","RequisitionApprovals")" class="button">
+<a href="@Url.Action("TrackRequisition","RequisitionApprovals",new {sessionId = sessionId})" class="button">
     <i class="fa fa-user fa-100x"></i><br />
     Track Requisition <br><br>
 </a>
-<a href="@Url.Action("Display","CollectionPoint")" class="button">
+<a href="@Url.Action("Display","CollectionPoint",new {sessionId = sessionId})" class="button">
     <i class="fa fa-user fa-100x"></i><br />
     Collection Point <br> <br>
 </a>

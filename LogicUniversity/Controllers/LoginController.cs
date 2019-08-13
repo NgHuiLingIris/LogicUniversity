@@ -73,7 +73,7 @@ namespace LogicUniversity.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Login");
             }
         }
 
@@ -86,7 +86,7 @@ namespace LogicUniversity.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Login");
             }
         }
 
@@ -99,7 +99,7 @@ namespace LogicUniversity.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Login");
             }
         }
 
@@ -112,7 +112,7 @@ namespace LogicUniversity.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Login");
             }
         }
 
@@ -125,20 +125,20 @@ namespace LogicUniversity.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Login");
             }
         }
 
         public ActionResult Logout()
         {
             var username = Sessions.userSessions.Keys.OfType<String>().FirstOrDefault(s => Sessions.userSessions[s] == Session["id"]);
-            Debug.WriteLine("username is: " + username);
+            //Debug.WriteLine("username is: " + username);
             Session["id"] = null;
             Sessions.userSessions.Remove(username);
 
-            Debug.WriteLine("hashtable size is: " + Sessions.userSessions.Count);
-            Debug.WriteLine("sessionid is: " + Sessions.userSessions[username]);
-            return RedirectToAction("Login");
+            //Debug.WriteLine("hashtable size is: " + Sessions.userSessions.Count);
+            //Debug.WriteLine("sessionid is: " + Sessions.userSessions[username]);
+            return RedirectToAction("Login", "Login");
         }
     }
 }
