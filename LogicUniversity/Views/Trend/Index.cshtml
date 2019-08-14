@@ -62,27 +62,28 @@ var chart_2 = new CanvasJS.Chart("chartContainer_2", {
 </head>
 <body>
 
+    @Html.ActionLink("Compare Results", "TwoMonthsCompare")
 
     <div class="card shadow">
-        
+
         <div class="card-block">
             <div id="chartContainer_1" style="height: 210px; width: 100%;"></div>
         </div>
     </div>
     <div class="card shadow">
-       
+
         <div class="card-block">
             <div id="chartContainer_2" style="width: 45%; height: 300px;display: inline-block;"></div>
             <div id="chartContainer_3" style="width: 45%; height: 300px;display: inline-block;"></div>
         </div>
     </div>
-   
+
     @*<div class="card shadow">
-        <h4 class="card-header">Supplier Based Orders</h4>
-        <div class="card-block">
-            <div id="chartContainer_3" style="height: 210px; width: 50%;"></div>
-        </div>
-    </div>*@
+            <h4 class="card-header">Supplier Based Orders</h4>
+            <div class="card-block">
+                <div id="chartContainer_3" style="height: 210px; width: 50%;"></div>
+            </div>
+        </div>*@
 
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>

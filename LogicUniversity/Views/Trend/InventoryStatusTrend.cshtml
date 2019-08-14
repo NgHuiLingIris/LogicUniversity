@@ -1,0 +1,66 @@
+﻿@model LogicUniversity.Models.StockAdjustmentVoucher
+@using LogicUniversity.Models
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script>
+        window.onload = function () {
+
+            var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                title: {
+                    text: "Inventory Status of Clip"
+                },
+                toolTip: {
+                    shared: true
+                },
+                axisY: {
+                    title: "Available Stocks"
+                },
+                legend: {
+                    cursor: "pointer",
+                    verticalAlign: "center",
+                    horizontalAlign: "right",
+                    itemclick: toggleDataSeries
+                },
+                data: [{
+                    type: "stackedColumn",
+                    name: "ReOrder Level",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(ViewBag.DataPoints_1)
+        },
+            {
+                type: "stackedColumn",
+                name: "Balance",
+                showInLegend: "true",
+                dataPoints: @Html.Raw(ViewBag.DataPoints_2)
+            }]
+});
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            }
+            else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+
+}
+    </script>
+</head>
+<body>
+
+    @using(Html.BeginForm("InventoryStatusTrend", "Trend", FormMethod.Post, new { id = "TheForm" }))
+    {
+
+
+    <br />
+
+    }
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+</html>               

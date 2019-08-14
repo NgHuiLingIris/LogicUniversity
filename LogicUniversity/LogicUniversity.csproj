@@ -365,6 +365,8 @@
     <Content Include="Views\Disbursements\Select.cshtml" />
     <Content Include="Views\ChargeBackDepartment\ShowChargeBackDepartment.cshtml" />
     <Content Include="TimePicker\LICENSE" />
+    <Content Include="Views\Trend\InventoryStatus.cshtml" />
+    <Content Include="Views\Trend\TwoMonthsCompare.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
