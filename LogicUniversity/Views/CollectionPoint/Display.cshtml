@@ -6,6 +6,25 @@
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
+
+@if (ViewBag.Message != null)
+{
+    @section scripts{
+        <script src="~/Scripts/toastr.js"></script>
+        <script>
+        $(document).ready(function () {
+
+
+            toastr.success('@ViewBag.Message')
+
+
+        });
+        </script>
+    }
+
+}
+
+
 <div class="container-fluid py-4">
     <h4 class="text-center text-none">Current Representative: @representative</h4>
     <h4 class="text-center text-none">Current Collection point: @collectionpoint</h4>

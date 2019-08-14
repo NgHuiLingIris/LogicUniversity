@@ -3,7 +3,7 @@
 @{
     var v0 = (StockAdjustmentVoucher)ViewData["s"];
     var count = (int)ViewData["count"];
-    var RetrievalId = (int)ViewData["RetrievalId"];
+    var RequisitionDetailsString = (string)ViewData["RequisitionDetailsString"];
     var DeptString = (string)ViewData["DeptString"];
 }
 
@@ -32,8 +32,9 @@
 {
     @Html.AntiForgeryToken()
     <input type="hidden" value="@count" name="count" />
-    <input type="hidden" value="@RetrievalId" name="RetrievalId" />
+    <input type="hidden" value="@RequisitionDetailsString" name="RequisitionDetailsString" />
     <input type="hidden" value="@DeptString" name="DeptString" />
+
     <div class="form-group" align="center">
         <table>
             <tr>

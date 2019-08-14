@@ -9,6 +9,23 @@
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
+@if (ViewBag.Message != null)
+{
+    @section scripts{
+        <script src="~/Scripts/toastr.js"></script>
+        <script>
+        $(document).ready(function () {
+
+
+                toastr.info('@ViewBag.Message')
+
+
+        });
+        </script>
+    }
+
+}
+
 <br />
 <h4 style="text-align:center">View Delegation</h4>
 <style>
@@ -42,9 +59,9 @@
     }
 </script>
 @{ if (msg != null)
-{
+    {
         @msg
-}
+    }
 }
 <table class="table">
     <tr>
@@ -73,7 +90,7 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @if (!(item.EndDate < DateTime.Now))
+                @if (!(item.EndDate < DateTime.Today))
                 {
                     @Html.ActionLink("Edit |", "EditDelegation", new { id = item.DelegationId })
                     @Html.ActionLink("Details |", "GetDelegationDetails", new { id = item.DelegationId })
@@ -87,4 +104,4 @@
 <div class="pagination">
     @Html.PagedListPager(Model, page => Url.Action("ViewDelegation", new { page }))
 </div>
-    <input type="submit" value="Back" onclick="back()" />
+<input type="submit" value="Back" onclick="back()" />

@@ -20,9 +20,17 @@ namespace LogicUniversity.Controllers
 
         // GET: Delegations
 
-        public ActionResult ManageDelegation()
+        public ActionResult ManageDelegation(string sessionId)
         {
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 
@@ -32,7 +40,8 @@ namespace LogicUniversity.Controllers
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             var delegations = db.Delegations.Include(d => d.Employee).Where(d=>d.Employee.DeptId==deptId).OrderByDescending(d=>d.StartDate);
             ViewData["msg"] =null;
-            return View(delegations.ToPagedList(page ?? 1, 10));
+            ViewBag.Message = TempData["toastmessage"];
+            return View(delegations.ToPagedList(page ?? 1, 5));
         }
 
         // GET: Delegations/Details/5
@@ -66,33 +75,40 @@ namespace LogicUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AppointDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
         {
+            DelegationService ds = new DelegationService();
+            List<string> msglist = new List<string>();
 
             if (ModelState.IsValid)
             {
                 int empId = (int)Session["empId"];
                 var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
-
+                ViewBag.EmployeeId = new SelectList(db.Employees.Where(d => d.Role == "DEP_STAFF" && d.DeptId == deptId), "EmployeeId", "EmployeeName");
                 int value = DateTime.Compare(delegation.StartDate, delegation.EndDate);
-                if (value > 0 || delegation.StartDate < DateTime.Now)
+                if (value > 0 || delegation.StartDate < DateTime.Today)
                 {
-                    return RedirectToAction("AppointDelegation", "Delegations");
+                    if(value>0)
+                    {
+                        msglist.Add("Enddate must follow Startdate");
+                    }
+                    else if(delegation.StartDate < DateTime.Today)
+                    {
+                        msglist.Add("Select date preceeds today's date");          
+                    }
+                    ViewData["list"] = msglist;
+                    return View("AppointDelegation");
                 }
                 else
                 {
-                    List<string> msglist = new List<string>();
-                    var case1 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate >= delegation.StartDate && d.EndDate > delegation.EndDate && d.Employee.DeptId == deptId).ToList();
-                    var case2 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate < delegation.StartDate && d.EndDate <= delegation.EndDate && d.Employee.DeptId == deptId).ToList();
+                    
+                    var case1 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate >= delegation.StartDate && d.EndDate >= delegation.EndDate && d.Employee.DeptId == deptId).ToList();
+                    var case2 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate <= delegation.StartDate && d.EndDate <= delegation.EndDate && d.Employee.DeptId == deptId).ToList();
                     var case3 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate >= delegation.StartDate && d.EndDate <= delegation.EndDate && d.Employee.DeptId == deptId).ToList();
                     var case4 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate < delegation.StartDate && d.EndDate > delegation.EndDate && d.Employee.DeptId == deptId).ToList();
-                    ViewBag.EmployeeId = new SelectList(db.Employees.Where(d => d.Role == "DEP_STAFF" && d.DeptId == deptId), "EmployeeId", "EmployeeName");
+        
                     if (case1.Count == 0 && case2.Count == 0 && case3.Count == 0 && case4.Count == 0)
                     {
-                        Employee emp = db.Employees.Find(delegation.EmployeeId);
-                        emp.Isdelegateded = "Y";
-                        db.Delegations.Add(delegation);
-                        db.SaveChanges();
-                        EmailService.SendNotification(delegation.EmployeeId,"Delegation Appointment reg.","You are delegated Department Head responsibility from "+delegation.StartDate+" to"+delegation.EndDate);
-                        EmailService.SendNotification(empId, "Delegation Appointment reg.",delegation.Employee.EmployeeName+" is delegated from "+ delegation.StartDate + "to" + delegation.EndDate);
+                        ds.AddDelegation(delegation, empId);
+                        TempData["toastmessage"] = "Success";
                         return RedirectToAction("ViewDelegation");
                     }
                     else
@@ -103,10 +119,8 @@ namespace LogicUniversity.Controllers
 
                             foreach (var item in case3)
                             {
-                                string name = item.Employee.EmployeeName.ToString();
-                                string startdate = (string)item.StartDate.ToString();
-                                string enddate = (string)item.EndDate.ToString();
-                                msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
+                                List<string>msg = ds.CaptureErrorMsg(item);
+                                msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
                             }
                             ViewData["list"] = msglist;
                             return View("AppointDelegation");
@@ -117,10 +131,8 @@ namespace LogicUniversity.Controllers
 
                             foreach (var item in case4)
                             {
-                                string name = item.Employee.EmployeeName.ToString();
-                                string startdate = (string)item.StartDate.ToString();
-                                string enddate = (string)item.EndDate.ToString();
-                                msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
+                                List<string> msg = ds.CaptureErrorMsg(item);
+                                msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
                             }
                             ViewData["list"] = msglist;
                             return View("AppointDelegation");
@@ -128,65 +140,95 @@ namespace LogicUniversity.Controllers
                   
                         else if (case1.Count != 0)
                         {
+                            int flag = 0;
                             foreach (var item in case1)
                             {
                                 if (item.StartDate > delegation.EndDate)
                                 {
-                                    Employee emp = db.Employees.Find(delegation.EmployeeId);
-                                    emp.Isdelegateded = "Y";
-                                    db.Delegations.Add(delegation);
-                                    db.SaveChanges();
-                                    EmailService.SendNotification(delegation.EmployeeId, "Delegation Appointment reg.", "You are delegated Department Head responsibility from " + delegation.StartDate + " to" + delegation.EndDate);
-                                    EmailService.SendNotification(empId, "Delegation Appointment reg.", delegation.Employee.EmployeeName + " is delegated from " + delegation.StartDate + "to" + delegation.EndDate);
+                                    flag++;
+                                }
+                                else
+                                {
+                                    List<string> msg = ds.CaptureErrorMsg(item);
+                                    msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
+                                }
+
+                            }
+                            if(flag==case1.Count&&case2.Count==0)
+                            {
+                                ds.AddDelegation(delegation, empId);
+                                TempData["toastmessage"] = "Success";
+                                return RedirectToAction("ViewDelegation");
+                            }
+                            else if(flag == case1.Count && case2.Count != 0)
+                            {
+                                int flag1 = 0;
+                                foreach (var item in case2)
+                                {
+                                    if (item.EndDate < delegation.StartDate)
+                                    {
+                                        flag1++;
+                                    }
+                                    else
+                                    {
+                                        List<string> msg = ds.CaptureErrorMsg(item);
+                                        msglist.Add(msg[0] + " is  deleagated from " + msg[1] + " to" + msg[2]);
+                                    }
+
+                                }
+                                if (flag1 == case2.Count)
+                                {
+                                    ds.AddDelegation(delegation, empId);
+                                    TempData["toastmessage"] = "Success";
                                     return RedirectToAction("ViewDelegation");
                                 }
                                 else
                                 {
-                                   
-                                    string name = item.Employee.EmployeeName.ToString();
-                                    string startdate = (string)item.StartDate.ToString();
-                                    string enddate = (string)item.EndDate.ToString();
-                                    msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate);
+                                    ViewData["list"] = msglist;
+                                    return View("AppointDelegation");
                                 }
 
+
                             }
-                            ViewData["list"] = msglist;
-                            return View("AppointDelegation");
+                            else
+                            {
+                                ViewData["list"] = msglist;
+                                return View("AppointDelegation");
+                            }
+                          
                         }
 
                         else if (case2.Count != 0)
                         {
-
+                            int flag = 0;
                             foreach (var item in case2)
                             {
                                 if (item.EndDate < delegation.StartDate)
                                 {
-                                    Employee emp = db.Employees.Find(delegation.EmployeeId);
-                                    emp.Isdelegateded = "Y";
-                                    db.Delegations.Add(delegation);
-                                    db.SaveChanges();
-                                    EmailService.SendNotification(delegation.EmployeeId, "Delegation Appointment reg.", "You are delegated Department Head responsibility from " + delegation.StartDate + " to" + delegation.EndDate);
-                                    EmailService.SendNotification(empId, "Delegation Appointment reg.", delegation.Employee.EmployeeName + " is delegated from " + delegation.StartDate + "to" + delegation.EndDate);
-                                    return RedirectToAction("ViewDelegation");
+                                    flag++;       
                                 }
                                 else
                                 {
-                                    string name = item.Employee.EmployeeName.ToString();
-                                    string startdate = (string)item.StartDate.ToString();
-                                    string enddate = (string)item.EndDate.ToString();
-                                    msglist.Add(name + " is already deleagated from " + startdate + " to" + enddate + " ");
-
+                                    List<string> msg = ds.CaptureErrorMsg(item);
+                                    msglist.Add(msg[0] + " is  deleagated from " + msg[1] + " to" + msg[2]);
                                 }
+                                
                             }
-                            ViewData["list"] = msglist;
-                            return View("AppointDelegation");
-
-
+                            if (flag == case2.Count)
+                            {
+                                ds.AddDelegation(delegation, empId);
+                                TempData["toastmessage"] = "Success";
+                                return RedirectToAction("ViewDelegation");
+                            }
+                            else
+                            {
+                                ViewData["list"] = msglist;
+                                return View("AppointDelegation");
+                            }
+                        
                         }
                        
                     }
-
-
 
                 }
 
@@ -196,6 +238,9 @@ namespace LogicUniversity.Controllers
         }
 
 
+
+
+       
 
         // GET: Delegations/Edit/5
         public ActionResult EditDelegation(int? id)
@@ -205,13 +250,27 @@ namespace LogicUniversity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Delegation delegation = db.Delegations.Find(id);
+            int empId = (int)Session["empId"];
+            var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
+            Employee emp = db.Employees.Find(delegation.EmployeeId);
+
             if (delegation == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", delegation.EmployeeId);
-            return View(delegation);
+            if (emp.DeptId == deptId && !(delegation.EndDate < DateTime.Today))
+            {
+                ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", delegation.EmployeeId);
+                return View(delegation);
+            }
+            else
+            {
+                return RedirectToAction("ViewDelegation");
+            }
         }
+
+
+
 
         // POST: Delegations/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -221,24 +280,338 @@ namespace LogicUniversity.Controllers
         public ActionResult EditDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
         {
             int empId = (int)Session["empId"];
+            var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
+            DelegationService ds = new DelegationService();
+            List<string> msglist = new List<string>();
             if (ModelState.IsValid)
             {
-                if (!(delegation.EndDate < DateTime.Now))
+
+                Delegation originalDelegation = db.Delegations.Find(delegation.DelegationId);
+                if (originalDelegation.StartDate < DateTime.Today)
                 {
-                    db.Entry(delegation).State = EntityState.Modified;
-                    db.SaveChanges();
-                    EmailService.SendNotification(delegation.EmployeeId, "Delegation Modification reg.", "Assigned delegation from" + delegation.StartDate + " to" + delegation.EndDate + " is modified");
-                   
+                    if (delegation.StartDate != originalDelegation.StartDate)
+                    {
+                        msglist.Add("Start Date cant be changed");
+                        ViewData["list"] = msglist;
+                        return RedirectToAction("EditDelegation");
+                    }
+                    else
+                    {
+
+                        ViewBag.EmployeeId = new SelectList(db.Employees.Where(d => d.Role == "DEP_STAFF" && d.DeptId == deptId), "EmployeeId", "EmployeeName");
+                        int value = DateTime.Compare(delegation.StartDate, delegation.EndDate);
+                        if (value > 0 || delegation.EndDate < DateTime.Today)
+                        {
+                            if (value > 0)
+                            {
+                                msglist.Add("Enddate must follow Startdate");
+                            }
+                            else if (delegation.EndDate < DateTime.Today)
+                            {
+                                msglist.Add("Enddate must follow today's date");
+                            }
+
+                            ViewData["list"] = msglist;
+                            return View("EditDelegation");
+                        }
+                        else
+                        {
+
+                            var case1 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate >= delegation.StartDate && d.EndDate >= delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+                            var case2 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate <= delegation.StartDate && d.EndDate <= delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+                            var case3 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate >= delegation.StartDate && d.EndDate <= delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+                            var case4 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate < delegation.StartDate && d.EndDate > delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+
+                            if (case1.Count == 0 && case2.Count == 0 && case3.Count == 0 && case4.Count == 0)
+                            {
+                                ds.saveDelegationChanges(delegation,empId);
+                                TempData["toastmessage"] = "Success";
+                                return RedirectToAction("ViewDelegation");
+                            }
+                            else
+                            {
+
+                                if (case3.Count != 0)
+                                {
+
+                                    foreach (var item in case3)
+                                    {
+                                        List<string> msg = ds.CaptureErrorMsg(item);
+                                        msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
+                                    }
+                                    ViewData["list"] = msglist;
+                                    return View("EditDelegation");
+                                }
+
+                                else if (case4.Count != 0)
+                                {
+
+                                    foreach (var item in case4)
+                                    {
+                                        List<string> msg = ds.CaptureErrorMsg(item);
+                                        msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
+                                    }
+                                    ViewData["list"] = msglist;
+                                    return View("EditDelegation");
+                                }
+
+                                else if (case1.Count != 0)
+                                {
+                                    int flag = 0;
+                                    foreach (var item in case1)
+                                    {
+                                        if (item.StartDate > delegation.EndDate)
+                                        {
+                                            flag++;
+                                        }
+                                        else
+                                        {
+                                            List<string> msg = ds.CaptureErrorMsg(item);
+                                            msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
+                                        }
+
+                                    }
+                                    if (flag == case1.Count && case2.Count == 0)
+                                    {
+                                        ds.saveDelegationChanges(delegation, empId);
+                                        TempData["toastmessage"] = "Success";
+                                        return RedirectToAction("ViewDelegation");
+                                    }
+                                    else if (flag == case1.Count && case2.Count != 0)
+                                    {
+                                        int flag1 = 0;
+                                        foreach (var item in case2)
+                                        {
+                                            if (item.EndDate < delegation.StartDate)
+                                            {
+                                                flag1++;
+                                            }
+                                            else
+                                            {
+                                                List<string> msg = ds.CaptureErrorMsg(item);
+                                                msglist.Add(msg[0] + " is  deleagated from " + msg[1] + " to" + msg[2]);
+                                            }
+
+                                        }
+                                        if (flag1 == case2.Count)
+                                        {
+                                            ds.saveDelegationChanges(delegation, empId);
+                                            TempData["toastmessage"] = "Success";
+                                            return RedirectToAction("ViewDelegation");
+                                        }
+                                        else
+                                        {
+                                            ViewData["list"] = msglist;
+                                            return View("EditDelegation");
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        ViewData["list"] = msglist;
+                                        return View("EditDelegation");
+                                    }
+
+                                }
+
+                                else if (case2.Count != 0)
+                                {
+                                    int flag = 0;
+                                    foreach (var item in case2)
+                                    {
+                                        if (item.EndDate < delegation.StartDate)
+                                        {
+                                            flag++;
+                                        }
+                                        else
+                                        {
+                                            List<string> msg = ds.CaptureErrorMsg(item);
+                                            msglist.Add(msg[0] + " is  deleagated from " + msg[1] + " to" + msg[2]);
+                                        }
+
+                                    }
+                                    if (flag == case2.Count)
+                                    {
+                                        ds.saveDelegationChanges(delegation, empId);
+                                        TempData["toastmessage"] = "Success";
+                                        return RedirectToAction("ViewDelegation");
+                                    }
+                                    else
+                                    {
+                                        ViewData["list"] = msglist;
+                                        return View("EditDelegation");
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                    }
+
                 }
+
                 else
                 {
-                    ViewData["msg"] = "This cant be edited as it is a past history";
-                    return RedirectToAction("ViewDelegation");
+                    ViewBag.EmployeeId = new SelectList(db.Employees.Where(d => d.Role == "DEP_STAFF" && d.DeptId == deptId), "EmployeeId", "EmployeeName");
+                    int value = DateTime.Compare(delegation.StartDate, delegation.EndDate);
+                    if (value > 0 || delegation.EndDate < DateTime.Today)
+                    {
+                        if (value > 0)
+                        {
+                            msglist.Add("Enddate must follow Startdate");
+                        }
+                        else if (delegation.EndDate < DateTime.Today)
+                        {
+                            msglist.Add("Enddate must follow today's date");
+                        }
+
+                        ViewData["list"] = msglist;
+                        return View("EditDelegation");
+                    }
+                    else
+                    {
+
+                        var case1 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate >= delegation.StartDate && d.EndDate >= delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+                        var case2 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate <= delegation.StartDate && d.EndDate <= delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+                        var case3 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate >= delegation.StartDate && d.EndDate <= delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+                        var case4 = db.Delegations.Include(d => d.Employee).Where(d => d.StartDate < delegation.StartDate && d.EndDate > delegation.EndDate && d.Employee.DeptId == deptId && d.DelegationId != delegation.DelegationId).ToList();
+
+                        if (case1.Count == 0 && case2.Count == 0 && case3.Count == 0 && case4.Count == 0)
+                        {
+                            ds.saveDelegationChanges( delegation, empId);
+                            TempData["toastmessage"] = "Success";
+                            return RedirectToAction("ViewDelegation");
+                        }
+                        else
+                        {
+
+                            if (case3.Count != 0)
+                            {
+
+                                foreach (var item in case3)
+                                {
+                                    List<string> msg = ds.CaptureErrorMsg(item);
+                                    msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
+                                }
+                                ViewData["list"] = msglist;
+                                return View("EditDelegation");
+                            }
+
+                            else if (case4.Count != 0)
+                            {
+
+                                foreach (var item in case4)
+                                {
+                                    List<string> msg = ds.CaptureErrorMsg(item);
+                                    msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
+                                }
+                                ViewData["list"] = msglist;
+                                return View("EditDelegation");
+                            }
+
+                            else if (case1.Count != 0)
+                            {
+                                int flag = 0;
+                                foreach (var item in case1)
+                                {
+                                    if (item.StartDate > delegation.EndDate)
+                                    {
+                                        flag++;
+                                    }
+                                    else
+                                    {
+                                        List<string> msg = ds.CaptureErrorMsg(item);
+                                        msglist.Add(msg[0] + " is deleagated from " + msg[1] + " to" + msg[2]);
+                                    }
+
+                                }
+                                if (flag == case1.Count && case2.Count == 0)
+                                {
+                                    ds.saveDelegationChanges(delegation, empId);
+                                    TempData["toastmessage"] = "Success";
+                                    return RedirectToAction("ViewDelegation");
+                                }
+                                else if (flag == case1.Count && case2.Count != 0)
+                                {
+                                    int flag1 = 0;
+                                    foreach (var item in case2)
+                                    {
+                                        if (item.EndDate < delegation.StartDate)
+                                        {
+                                            flag1++;
+                                        }
+                                        else
+                                        {
+                                            List<string> msg = ds.CaptureErrorMsg(item);
+                                            msglist.Add(msg[0] + " is  deleagated from " + msg[1] + " to" + msg[2]);
+                                        }
+
+                                    }
+                                    if (flag1 == case2.Count)
+                                    {
+                                        ds.saveDelegationChanges(delegation, empId);
+                                        TempData["toastmessage"] = "Success";
+                                        return RedirectToAction("ViewDelegation");
+                                    }
+                                    else
+                                    {
+                                        ViewData["list"] = msglist;
+                                        return View("EditDelegation");
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    ViewData["list"] = msglist;
+                                    return View("EditDelegation");
+                                }
+
+                            }
+
+                            else if (case2.Count != 0)
+                            {
+                                int flag = 0;
+                                foreach (var item in case2)
+                                {
+                                    if (item.EndDate < delegation.StartDate)
+                                    {
+                                        flag++;
+                                    }
+                                    else
+                                    {
+                                        List<string> msg = ds.CaptureErrorMsg(item);
+                                        msglist.Add(msg[0] + " is  deleagated from " + msg[1] + " to" + msg[2]);
+                                    }
+
+                                }
+                                if (flag == case2.Count)
+                                {
+                                    ds.saveDelegationChanges(delegation, empId);
+                                    TempData["toastmessage"] = "Success";
+                                    return RedirectToAction("ViewDelegation");
+                                }
+                                else
+                                {
+                                    ViewData["list"] = msglist;
+                                    return View("EditDelegation");
+                                }
+
+                            }
+
+                        }
+                    }
                 }
             }
-            ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", delegation.EmployeeId);
+            ViewBag.EmployeeId = new SelectList(db.Employees.Where(d => d.DeptId == deptId), "EmployeeId", "EmployeeName", delegation.EmployeeId);
             return View(delegation);
         }
+
+
+
+
 
         // GET: Delegations/Delete/5
         public ActionResult CancelDelegation(int? id)
@@ -260,22 +633,40 @@ namespace LogicUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            int empId = (int)Session["empId"];
+            var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             Delegation delegation = db.Delegations.Find(id);
             Employee emp = db.Employees.Find(delegation.EmployeeId);
-            var delegated = db.Delegations.Include(d => d.Employee).Where(d => d.DelegationId != id).ToList();
-            foreach (var item in delegated)
+            var delegated = db.Delegations.Include(d => d.Employee).Where(d => d.DelegationId != id&&d.Employee.DeptId==deptId).ToList();
+            var isDelegatedInFuture = true;
+            if (!(delegation.EndDate < DateTime.Today)&&emp.DeptId==deptId)
             {
-                if (item.EmployeeId == delegation.EmployeeId)
-                { emp.Isdelegateded = "Y"; }
-
+                foreach (var item in delegated)
+                {
+                    if (item.EmployeeId == delegation.EmployeeId && item.EndDate < DateTime.Today)
+                    {
+                        isDelegatedInFuture = false;
+                    }
+                    else
+                    {
+                        isDelegatedInFuture = true;
+                        break;
+                    }
+                }
+                if (isDelegatedInFuture == true)
+                {
+                    emp.Isdelegateded = "Y";
+                }
                 else
                 {
                     emp.Isdelegateded = "N";
                 }
-            }
 
-            db.Delegations.Remove(delegation);
-            db.SaveChanges();
+                db.Delegations.Remove(delegation);
+                db.SaveChanges();
+                EmailService.SendNotification(delegation.EmployeeId, "Delegation Cancellation Reg.", "Delegation("+delegation.StartDate+"-"+delegation.EndDate+" is cancelled hereafter");
+            }
+            TempData["toastmessage"] = "Successfully Cancelled";
             return RedirectToAction("ViewDelegation");
         }
 

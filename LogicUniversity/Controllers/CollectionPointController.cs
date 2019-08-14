@@ -1,11 +1,9 @@
 ﻿using LogicUniversity.Context;
 using LogicUniversity.Models;
-using System;
-using System.Collections.Generic;
+using LogicUniversity.Services;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace LogicUniversity.Controllers
@@ -16,9 +14,17 @@ namespace LogicUniversity.Controllers
 
         private LogicUniversityContext db = new LogicUniversityContext();
 
-        public ActionResult ManageCollection()
+        public ActionResult ManageCollection(string sessionId)
         {
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 
@@ -53,6 +59,7 @@ namespace LogicUniversity.Controllers
             //set to the new collectionpoint
             cp.CollectionLocationId = selection.ToString();
             db.SaveChanges();
+            TempData["successmsg"] = "Successfully changed the collection point";
             return RedirectToAction("Display", "CollectionPoint");
         }
 
@@ -93,26 +100,33 @@ namespace LogicUniversity.Controllers
                 Employee newrep = db.Employees.Find(emp.EmployeeId);
                 newrep.Role = "DEP_REP";
                 db.SaveChanges();
+                TempData["successmsg"] = "Successfully changed the representative";
                 return RedirectToAction("Display", "CollectionPoint");
             }
-
-
             return RedirectToAction("UpdateRepresentative", "CollectionPoint");
 
 
         }
 
-        public ActionResult Display()
+        public ActionResult Display(string sessionId)
         {
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
 
-            int empId = (int)Session["empId"];
-            var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
-            var currentRepresentative = db.Employees.Where(r => r.DeptId == deptId && r.Role == "DEP_REP").Select(x => x.EmployeeName).SingleOrDefault();
-            var collectionPoint = db.Departments.Where(r => r.DeptId == deptId).Select(r => r.CollectionLocationId).SingleOrDefault();
-            var currentCollectionPoint = db.CollectionPoints.Where(r => r.CollectionPointId.Equals(collectionPoint)).Select(r => r.LocationName).SingleOrDefault();
-            ViewData["rep"] = currentRepresentative;
-            ViewData["cp"] = currentCollectionPoint;
-            return View();
+                int empId = (int)Session["empId"];
+                var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
+                var currentRepresentative = db.Employees.Where(r => r.DeptId == deptId && r.Role == "DEP_REP").Select(x => x.EmployeeName).SingleOrDefault();
+                var collectionPoint = db.Departments.Where(r => r.DeptId == deptId).Select(r => r.CollectionLocationId).SingleOrDefault();
+                var currentCollectionPoint = db.CollectionPoints.Where(r => r.CollectionPointId.Equals(collectionPoint)).Select(r => r.LocationName).SingleOrDefault();
+                ViewData["rep"] = currentRepresentative;
+                ViewData["cp"] = currentCollectionPoint;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 
@@ -121,10 +135,18 @@ namespace LogicUniversity.Controllers
 
         //store
         // GET: CollectionPoints
-        public ActionResult ViewCollectionPoint()
+        public ActionResult ViewCollectionPoint(string sessionId)
         {
-            var collectionPoints = db.CollectionPoints.Include(c => c.Employee);
-            return View(collectionPoints.ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var collectionPoints = db.CollectionPoints.Include(c => c.Employee);
+                return View(collectionPoints.ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: CollectionPoints/Details/5

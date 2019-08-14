@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string sessionId = (string)ViewData["sessionId"];
+}
+
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -7,6 +12,7 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <style>
+
         .topnav {
             overflow: hidden;
             background-color: #333;
@@ -34,27 +40,38 @@
         body {
             margin: -55px auto;
         }
+        .btn {
+            background: none;
+            color: #0784bf;
+        }
+
     </style>
 
 </head>
+
 <body>
     <header>
-
         <div class="topnav">
-            <label><i class="fas fa-home"></i>@Html.ActionLink("Home", "StaffDashboard","Login") |  @Html.ActionLink("Product Catalogue", "Index","Products") | @Html.ActionLink("Store Feedback", "StaffDashboard")</label> <label style="float: right;"> @Html.ActionLink("Logout", "Login","Login") </label>
+            <label>
+                <i class="fas fa-home"></i>
+                <button class="btn" onclick="window.location.href = '/Login/StaffDashboard?sessionId=@sessionId';">Go to Dashboard</button>
+                <button class="btn" onclick="window.location.href = '/Products/Index?sessionId=@sessionId';">Go to Product Catalogue</button>
 
+
+                @*@Html.ActionLink("Dashboard", "StaffDashboard", "Login", new { sessionId = @sessionId })|  @Html.ActionLink("Product Catalogue", "Index", "Products") | @Html.ActionLink("Store Feedback", "StaffDashboard")*@
+            </label> <label style="float: right;">
+    <button class="btn" onclick="window.location.href = '/Login/Logout?sessionId=@sessionId';">Log out</button>
+    @*@Html.ActionLink("Logout", "Logout", "Login")*@
+</label>
         </div>
-
     </header>
-
     <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Logic University Application</p>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
-
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

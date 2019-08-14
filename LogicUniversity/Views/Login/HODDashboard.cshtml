@@ -1,44 +1,21 @@
-﻿
-
-@{
+﻿@{
     ViewBag.Title = "Department Head Dashboard";
 }
-
+@{
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/newst.css">
 
+</head>
 
 <h2>HOD Dashboard</h2>
 
-<a href="@Url.Action("ViewRequisition","RequisitionApprovals")" class="button">Requistion Approvals</a>
-<a href="@Url.Action("ViewAllRequisition","RequisitionApprovals")" class="button">View all Requistion </a>
-<a href="@Url.Action("ManageCollection","CollectionPoint")" class="button">Manage Collection</a>
-<a href="@Url.Action("ManageDelegation","Delegations")" class="button">Manage Delegation </a>
+<a href="@Url.Action("ViewRequisition","RequisitionApprovals",new { sessionId = sessionId })" class="button">Requistion Approvals</a>
+<a href="@Url.Action("ViewAllRequisition","RequisitionApprovals",new { sessionId = sessionId })" class="button">View all Requistion </a>
+<a href="@Url.Action("ManageCollection","CollectionPoint",new { sessionId = sessionId })" class="button">Manage Collection</a>
+<a href="@Url.Action("ManageDelegation","Delegations",new { sessionId = sessionId })" class="button">Manage Delegation </a>
 
-<style>
-    fieldset {
-        display: block;
-        margin-left: 2px;
-        margin-right: 2px;
-        padding-top: 0.35em;
-        padding-bottom: 0.625em;
-        padding-left: 0.75em;
-        padding-right: 0.75em;
-        border: 2px groove;
-    }
-
-    .button {
-        background-color: #0000ff; /* Green */
-        border: none;
-        color: white;
-        padding: 80px;
-        text-align: center;
-        display: inline-block;
-        font-size: 16px;
-        margin: 20px 20px;
-        cursor: pointer;
-        width: 20%;
-        border-radius: 2px;
-    }
-</style>

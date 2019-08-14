@@ -5,8 +5,13 @@
     var ICDList = (List<ItemCodeDisbursement>)ViewData["ICDList"];
     var count = (int)ViewData["count"];
     var DeptString = (string)ViewData["DeptString"];
+    var RequisitionDetailsString = (string)ViewData["RequisitionDetailsString"];
+    var dListAll = (List<Department>)ViewData["dListAll"];
+    var CpListAll = (List<CollectionPoint>)ViewData["CpListAll"];
 }
-
+@{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
 <h2>DisplayDisbursement</h2>
 @using (Html.BeginForm("DisplayDisbursement", "Disbursements"))
 
@@ -14,6 +19,43 @@
     @Html.AntiForgeryToken()
     <input type="hidden" value="@count" name="count" id="count" />
     <input type="hidden" value="@DeptString" name="DeptString" id="DeptString" />
+    <input type="hidden" value="@RequisitionDetailsString" name="RequisitionDetailsString" id="RequisitionDetailsString" />
+    
+        //make a unique id
+        int j = 0;
+    <table name="search">
+        <tr>
+            <td>
+                <select name="SearchDeptName">
+                    @foreach (Department dept in dListAll)
+                    {
+                        <option Id="SearchDeptName[@j]" name="SearchDeptName[@j]" typeof="text">
+                            @dept.DeptName
+                        </option>
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="submit" name="SearchDept" value="SearchDept" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select name="SearchCPId">
+                    @foreach (CollectionPoint Cp in CpListAll)
+                    {
+                        <option Id="SearchCP[@j]" name="SearchCP[@j]" typeof="text">
+                            @Cp.CollectionPointId
+                        </option>
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="submit" name="SearchCP" value="SearchCP" />
+            </td>
+        </tr>
+    </table>
+        
     <table>
         <thead>
         <td>Catalogue Item Code</td>

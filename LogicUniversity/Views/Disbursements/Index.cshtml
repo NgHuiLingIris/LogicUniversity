@@ -3,7 +3,9 @@
 @{
     ViewBag.Title = "Index";
 }
-
+@{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
 <h2>Index</h2>
 
 <p>
@@ -29,29 +31,30 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CollectionPoint.LocationName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Representative.EmployeeName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateCreated)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateDisbursed)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.DisbursementId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.DisbursementId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.DisbursementId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CollectionPoint.LocationName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Representative.EmployeeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateDisbursed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.DisbursementId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.DisbursementId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.DisbursementId })
+            </td>
+        </tr>
+    }
 
 </table>

@@ -8,8 +8,7 @@ using LogicUniversity.Models;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Net.Http;
-
-
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
@@ -30,147 +29,172 @@ namespace LogicUniversity.Controllers
             return View();
         }
 
-        public async Task<ActionResult> PlaceOrder(string supplier, List<PredictViewModel> predModel)
+        public async Task<ActionResult> PlaceOrder
+            (string supplier, List<PredictViewModel> predModel,string sessionId)
         {
-            Supplier supplier1 = new Supplier();
-            List<Products> products = new List<Products>();
-
-            ViewData["SupplierName"] = supplier;
-
-            //fetch largest PO number from database, and generate next for displaying 
-            var maxPO = (from c in db.Orders
-                         select c).Max(c => c.POnumber);
-            maxPO++;
-            ViewData["maxPO"] = maxPO;
-
-            //fetch list of products from Supplier 
-            var quest = from a in db.Suppliers
-                        join b in db.Products
-                        on a.SupplierId equals b.Supplier1
-                        where a.SupplierName == supplier
-                        select b;
-            products = quest.ToList();
-            supplier1.Products = products;
-
-            using (var client = new HttpClient())
+            if (Sessions.IsValidSession(sessionId))
             {
+                ViewData["sessionId"]=sessionId;
 
-                //Machine learning:
-                predModel = new List<PredictViewModel>();
-                foreach (Products p in products)
+                Supplier supplier1 = new Supplier();
+                List<Products> products = new List<Products>();
+
+                ViewData["SupplierName"] = supplier;
+
+                //fetch largest PO number from database, and generate next for displaying 
+                var maxPO = 1;
+                if ((from c in db.Orders select c).Any())
                 {
-                    PredictViewModel element = new PredictViewModel
-                    {
-                        ItemCode = int.Parse(p.ItemCode.Substring(1, p.ItemCode.Length - 1)),
-                        Month = DateTime.Now.Month,
-                    };
-                    predModel.Add(element);
-                }
-
-                HttpResponseMessage res = await client.PostAsJsonAsync("http://127.0.0.1:5000/", predModel);
-
-                if (res.IsSuccessStatusCode)
-                {
-                    // pass the result by setting the Viewdata property
-                    // have to read as string for the data in response.body
-                    ViewData["Message"] = res.Content.ReadAsStringAsync().Result;
-
-                    //to deserialize the message in to string array
-                    string message = res.Content.ReadAsStringAsync().Result;
-                    Debug.WriteLine(message);
-                    string[] split = message.Split(new Char[] { '"', '[', ']', ',' });
-                    split = split.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                    split = split.Where(x => x != "\n").ToArray();
-                    Debug.WriteLine(split.Length);
-                    List<string> outcomes = new List<string>();
-                    foreach (string s in split)
-                    {
-                        Debug.WriteLine("it is: " + s);
-                        outcomes.Add(s);
-                    }
-
-                    ViewData["outcomes"] = outcomes;
-                    supplier1.Products = products;
-                    return View(supplier1);
+                    maxPO = (from c in db.Orders
+                             select c).Max(c => c.POnumber);
+                    maxPO++;
                 }
                 else
+
+                    ViewData["maxPO"] = maxPO;
+
+                //fetch list of products from Supplier 
+                var quest = from a in db.Suppliers
+                            join b in db.Products
+                            on a.SupplierId equals b.Supplier1
+                            where a.SupplierName == supplier
+                            select b;
+                products = quest.ToList();
+                supplier1.Products = products;
+
+                using (var client = new HttpClient())
                 {
-                    return View("Error");
+
+                    //Machine learning:
+                    predModel = new List<PredictViewModel>();
+                    foreach (Products p in products)
+                    {
+                        PredictViewModel element = new PredictViewModel
+                        {
+                            ItemCode = int.Parse(p.ItemCode.Substring(1, p.ItemCode.Length - 1)),
+                            Month = DateTime.Now.Month,
+                        };
+                        predModel.Add(element);
+                    }
+
+                    HttpResponseMessage res = await client.PostAsJsonAsync("http://127.0.0.1:5000/", predModel);
+
+                    if (res.IsSuccessStatusCode)
+                    {
+                        // pass the result by setting the Viewdata property
+                        // have to read as string for the data in response.body
+                        ViewData["Message"] = res.Content.ReadAsStringAsync().Result;
+
+                        //to deserialize the message in to string array
+                        string message = res.Content.ReadAsStringAsync().Result;
+                        Debug.WriteLine(message);
+                        string[] split = message.Split(new Char[] { '"', '[', ']', ',' });
+                        split = split.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                        split = split.Where(x => x != "\n").ToArray();
+                        Debug.WriteLine(split.Length);
+                        List<string> outcomes = new List<string>();
+                        foreach (string s in split)
+                        {
+                            Debug.WriteLine("it is: " + s);
+                            outcomes.Add(s);
+                        }
+
+                        ViewData["outcomes"] = outcomes;
+                        supplier1.Products = products;
+                        return View(supplier1);
+                    }
+                    else
+                    {
+                        return View("Error");
+                    }
                 }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
             }
         }
 
-        public ActionResult PlaceOrderSuccess(FormCollection form)
+        public ActionResult PlaceOrderSuccess(FormCollection form,string sessionId)
         {
-            //fetch product list base on supplier name
-            string supplier = form["Supplier"];
-            var quest = from a in db.Suppliers
-                        join b in db.Products
-                        on a.SupplierId equals b.Supplier1
-                        where a.SupplierName == supplier
-                        select b;
-            List<Products> AllProducts = quest.ToList();
-
-            //generate a string list of user input on reorder quantity
-            List<string> ReOrderQtyList = new List<string>();
-            for (int i = 0; i < AllProducts.Count; i++)
+            if (Sessions.IsValidSession(sessionId))
             {
-                ReOrderQtyList.Add(form["Products[" + i + "].ReorderQty"]);
-            }
+                ViewData["sessionId"] = sessionId;
 
-            List<ReorderResult> tempList = new List<ReorderResult>();
-            for (int i = 0; i < AllProducts.Count; i++)
-            {
-                tempList.Add(new ReorderResult
+                //fetch product list base on supplier name
+                string supplier = form["Supplier"];
+                var quest = from a in db.Suppliers
+                            join b in db.Products
+                            on a.SupplierId equals b.Supplier1
+                            where a.SupplierName == supplier
+                            select b;
+                List<Products> AllProducts = quest.ToList();
+
+                //generate a string list of user input on reorder quantity
+                List<string> ReOrderQtyList = new List<string>();
+                for (int i = 0; i < AllProducts.Count; i++)
                 {
-                    Description = AllProducts[i].Description,
-                    UOM = AllProducts[i].UOM,
-                    ReorderQty = double.Parse(ReOrderQtyList[i])
-                });
-            }
-            //remove the products that have zero reorder quantity         
-            tempList.RemoveAll(l => l.ReorderQty == 0);
+                    ReOrderQtyList.Add(form["Products[" + i + "].ReorderQty"]);
+                }
 
-            ViewData["Products"] = tempList;
-
-            string date = Request["datepicker"];
-            string time = Request["SelectedTime"];
-
-            //get date 
-            DateTime datetime = DateTime.Parse(date);
-            //calculate hours and minutes
-            int hours = int.Parse(time.Substring(0, 2));
-            int minutes = int.Parse(time.Substring(3, 2));
-            //add hours and minutes to date
-            datetime = datetime.AddHours(hours);
-            datetime = datetime.AddMinutes(minutes);
-            ViewData["date"] = datetime;
-
-            //update database
-            Order order = new Order
-            {
-                SupplierCode = supplier,
-                Status = "Pending",
-                DateOrdered = DateTime.Now,
-                DateDelivery = datetime,
-            };
-            db.Orders.Add(order);
-            List<OrderDetail> orderDetails = new List<OrderDetail>();
-            for (int i = 0; i < AllProducts.Count; i++)
-            {
-                orderDetails.Add(new OrderDetail
+                List<ReorderResult> tempList = new List<ReorderResult>();
+                for (int i = 0; i < AllProducts.Count; i++)
                 {
-                    PONumber = order.POnumber,
-                    ItemCode = AllProducts[i].ItemCode,
-                    Quantity = double.Parse(ReOrderQtyList[i]),
-                });
+                    tempList.Add(new ReorderResult
+                    {
+                        Description = AllProducts[i].Description,
+                        UOM = AllProducts[i].UOM,
+                        ReorderQty = double.Parse(ReOrderQtyList[i])
+                    });
+                }
+                //remove the products that have zero reorder quantity         
+                tempList.RemoveAll(l => l.ReorderQty == 0);
+
+                ViewData["Products"] = tempList;
+
+                string date = Request["datepicker"];
+                string time = Request["SelectedTime"];
+
+                //get date 
+                DateTime datetime = DateTime.Parse(date);
+                //calculate hours and minutes
+                int hours = int.Parse(time.Substring(0, 2));
+                int minutes = int.Parse(time.Substring(3, 2));
+                //add hours and minutes to date
+                datetime = datetime.AddHours(hours);
+                datetime = datetime.AddMinutes(minutes);
+                ViewData["date"] = datetime;
+
+                //update database
+                Order order = new Order
+                {
+                    SupplierCode = supplier,
+                    Status = "Pending",
+                    DateOrdered = DateTime.Now,
+                    DateDelivery = datetime,
+                };
+                db.Orders.Add(order);
+                List<OrderDetail> orderDetails = new List<OrderDetail>();
+                for (int i = 0; i < AllProducts.Count; i++)
+                {
+                    orderDetails.Add(new OrderDetail
+                    {
+                        PONumber = order.POnumber,
+                        ItemCode = AllProducts[i].ItemCode,
+                        Quantity = double.Parse(ReOrderQtyList[i]),
+                    });
+                }
+
+                orderDetails.RemoveAll(l => l.Quantity == 0);
+                db.OrderDetails.AddRange(orderDetails);
+
+                db.SaveChanges();
+                return View();
             }
-
-            orderDetails.RemoveAll(l => l.Quantity == 0);
-            db.OrderDetails.AddRange(orderDetails);
-
-            db.SaveChanges();
-            return View();
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }     
         }
     }
 
