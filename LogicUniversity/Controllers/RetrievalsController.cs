@@ -37,7 +37,6 @@ namespace LogicUniversity.Controllers
             foreach (Department d in dList)
             {
                 List<RequisitionDetails> rdList2 = InputRDList.Where(rd => rd.Status == null).Where(rd => rd.Requisition.Department == d.DeptName).ToList();
-                //List<Requisition> requisitionByDept = db.Requisition.Where(r => r.Department == d.DeptName).Where(r => r.Status == "PENDING").ToList();
                 foreach (RequisitionDetails r in rdList2)
                 {
                     rdListAll.Add(r);
@@ -76,7 +75,6 @@ namespace LogicUniversity.Controllers
                     Department d0 = db.Departments.FirstOrDefault(s => s.DeptName == d.Requisition.Department);
                     if (DeptName.Any(s => s == d0))
                     {
-                        //get position of department in DeptName list
                         int idx = DeptName.IndexOf(d0);
                         TotalNeeded = TotalNeeded + d.Quantity;
                         NeededList[idx] = NeededList[idx] + d.Quantity;
@@ -147,7 +145,6 @@ namespace LogicUniversity.Controllers
         }
         public List<RetrievalDetail> AddRetrievalDetailToRdList(List<RetrievalDetail> rdList,string itemcode,int retrievedqty,int TotalNeeded,string Id)
         {
-            //AddRetrievalDetailToRdList
             RetrievalDetail rd = new RetrievalDetail();
             rd.ItemCode = itemcode;
             rd.QuantityRetrieved = retrievedqty;
@@ -162,12 +159,9 @@ namespace LogicUniversity.Controllers
         {
             int count = int.Parse(Request.Form["count"]);
             string DeptString = "";
-            //StockAdjustmentVoucher s = db.StockAdjustmentVouchers.FirstOrDefault(s0=>s0.
             StockAdjustmentVoucher s = PrepareVoucher();
             Retrieval r = PrepareRetrieval();
             List<RetrievalDetail> rdList = new List<RetrievalDetail>();
-            //Requisition SplitRequisition = new Requisition();
-            //List<RequisitionDetails> SplitRDList = new List<RequisitionDetails>();
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i < count; i++)
             {
@@ -184,12 +178,10 @@ namespace LogicUniversity.Controllers
                 List<RequisitionDetails> requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
                 requisitiondetaillist = RetrieveRequisitionDetailsByDepartment(requisitiondetaillist, dList, requisitiondetaillist1);
                 requisitiondetaillist = IncludeSaveAllRequisitionDetails(requisitiondetaillist);
-                //the requisition detail list is already by department and itemcode
                 if (TotalNeeded != retrievedqty)
                     {
                     sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, retrievedqty - TotalNeeded,null);
                     requisitiondetaillist = requisitiondetaillist.Where(q => q.ItemCode == itemcode).OrderBy(w=>w.Requisition.Date).ToList();
-                    //go down each list
 
                     for(int j = 0; j< requisitiondetaillist.Count(); j++)
                     {
@@ -234,9 +226,7 @@ namespace LogicUniversity.Controllers
                 ViewData["s"] = s;
                 ViewData["count"] = sList.Count();
                 ViewData["RequisitionDetailsString"] = r.RequisitionString;
-                //ViewData["RetrievalId"] = r.RetrievalId;
                 ViewData["DeptString"] = DeptString;
-                //can bring dept string here
                 return View("AdjustRetrieval",s);
             }
             else
@@ -261,8 +251,6 @@ namespace LogicUniversity.Controllers
             {
                 c.Status = "Retrieved";
                 r.RequisitionString = r.RequisitionString + "," + c.RequisitionDetailsId;
-                //will work on method to check if item is retrieved here, if not put 'PENDING'
-                //c.Requisition.Status = "COMPLETE";
                 db.Entry(c).State = EntityState.Modified;
                 db.SaveChanges();
             }
@@ -272,10 +260,8 @@ namespace LogicUniversity.Controllers
         {
             string VoucherId = Request.Form["Id"];
             string DeptString = Request.Form["DeptString"];
-            //int RetrievalId = int.Parse(Request.Form["RetrievalId"]);
             string RequisitionDetailsString = Request.Form["RequisitionDetailsString"];
             int count = int.Parse(Request.Form["count"]);
-            //StockAdjustmentVoucher S = db.StockAdjustmentVouchers.FirstOrDefault(s1 => s1.Id == VoucherId);
             List<StockAdjustmentVoucherDetail> sList = db.StockAdjustmentVoucherDetails.Where(sd1 => sd1.StockAdjustmentVoucherId == VoucherId).ToList();
             for (int i = 0; i< count; i++)
             {
@@ -286,7 +272,7 @@ namespace LogicUniversity.Controllers
                 if (sList.Any(a => a.ItemCode.Contains(itemcode)))
                 {
                     StockAdjustmentVoucherDetail s0 = sList.Find(b => b.ItemCode == itemcode);
-                    s0.QuantityAdjusted = s0.QuantityAdjusted + qtyadjusted;
+                    //s0.QuantityAdjusted = s0.QuantityAdjusted + qtyadjusted;
                     s0.Reason = "RETRIEVAL: "+reason;
                 }
                 else
@@ -294,8 +280,6 @@ namespace LogicUniversity.Controllers
                     sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, qtyadjusted,reason);
                 }
             }
-            //StockAdjustmentVoucher s = new StockAdjustmentVoucher();
-            //StockAdjustmentVouchersController c = new StockAdjustmentVouchersController();
             AllocateAuthorizer(sList);
 
             ViewData["count"] = count;
@@ -332,17 +316,12 @@ namespace LogicUniversity.Controllers
                 r1.Department = d1.DeptName;
                 db.Entry(r1).State = EntityState.Modified;
                 db.SaveChanges();
-                //to factorise
-                //entity state saved and modified
             }
             return requisitiondetaillist1;
         }
                         
-    //Retrieval allocate authorizer comes here
     public List<StockAdjustmentVoucherDetail> AllocateAuthorizer(List<StockAdjustmentVoucherDetail> sDetailList)
         {
-            //List<StockAdjustmentVoucherDetail> sDetailList = stockAdjustmentVoucher.StockAdjustmentVoucherDetails;
-
             foreach (StockAdjustmentVoucherDetail d0 in sDetailList)
             {
                 string itemcode = d0.ItemCode;

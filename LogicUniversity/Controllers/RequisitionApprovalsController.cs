@@ -56,7 +56,7 @@ namespace LogicUniversity.Controllers
             //
             //should be grouped by department
 
-            List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING").OrderByDescending(s => s.Date).ToList();
+            List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING" || s.Status=="OUTSTANDING").OrderByDescending(s => s.Date).ToList();
             List<Requisition> reqByDept = new List<Requisition>();
             foreach (Requisition r in reqListAll)
             {
