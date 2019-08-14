@@ -53,9 +53,13 @@ namespace LogicUniversity.Controllers
         [HttpGet]
         public ActionResult SCRequisitionView()
         {
-            //
-            //should be grouped by department
+            //------------------Prepare SCRequisitionViewPage-------
             List<CollectionPoint> CPList = db.CollectionPoints.ToList();
+            CPList.Insert(0, new CollectionPoint());
+            List<string> StatusList = new List<string>{ "", "PENDING", "OUTSTANDING" };
+            ViewData["CPList"] = CPList;
+            ViewData["StatusList"] = StatusList;
+            //---------------------END HERE----------------------
             List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING" || s.Status=="OUTSTANDING").OrderByDescending(s => s.Date).ToList();
             List<Requisition> reqByDept = new List<Requisition>();
             foreach (Requisition r in reqListAll)
@@ -71,18 +75,14 @@ namespace LogicUniversity.Controllers
                     reqByDept.Add(r);
                 }
             }
-            //filter the top
 
             List<Requisition> reqList = new List<Requisition>();
             foreach (Requisition req in reqByDept)
             {
                 reqList.Add(req);
             }
-            //reqList = db.Requisition.ToList();
-            int count = reqByDept.Count();
-            ViewData["count"] = count;
+            ViewData["count"] = reqList.Count();
             ViewData["reqList"] = reqList;
-            ViewData["CPList"] = CPList;
             return View(reqList);
         }
         [HttpPost]
@@ -101,34 +101,32 @@ namespace LogicUniversity.Controllers
 
                 ViewData["count"] = reqList.Count();
                 ViewData["reqList"] = reqList;
-                ViewData["CPList"] = db.CollectionPoints.ToList();
+                //------------------Prepare SCRequisitionViewPage-------
+                List<CollectionPoint> CPList = db.CollectionPoints.ToList();
+                CPList.Insert(0, new CollectionPoint());
+                List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
+                ViewData["CPList"] = CPList;
+                ViewData["StatusList"] = StatusList;
+                //---------------------END HERE----------------------
                 return View(reqList);
             }
             else if (Request.Form["retrieve"] != null)
             {
                 List<Requisition> SelectedRequests = new List<Requisition>();
                 int count = int.Parse(Request.Form["count"]);
-                //for(int i = 0; i<)
                 string PendingDeptRequisition = ",";
                 for (int i = 0; i < count; i++)
                 {
                     if (Request.Form["Requisition[" + i + "].toretrieve"] != null)
                     {
                         string dept = Request.Form["Requisition[" + i + "].toretrieve"];
-                        //Department d0 = new Department();
-                        //d0 = db.Departments.FirstOrDefault(d => d.DeptName == dept);
                         PendingDeptRequisition = PendingDeptRequisition + dept + ",";
-                        //retrieve the requisition id
-                        //redirect action to create retrieval
 
                     }
-                    //string checking = Request.Form["Requisition[0].toretrieve"];//on
-                    //string checking1 = Request.Form["Requisition[1].toretrieve"];//null
                 }
 
                 return RedirectToAction("Create", "Retrievals", new { PendingDeptRequisition = PendingDeptRequisition });
-
-                //Debug.WriteLine("");
+                
             }
 
             ViewData["reqList"] = reqList;
@@ -199,7 +197,12 @@ namespace LogicUniversity.Controllers
 
         public List<Requisition> Search(string fromdate, string todate, string cp, string status)
         {
-            List<Requisition> searchList = new List<Requisition>();
+            //put search list at the back
+            //string SearchCriteria = "";
+            List<Requisition> SearchList = new List<Requisition>();
+            List<Requisition> DateList = new List<Requisition>();
+            List<Requisition> CPList = new List<Requisition>();
+            List<Requisition> StatusList = new List<Requisition>();
             if (cp != null)
             {
                 List<Department> DepartmentInCp = db.Departments.Where(d => d.CollectionLocationId == cp).ToList();
@@ -208,24 +211,48 @@ namespace LogicUniversity.Controllers
                     List<Requisition> searchListByDept = db.Requisition.Where(r => r.Department == d1.DeptName).ToList();
                     foreach(Requisition r1 in searchListByDept)
                     {
-                        searchList.Add(r1);
+                        CPList.Add(r1);
                     }
                 }
+                SearchList = AddOrMerge(SearchList, CPList);
+                //SearchCriteria = SearchCriteria + "CP";
             }
-            //PENDING1
-            //ignore collection point first. there should be a foreign key that links with department.
-            //if status is null, query does not work. all are compulsatory fields
-            else
+            if(fromdate!="" && todate!= "")
             {
                 DateTime startdate = Convert.ToDateTime(fromdate);
                 DateTime enddate = Convert.ToDateTime(todate);
-                searchList = db.Requisition.Where(i => i.Status == status)
+                DateList = db.Requisition.Where(i => i.Status == status)
                     .Where(j => j.Date >= startdate && j.Date <= enddate).Include(k => k.RequisitionDetails).ToList();
+                SearchList = AddOrMerge(SearchList, DateList);
+                //SearchCriteria = SearchCriteria + "DATE";
             }
-
-            return searchList;
+            if (status != "")
+            {
+                StatusList = db.Requisition.Where(r1 => r1.Status == status).ToList();
+                SearchList = AddOrMerge(SearchList, StatusList);
+                //SearchCriteria = SearchCriteria + "STATUS";
+            }
+            //if (SearchCriteria.Contains("STATUS")&& SearchCriteria.Contains("CP"))
+            //{
+            //    searchList = StatusList.Intersect(CPList).ToList();
+            //}
+            return SearchList;
         }
-
+        public List<Requisition> AddOrMerge(List<Requisition> SearchList, List<Requisition> MergingList)
+        {
+            if (SearchList.Count() == 0)//nothing inside
+            {
+                foreach (Requisition r in MergingList)
+                {
+                    SearchList.Add(r);
+                }
+            }
+            else
+            {
+                SearchList = SearchList.Intersect(MergingList).ToList();
+            }
+            return SearchList;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

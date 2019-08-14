@@ -1,9 +1,11 @@
 ﻿@using LogicUniversity.Models
+@using MvcBootstrapTimepicker;
 
 @{
     var reqList = (List<Requisition>)ViewData["reqList"];
     var count = (int)ViewData["count"];
     var CPList = (List<CollectionPoint>)ViewData["CPList"];
+    var StatusList = (List<string>)ViewData["StatusList"];
 }
 
 @{
@@ -30,22 +32,35 @@
     <table>
         <tr>
             <td>From date: </td>
-            <td><input type="text" name="fromdate" id="fromdate" /></td>
+            <td><input type="text" id="datepicker" name="fromdate"></td>
             <td>Collection Point: </td>
-            <td><select name="SelectedCP">
+            <td>
+                <select name="SelectedCP">
                     @foreach (CollectionPoint cp in CPList)
                     {
                         <option Id="CollectionPoint[@j]" name="CollectionPoint[@j]" value="@cp.CollectionPointId" typeof="text">
                             @cp.LocationName
                         </option>
                     }
-                </select></td>
+                </select>
+            </td>
         </tr>
         <tr>
             <td>To date: </td>
-            <td><input type="text" name="todate" id="todate" /></td>
+            <td>
+                <input type="text" id="datepicker" name="todate">
+            </td>
             <td>Status: </td>
-            <td><input type="text" name="status" id="status" /></td>
+            <td>
+                <select name="status">
+                    @foreach (string Status in StatusList)
+                    {
+                        <option Id="Status[@j]" name="Status[@j]" value="@Status" typeof="text">
+                            @Status
+                        </option>
+                    }
+                </select>
+            </td>
         </tr>
         <tr>
 
@@ -54,54 +69,114 @@
         </tr>
     </table>
     <input type="hidden" value=@count name="count" id="count" />
+    @*---DATEPICKER TEST STARTS HERE---*@
+    <div>
+        <span style="display:inline-block;">
+            @*date picker:*@
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+                <title>Pikaday - showDaysInNextAndPreviousMonths example</title>
+                <meta name="author" content="Ramiro Rikkert">
+                <link rel="stylesheet" href="../css/pikaday.css">
+                @*<link rel="stylesheet" href="../css/site.css">*@
+            </head>
+            <body>
+                @*<a href="https://github.com/Pikaday/Pikaday"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>*@
+            </body>
+        </html>
+    </span>
 
-    <table>
+    <span style="display:inline-block; ">
+        @*time picker*@
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style type="text/css">
+                body {
+                    margin-left: 10pt;
+                    padding: 10pt;
+                }
 
-        <tr>
-            <td></td>
+                .TimePickerWidth {
+                    width: 150px;
+                }
+            </style>
+        </head>
+        <body>
+            <script src="../pikaday.js"></script>
+            <script>
+                var disable = false, picker = new Pikaday({
+                    field: document.getElementById('datepicker'),
+                    firstDay: 1,
+                    minDate: new Date(2000, 0, 1),
+                    maxDate: new Date(2050, 12, 31),
+                    yearRange: [2000, 2050],
+                    showDaysInNextAndPreviousMonths: true,
+                    enableSelectionDaysInNextAndPreviousMonths: true,
+                });
+            </script>
+            <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+            <link href="~/TimePicker/bootstrap-timepicker.css" rel="stylesheet" />
+            @*<link href="~/TimePicker/MvcBootstrapTimepicker.css" rel="stylesheet" />*@
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+            <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+            <script src="~/TimePicker/bootstrap-timepicker.js" type="text/javascript"></script>
+            <script src="~/TimePicker/MvcBootstrapTimepicker.js" type="text/javascript"></script>
+        </body>
+    </html>
+</span>
+</div>
+@*---DATEPICKER TEST ENDS HERE---*@
+<table>
+
+    <tr>
+        <td></td>
+        <td>Date </td>
+        <td>Status </td>
+        <td>Department </td>
+    </tr>
+    @{
+        //To make unique Id
+        int i = 0;
+        foreach (var item in reqList)
+        {
+
+            <tr>
+                <td>
+                    <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" value=@Html.DisplayFor(model => item.Department) />
+                </td>
+                <td>@Html.DisplayFor(model => item.Date)</td>
+                <td>@Html.DisplayFor(model => item.Status)</td>
+                <td>@Html.DisplayFor(model => item.Department)</td>
+            </tr>
+            i++;
+        }
+    }
+    @*
+            <tr>
+            <td>Requisition Id </td>
+            <td>Employee Id </td>
             <td>Date </td>
             <td>Status </td>
+            <td>Remarkss </td>
+            <td>Approver Id </td>
             <td>Department </td>
         </tr>
-        @{
-            //To make unique Id
-            int i = 0;
-            foreach (var item in reqList)
-            {
-
-                <tr>
-                    <td>
-                        <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" value=@Html.DisplayFor(model => item.Department) />
-                    </td>
-                    <td>@Html.DisplayFor(model => item.Date)</td>
-                    <td>@Html.DisplayFor(model => item.Status)</td>
-                    <td>@Html.DisplayFor(model => item.Department)</td>
-                </tr>
-                i++;
-            }
-        }
-        @*
-                <tr>
-                <td>Requisition Id </td>
-                <td>Employee Id </td>
-                <td>Date </td>
-                <td>Status </td>
-                <td>Remarkss </td>
-                <td>Approver Id </td>
-                <td>Department </td>
+        @foreach (var requisition in reqList)
+        {
+            <tr>
+                <td>@Html.DisplayFor(model => requisition.RequisitionId)</td>
+                <td>@Html.DisplayFor(model => requisition.EmployeeId)</td>
+                <td>@Html.DisplayFor(model => requisition.Date)</td>
+                <td>@Html.DisplayFor(model => requisition.Status)</td>
+                <td>@Html.DisplayFor(model => requisition.Remarks)</td>
+                <td>@Html.DisplayFor(model => requisition.ApproverId)</td>
+                <td>@Html.DisplayFor(model => requisition.Department)</td>
             </tr>
-            @foreach (var requisition in reqList)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(model => requisition.RequisitionId)</td>
-                    <td>@Html.DisplayFor(model => requisition.EmployeeId)</td>
-                    <td>@Html.DisplayFor(model => requisition.Date)</td>
-                    <td>@Html.DisplayFor(model => requisition.Status)</td>
-                    <td>@Html.DisplayFor(model => requisition.Remarks)</td>
-                    <td>@Html.DisplayFor(model => requisition.ApproverId)</td>
-                    <td>@Html.DisplayFor(model => requisition.Department)</td>
-                </tr>
-            }
-        *@
-    </table>
+        }
+    *@
+</table>
 }
