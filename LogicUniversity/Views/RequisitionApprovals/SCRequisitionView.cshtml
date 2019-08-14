@@ -3,6 +3,7 @@
 @{
     var reqList = (List<Requisition>)ViewData["reqList"];
     var count = (int)ViewData["count"];
+    var CPList = (List<CollectionPoint>)ViewData["CPList"];
 }
 
 @{
@@ -25,12 +26,20 @@
 
 @using (Html.BeginForm())
 {
+    int j = 0;
     <table>
         <tr>
             <td>From date: </td>
             <td><input type="text" name="fromdate" id="fromdate" /></td>
             <td>Collection Point: </td>
-            <td><input type="text" name="cp" id="cp" /></td>
+            <td><select name="SelectedCP">
+                    @foreach (CollectionPoint cp in CPList)
+                    {
+                        <option Id="CollectionPoint[@j]" name="CollectionPoint[@j]" value="@cp.CollectionPointId" typeof="text">
+                            @cp.LocationName
+                        </option>
+                    }
+                </select></td>
         </tr>
         <tr>
             <td>To date: </td>

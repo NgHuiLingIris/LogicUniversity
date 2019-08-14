@@ -55,7 +55,7 @@ namespace LogicUniversity.Controllers
         {
             //
             //should be grouped by department
-
+            List<CollectionPoint> CPList = db.CollectionPoints.ToList();
             List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING" || s.Status=="OUTSTANDING").OrderByDescending(s => s.Date).ToList();
             List<Requisition> reqByDept = new List<Requisition>();
             foreach (Requisition r in reqListAll)
@@ -65,11 +65,6 @@ namespace LogicUniversity.Controllers
                 r.Employee.Department = db.Departments.FirstOrDefault(c=>c.DeptId == e.DeptId);
                 r.Department = r.Employee.Department.DeptName;
                 string deptName = r.Department;
-                //var d0 = db.Departments.FirstOrDefault(a => a.DeptName == deptName);
-                //Department d1 = d0;
-                //retrieve employee here
-                //Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
-                
 
                 if (!reqByDept.Any(s => s.Department.Contains(r.Department)))
                 {
@@ -87,7 +82,7 @@ namespace LogicUniversity.Controllers
             int count = reqByDept.Count();
             ViewData["count"] = count;
             ViewData["reqList"] = reqList;
-
+            ViewData["CPList"] = CPList;
             return View(reqList);
         }
         [HttpPost]
@@ -97,12 +92,17 @@ namespace LogicUniversity.Controllers
             if (Request.Form["search"] != null)
             {
                 string fromdate = Request.Form["fromdate"];
-                string cp = Request.Form["cp"];
+                string cp = Request.Form["SelectedCP"];
                 string todate = Request.Form["todate"];
                 string status = Request.Form["status"];
                 //check the search then bring it over to the logic
                 //check if this redirect action actually brings back to same list
                 reqList = Search(fromdate, todate, cp, status);
+
+                ViewData["count"] = reqList.Count();
+                ViewData["reqList"] = reqList;
+                ViewData["CPList"] = db.CollectionPoints.ToList();
+                return View(reqList);
             }
             else if (Request.Form["retrieve"] != null)
             {
@@ -199,15 +199,29 @@ namespace LogicUniversity.Controllers
 
         public List<Requisition> Search(string fromdate, string todate, string cp, string status)
         {
+            List<Requisition> searchList = new List<Requisition>();
+            if (cp != null)
+            {
+                List<Department> DepartmentInCp = db.Departments.Where(d => d.CollectionLocationId == cp).ToList();
+                foreach(Department d1 in DepartmentInCp)
+                {
+                    List<Requisition> searchListByDept = db.Requisition.Where(r => r.Department == d1.DeptName).ToList();
+                    foreach(Requisition r1 in searchListByDept)
+                    {
+                        searchList.Add(r1);
+                    }
+                }
+            }
             //PENDING1
             //ignore collection point first. there should be a foreign key that links with department.
             //if status is null, query does not work. all are compulsatory fields
-            DateTime startdate = Convert.ToDateTime(fromdate);
-            DateTime enddate = Convert.ToDateTime(todate);
-
-            List<Requisition> searchList = new List<Requisition>();
-            searchList = db.Requisition.Where(i => i.Status == status)
-                .Where(j => j.Date >= startdate && j.Date <= enddate).Include(k => k.RequisitionDetails).ToList();
+            else
+            {
+                DateTime startdate = Convert.ToDateTime(fromdate);
+                DateTime enddate = Convert.ToDateTime(todate);
+                searchList = db.Requisition.Where(i => i.Status == status)
+                    .Where(j => j.Date >= startdate && j.Date <= enddate).Include(k => k.RequisitionDetails).ToList();
+            }
 
             return searchList;
         }
