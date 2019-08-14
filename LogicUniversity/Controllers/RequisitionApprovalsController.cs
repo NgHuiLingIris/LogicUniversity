@@ -221,8 +221,7 @@ namespace LogicUniversity.Controllers
             {
                 DateTime startdate = Convert.ToDateTime(fromdate);
                 DateTime enddate = Convert.ToDateTime(todate);
-                DateList = db.Requisition.Where(i => i.Status == status)
-                    .Where(j => j.Date >= startdate && j.Date <= enddate).Include(k => k.RequisitionDetails).ToList();
+                DateList = db.Requisition.Where(j => j.Date >= startdate && j.Date <= enddate).ToList();
                 SearchList = AddOrMerge(SearchList, DateList);
                 //SearchCriteria = SearchCriteria + "DATE";
             }
