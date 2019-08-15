@@ -34,8 +34,9 @@ namespace LogicUniversity.Controllers
         }
 
 
-        public ActionResult ViewDelegation(int ?page)
+        public ActionResult ViewDelegation(int ?page,string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             var delegations = db.Delegations.Include(d => d.Employee).Where(d=>d.Employee.DeptId==deptId).OrderByDescending(d=>d.StartDate);
@@ -45,8 +46,9 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Delegations/Details/5
-        public ActionResult GetDelegationDetails(int? id)
+        public ActionResult GetDelegationDetails(int? id, string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -60,8 +62,9 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Delegations/Create
-        public ActionResult AppointDelegation()
+        public ActionResult AppointDelegation(string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             ViewBag.EmployeeId = new SelectList(db.Employees.Where(d => d.Role == "DEP_STAFF" && d.DeptId == deptId), "EmployeeId", "EmployeeName");
@@ -73,8 +76,9 @@ namespace LogicUniversity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AppointDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
+        public ActionResult AppointDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation,string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             DelegationService ds = new DelegationService();
             List<string> msglist = new List<string>();
 
@@ -109,7 +113,7 @@ namespace LogicUniversity.Controllers
                     {
                         ds.AddDelegation(delegation, empId);
                         TempData["toastmessage"] = "Success";
-                        return RedirectToAction("ViewDelegation");
+                        return RedirectToAction("ViewDelegation",new { sessionId=sessionId});
                     }
                     else
                     {
@@ -158,7 +162,7 @@ namespace LogicUniversity.Controllers
                             {
                                 ds.AddDelegation(delegation, empId);
                                 TempData["toastmessage"] = "Success";
-                                return RedirectToAction("ViewDelegation");
+                                return RedirectToAction("ViewDelegation",new { sessionId=sessionId});
                             }
                             else if(flag == case1.Count && case2.Count != 0)
                             {
@@ -180,7 +184,7 @@ namespace LogicUniversity.Controllers
                                 {
                                     ds.AddDelegation(delegation, empId);
                                     TempData["toastmessage"] = "Success";
-                                    return RedirectToAction("ViewDelegation");
+                                    return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                                 }
                                 else
                                 {
@@ -218,7 +222,7 @@ namespace LogicUniversity.Controllers
                             {
                                 ds.AddDelegation(delegation, empId);
                                 TempData["toastmessage"] = "Success";
-                                return RedirectToAction("ViewDelegation");
+                                return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                             }
                             else
                             {
@@ -243,8 +247,9 @@ namespace LogicUniversity.Controllers
        
 
         // GET: Delegations/Edit/5
-        public ActionResult EditDelegation(int? id)
+        public ActionResult EditDelegation(int? id,string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -260,12 +265,12 @@ namespace LogicUniversity.Controllers
             }
             if (emp.DeptId == deptId && !(delegation.EndDate < DateTime.Today))
             {
-                ViewBag.EmployeeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", delegation.EmployeeId);
+                ViewBag.EmployeeId = new SelectList(db.Employees.Where(d=>d.Department.DeptId==deptId&&d.Role== "DEP_STAFF"), "EmployeeId", "EmployeeName", delegation.EmployeeId);
                 return View(delegation);
             }
             else
             {
-                return RedirectToAction("ViewDelegation");
+                return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
             }
         }
 
@@ -277,8 +282,9 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation)
+        public ActionResult EditDelegation([Bind(Include = "DelegationId,EmployeeId,StartDate,EndDate")] Delegation delegation,string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             DelegationService ds = new DelegationService();
@@ -293,7 +299,7 @@ namespace LogicUniversity.Controllers
                     {
                         msglist.Add("Start Date cant be changed");
                         ViewData["list"] = msglist;
-                        return RedirectToAction("EditDelegation");
+                        return RedirectToAction("EditDelegation", new { sessionId = sessionId });
                     }
                     else
                     {
@@ -326,7 +332,7 @@ namespace LogicUniversity.Controllers
                             {
                                 ds.saveDelegationChanges(delegation,empId);
                                 TempData["toastmessage"] = "Success";
-                                return RedirectToAction("ViewDelegation");
+                                return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                             }
                             else
                             {
@@ -375,7 +381,7 @@ namespace LogicUniversity.Controllers
                                     {
                                         ds.saveDelegationChanges(delegation, empId);
                                         TempData["toastmessage"] = "Success";
-                                        return RedirectToAction("ViewDelegation");
+                                        return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                                     }
                                     else if (flag == case1.Count && case2.Count != 0)
                                     {
@@ -397,7 +403,7 @@ namespace LogicUniversity.Controllers
                                         {
                                             ds.saveDelegationChanges(delegation, empId);
                                             TempData["toastmessage"] = "Success";
-                                            return RedirectToAction("ViewDelegation");
+                                            return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                                         }
                                         else
                                         {
@@ -435,7 +441,7 @@ namespace LogicUniversity.Controllers
                                     {
                                         ds.saveDelegationChanges(delegation, empId);
                                         TempData["toastmessage"] = "Success";
-                                        return RedirectToAction("ViewDelegation");
+                                        return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                                     }
                                     else
                                     {
@@ -482,7 +488,7 @@ namespace LogicUniversity.Controllers
                         {
                             ds.saveDelegationChanges( delegation, empId);
                             TempData["toastmessage"] = "Success";
-                            return RedirectToAction("ViewDelegation");
+                            return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                         }
                         else
                         {
@@ -531,7 +537,7 @@ namespace LogicUniversity.Controllers
                                 {
                                     ds.saveDelegationChanges(delegation, empId);
                                     TempData["toastmessage"] = "Success";
-                                    return RedirectToAction("ViewDelegation");
+                                    return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                                 }
                                 else if (flag == case1.Count && case2.Count != 0)
                                 {
@@ -553,7 +559,7 @@ namespace LogicUniversity.Controllers
                                     {
                                         ds.saveDelegationChanges(delegation, empId);
                                         TempData["toastmessage"] = "Success";
-                                        return RedirectToAction("ViewDelegation");
+                                        return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                                     }
                                     else
                                     {
@@ -591,7 +597,7 @@ namespace LogicUniversity.Controllers
                                 {
                                     ds.saveDelegationChanges(delegation, empId);
                                     TempData["toastmessage"] = "Success";
-                                    return RedirectToAction("ViewDelegation");
+                                    return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
                                 }
                                 else
                                 {
@@ -614,8 +620,9 @@ namespace LogicUniversity.Controllers
 
 
         // GET: Delegations/Delete/5
-        public ActionResult CancelDelegation(int? id)
+        public ActionResult CancelDelegation(int? id,string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -631,8 +638,9 @@ namespace LogicUniversity.Controllers
         // POST: Delegations/Delete/5
         [HttpPost, ActionName("cancelDelegation")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id,string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             Delegation delegation = db.Delegations.Find(id);
@@ -667,7 +675,7 @@ namespace LogicUniversity.Controllers
                 EmailService.SendNotification(delegation.EmployeeId, "Delegation Cancellation Reg.", "Delegation("+delegation.StartDate+"-"+delegation.EndDate+" is cancelled hereafter");
             }
             TempData["toastmessage"] = "Successfully Cancelled";
-            return RedirectToAction("ViewDelegation");
+            return RedirectToAction("ViewDelegation", new { sessionId = sessionId });
         }
 
         protected override void Dispose(bool disposing)

@@ -154,6 +154,7 @@ namespace LogicUniversity.Controllers
                 ViewData["sessionId"] = sessionId;
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
+                var req = db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList();
                 return View(db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList());
             }
             else

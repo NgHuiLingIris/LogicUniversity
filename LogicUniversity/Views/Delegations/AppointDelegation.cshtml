@@ -4,6 +4,7 @@
 @{
 
     var delegation = (List<string>)ViewData["list"];
+   string sessionId=(string)  ViewData["sessionId"] ;
 }
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
@@ -60,13 +61,14 @@
             <div class="col-md-offset-2 col-md-10">
                 <input type="reset" value="Reset" class="btn btn-default" align="center"/>
                 <input type="submit" value="Appoint" class="btn btn-default"  />
+                <input type="hidden" value=@sessionId name="sessionId" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Back to List", "ViewDelegation")
+    @Html.ActionLink("Back to List", "ViewDelegation",new { sessionId=sessionId})
 </div>
 
 

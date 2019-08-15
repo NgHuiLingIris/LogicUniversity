@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
     string sessionId=(string)ViewData["sessionId"];
+    
 }
 
 
@@ -15,13 +16,13 @@
         function updatecp()
         {
 
-            window.location.href = '@Url.Action("AppointDelegation", "Delegations")'
+            window.location.href = '@Url.Action("AppointDelegation", "Delegations",new { sessionId=sessionId})'
         }
 
         function updateur()
         {
 
-            window.location.href = '@Url.Action("ViewDelegation", "Delegations")'
+            window.location.href = '@Url.Action("ViewDelegation", "Delegations",new { sessionId=sessionId})'
         }
     </script>
 </head>

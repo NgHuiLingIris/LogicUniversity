@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Details";
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
@@ -39,8 +40,8 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "EditDelegation", new { id = Model.DelegationId }) |
-    @Html.ActionLink("Back to List", "ViewDelegation")
+    @Html.ActionLink("Edit", "EditDelegation", new { id = Model.DelegationId, sessionId = @sessionId }) |
+    @Html.ActionLink("Back to List", "ViewDelegation", new {  sessionId = @sessionId })
 </p>
 
 
