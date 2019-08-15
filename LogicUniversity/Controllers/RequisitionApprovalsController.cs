@@ -51,44 +51,47 @@ namespace LogicUniversity.Controllers
 
         //Requisition ALL Details for Store Clerk
         [HttpGet]
-        public ActionResult SCRequisitionView()
+        public ActionResult SCRequisitionView(string sessionId)
         {
-            //
-            //should be grouped by department
-
-            List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING").OrderByDescending(s => s.Date).ToList();
-            List<Requisition> reqByDept = new List<Requisition>();
-            foreach (Requisition r in reqListAll)
+            if (Sessions.IsValidSession(sessionId))
             {
-                Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
-                r.Employee = e;
-                r.Employee.Department = db.Departments.FirstOrDefault(c=>c.DeptId == e.DeptId);
-                r.Department = r.Employee.Department.DeptName;
-                string deptName = r.Department;
-                //var d0 = db.Departments.FirstOrDefault(a => a.DeptName == deptName);
-                //Department d1 = d0;
-                //retrieve employee here
-                //Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
-                
-
-                if (!reqByDept.Any(s => s.Department.Contains(r.Department)))
+                ViewData["sessionId"] = sessionId;
+                //------------------Prepare SCRequisitionViewPage-------
+                List<CollectionPoint> CPList = db.CollectionPoints.ToList();
+                CPList.Insert(0, new CollectionPoint());
+                List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
+                ViewData["CPList"] = CPList;
+                ViewData["StatusList"] = StatusList;
+                //---------------------END HERE----------------------
+                List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING" || s.Status == "OUTSTANDING").OrderByDescending(s => s.Date).ToList();
+                List<Requisition> reqByDept = new List<Requisition>();
+                foreach (Requisition r in reqListAll)
                 {
-                    reqByDept.Add(r);
+                    Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
+                    r.Employee = e;
+                    r.Employee.Department = db.Departments.FirstOrDefault(c => c.DeptId == e.DeptId);
+                    r.Department = r.Employee.Department.DeptName;
+                    string deptName = r.Department;
+
+                    if (!reqByDept.Any(s => s.Department.Contains(r.Department)))
+                    {
+                        reqByDept.Add(r);
+                    }
                 }
-            }
-            //filter the top
 
-            List<Requisition> reqList = new List<Requisition>();
-            foreach (Requisition req in reqByDept)
+                List<Requisition> reqList = new List<Requisition>();
+                foreach (Requisition req in reqByDept)
+                {
+                    reqList.Add(req);
+                }
+                ViewData["count"] = reqList.Count();
+                ViewData["reqList"] = reqList;
+                return View(reqList);
+            }
+            else
             {
-                reqList.Add(req);
+                return RedirectToAction("Login", "Login");
             }
-            //reqList = db.Requisition.ToList();
-            int count = reqByDept.Count();
-            ViewData["count"] = count;
-            ViewData["reqList"] = reqList;
-
-            return View(reqList);
         }
         [HttpPost]
         public ActionResult SCRequisitionView(FormCollection form)
@@ -97,38 +100,41 @@ namespace LogicUniversity.Controllers
             if (Request.Form["search"] != null)
             {
                 string fromdate = Request.Form["fromdate"];
-                string cp = Request.Form["cp"];
+                string cp = Request.Form["SelectedCP"];
                 string todate = Request.Form["todate"];
                 string status = Request.Form["status"];
                 //check the search then bring it over to the logic
                 //check if this redirect action actually brings back to same list
                 reqList = Search(fromdate, todate, cp, status);
+
+                ViewData["count"] = reqList.Count();
+                ViewData["reqList"] = reqList;
+                //------------------Prepare SCRequisitionViewPage-------
+                List<CollectionPoint> CPList = db.CollectionPoints.ToList();
+                CPList.Insert(0, new CollectionPoint());
+                List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
+                ViewData["CPList"] = CPList;
+                ViewData["StatusList"] = StatusList;
+                //---------------------END HERE----------------------
+                return View(reqList);
             }
             else if (Request.Form["retrieve"] != null)
             {
                 List<Requisition> SelectedRequests = new List<Requisition>();
                 int count = int.Parse(Request.Form["count"]);
-                //for(int i = 0; i<)
                 string PendingDeptRequisition = ",";
                 for (int i = 0; i < count; i++)
                 {
                     if (Request.Form["Requisition[" + i + "].toretrieve"] != null)
                     {
                         string dept = Request.Form["Requisition[" + i + "].toretrieve"];
-                        //Department d0 = new Department();
-                        //d0 = db.Departments.FirstOrDefault(d => d.DeptName == dept);
                         PendingDeptRequisition = PendingDeptRequisition + dept + ",";
-                        //retrieve the requisition id
-                        //redirect action to create retrieval
 
                     }
-                    //string checking = Request.Form["Requisition[0].toretrieve"];//on
-                    //string checking1 = Request.Form["Requisition[1].toretrieve"];//null
                 }
 
                 return RedirectToAction("Create", "Retrievals", new { PendingDeptRequisition = PendingDeptRequisition });
-
-                //Debug.WriteLine("");
+                
             }
 
             ViewData["reqList"] = reqList;
@@ -199,19 +205,61 @@ namespace LogicUniversity.Controllers
 
         public List<Requisition> Search(string fromdate, string todate, string cp, string status)
         {
-            //PENDING1
-            //ignore collection point first. there should be a foreign key that links with department.
-            //if status is null, query does not work. all are compulsatory fields
-            DateTime startdate = Convert.ToDateTime(fromdate);
-            DateTime enddate = Convert.ToDateTime(todate);
-
-            List<Requisition> searchList = new List<Requisition>();
-            searchList = db.Requisition.Where(i => i.Status == status)
-                .Where(j => j.Date >= startdate && j.Date <= enddate).Include(k => k.RequisitionDetails).ToList();
-
-            return searchList;
+            //put search list at the back
+            //string SearchCriteria = "";
+            List<Requisition> SearchList = new List<Requisition>();
+            List<Requisition> DateList = new List<Requisition>();
+            List<Requisition> CPList = new List<Requisition>();
+            List<Requisition> StatusList = new List<Requisition>();
+            if (cp != null)
+            {
+                List<Department> DepartmentInCp = db.Departments.Where(d => d.CollectionLocationId == cp).ToList();
+                foreach(Department d1 in DepartmentInCp)
+                {
+                    List<Requisition> searchListByDept = db.Requisition.Where(r => r.Department == d1.DeptName).ToList();
+                    foreach(Requisition r1 in searchListByDept)
+                    {
+                        CPList.Add(r1);
+                    }
+                }
+                SearchList = AddOrMerge(SearchList, CPList);
+                //SearchCriteria = SearchCriteria + "CP";
+            }
+            if(fromdate!="" && todate!= "")
+            {
+                DateTime startdate = Convert.ToDateTime(fromdate);
+                DateTime enddate = Convert.ToDateTime(todate);
+                DateList = db.Requisition.Where(j => j.Date >= startdate && j.Date <= enddate).ToList();
+                SearchList = AddOrMerge(SearchList, DateList);
+                //SearchCriteria = SearchCriteria + "DATE";
+            }
+            if (status != "")
+            {
+                StatusList = db.Requisition.Where(r1 => r1.Status == status).ToList();
+                SearchList = AddOrMerge(SearchList, StatusList);
+                //SearchCriteria = SearchCriteria + "STATUS";
+            }
+            //if (SearchCriteria.Contains("STATUS")&& SearchCriteria.Contains("CP"))
+            //{
+            //    searchList = StatusList.Intersect(CPList).ToList();
+            //}
+            return SearchList;
         }
-
+        public List<Requisition> AddOrMerge(List<Requisition> SearchList, List<Requisition> MergingList)
+        {
+            if (SearchList.Count() == 0)//nothing inside
+            {
+                foreach (Requisition r in MergingList)
+                {
+                    SearchList.Add(r);
+                }
+            }
+            else
+            {
+                SearchList = SearchList.Intersect(MergingList).ToList();
+            }
+            return SearchList;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
