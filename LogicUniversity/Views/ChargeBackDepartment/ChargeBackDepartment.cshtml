@@ -7,6 +7,7 @@
     var Department_List = (List<Department>)ViewData["DepartmentName"];
     var months = (List<string>)ViewData["months"];
     var deptname = (string)ViewData["deptName"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
@@ -45,8 +46,10 @@
 </head>
 
 <body>
-    @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment", FormMethod.Post))
+    @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment"
+        , FormMethod.Post,new{ sessionId=sessionId}))
     {
+        <input type="hidden" value="@sessionId" name="sessionId" />
         <br />
         <table>
             <tr>

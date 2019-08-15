@@ -35,38 +35,47 @@ namespace LogicUniversity.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(string SupplierId, String SearchString)
+        public ActionResult Index(string SupplierId, String SearchString,string sessionId)
         {
-            if (Request.Form["Edit"] != null)
+            sessionId = Request["sessionId"];
+            if (Sessions.IsValidSession(sessionId))
             {
-                Debug.WriteLine("Edit");
-                Debug.WriteLine(SupplierId);
-                return RedirectToAction("Edit", "Suppliers", new { id = SupplierId });
-            }
-            if (Request.Form["Create"] != null)
-            {
-                return RedirectToAction("Create", "Suppliers");
-            }
-            if (Request.Form["Search"] != null)
-            {
-                List<Supplier> SupplierListAll = new List<Supplier>(db.Suppliers);
-                List<Supplier> SupplierList = new List<Supplier>();
-                var FilterSuppliers = SupplierListAll.Where(s => s.SupplierId.Contains(SearchString));
-               
-                
-                foreach (var Supplier in FilterSuppliers)
-                    SupplierList.Add(Supplier);
+                ViewData["sessionId"] = sessionId;
+                if (Request.Form["Edit"] != null)
+                {
+                    Debug.WriteLine("Edit");
+                    Debug.WriteLine(SupplierId);
+                    return RedirectToAction("Edit", "Suppliers", new { id = SupplierId ,sessionId=sessionId});
+                }
+                if (Request.Form["Create"] != null)
+                {
+                    return RedirectToAction("Create", "Suppliers",new { sessionId = sessionId });
+                }
+                if (Request.Form["Search"] != null)
+                {
+                    List<Supplier> SupplierListAll = new List<Supplier>(db.Suppliers);
+                    List<Supplier> SupplierList = new List<Supplier>();
+                    var FilterSuppliers = SupplierListAll.Where(s => s.SupplierId.Contains(SearchString));
 
-                ViewData["SupplierList"] = SupplierList;
+
+                    foreach (var Supplier in FilterSuppliers)
+                        SupplierList.Add(Supplier);
+
+                    ViewData["SupplierList"] = SupplierList;
+                    return View();
+                }
+                else if (Request.Form["Delete"] != null)
+                {
+                    Debug.WriteLine("Delete");
+                    Debug.WriteLine(SupplierId);
+                    return RedirectToAction("Delete", "Suppliers", new { id = SupplierId,sessionId=sessionId });
+                }
                 return View();
             }
-            else if (Request.Form["Delete"] != null)
+            else
             {
-                Debug.WriteLine("Delete");
-                Debug.WriteLine(SupplierId);
-                return RedirectToAction("Delete", "Suppliers", new { id = SupplierId });
+                return RedirectToAction("Login", "Login");
             }
-            return View();
         }
 
         // GET: Suppliers/Details/5
@@ -86,9 +95,17 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Suppliers/Create
-        public ActionResult Create()
+        public ActionResult Create(string sessionId)
         {
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // POST: Suppliers/Create
@@ -96,33 +113,50 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SupplierId,SupplierName,ContactName,Phone,Fax,Address,GSTRegistrationNo")] Supplier supplier)
+        public ActionResult Create([Bind(Include = "SupplierId,SupplierName,ContactName,Phone,Fax,Address,GSTRegistrationNo")] Supplier supplier,string sessionId)
         {
-            if (ModelState.IsValid)
+            sessionId = Request["sessionId"];
+            if (Sessions.IsValidSession(sessionId))
             {
-                db.Suppliers.Add(supplier);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.Suppliers.Add(supplier);
+                    db.SaveChanges();
+                    return RedirectToAction("Index", new { sessionId = sessionId });
+                }
 
-            return View(supplier);
+                return View(supplier);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: Suppliers/Edit/5
-        public ActionResult Edit(String id)
+        public ActionResult Edit(String id,string sessionId)
         {
-            //string id = Request["SupplierId"];
-            Debug.WriteLine(id);
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                //string id = Request["SupplierId"];
+                Debug.WriteLine(id);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Supplier supplier = db.Suppliers.Find(id);
+                if (supplier == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(supplier);
             }
-            Supplier supplier = db.Suppliers.Find(id);
-            if (supplier == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(supplier);
         }
 
         // POST: Suppliers/Edit/5
@@ -130,43 +164,69 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SupplierId,SupplierName,ContactName,Phone,Fax,Address,GSTRegistrationNo")] Supplier supplier)
+        public ActionResult Edit([Bind(Include = "SupplierId,SupplierName,ContactName,Phone,Fax,Address,GSTRegistrationNo")] Supplier supplier,string sessionId)
         {
-            if (ModelState.IsValid)
+            sessionId = Request["sessionId"];
+            if (Sessions.IsValidSession(sessionId))
             {
-                db.Entry(supplier).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.Entry(supplier).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index",new { sessionId = sessionId });
+                }
+                return View(supplier);
             }
-            return View(supplier);
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: Suppliers/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(string id,string sessionId)
         {
-            Debug.WriteLine("Delete 1");
-            if (id == null)
+            //Debug.WriteLine("Delete 1");
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Supplier supplier = db.Suppliers.Find(id);
+                if (supplier == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(supplier);
             }
-            Supplier supplier = db.Suppliers.Find(id);
-            if (supplier == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(supplier);
         }
 
         // POST: Suppliers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string id,string sessionId)
         {
-            Debug.WriteLine("Delete 2");
-            Supplier supplier = db.Suppliers.Find(id);
-            db.Suppliers.Remove(supplier);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            sessionId = Request["sessionId"];
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                //Debug.WriteLine("Delete 2");
+                Supplier supplier = db.Suppliers.Find(id);
+                db.Suppliers.Remove(supplier);
+                db.SaveChanges();
+                return RedirectToAction("Index",new { sessionId=sessionId});
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         protected override void Dispose(bool disposing)

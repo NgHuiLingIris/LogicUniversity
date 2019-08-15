@@ -1,5 +1,7 @@
 ﻿@model LogicUniversity.Models.Supplier
-
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     ViewBag.Title = "Edit Supplier Information";
 }
@@ -9,7 +11,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+    <input type="hidden" value="@sessionId" name="sessionId" />
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })

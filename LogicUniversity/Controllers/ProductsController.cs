@@ -46,9 +46,17 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Products/Create
-        public ActionResult Create()
+        public ActionResult Create(string sessionId)
         {
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // POST: Products/Create
@@ -56,16 +64,25 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ItemCode,Category,Description,ReorderLevel,ReorderQty,UOM")] Products products)
+        public ActionResult Create([Bind(Include = "ItemCode,Category,Description,ReorderLevel,ReorderQty,UOM")] Products products,string sessionId)
         {
-            if (ModelState.IsValid)
+            sessionId = Request["sessionId"];
+            if (Sessions.IsValidSession(sessionId))
             {
-                db.Products.Add(products);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.Products.Add(products);
+                    db.SaveChanges();
+                    return RedirectToAction("Index",new { sessionId = sessionId });
+                }
 
-            return View(products);
+                return View(products);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: Products/Edit/5

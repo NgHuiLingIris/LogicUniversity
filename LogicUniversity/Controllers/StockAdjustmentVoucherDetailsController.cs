@@ -137,19 +137,26 @@ namespace LogicUniversity.Controllers //Written By Iris
         }
 
         // GET: StockAdjustmentVoucherDetails/FilterView/V1
-        public ActionResult FilterView(string voucherId)
+        public ActionResult FilterView(string voucherId,string sessionId)
         {
-            
-            var detailById = from v in db.StockAdjustmentVoucherDetails
-                             where v.StockAdjustmentVoucherId == voucherId
-                             select v;
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var detailById = from v in db.StockAdjustmentVoucherDetails
+                                 where v.StockAdjustmentVoucherId == voucherId
+                                 select v;
 
-            var detailByIdIncluded = detailById.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher);
+                var detailByIdIncluded = detailById.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher);
 
-            List<StockAdjustmentVoucherDetail> sDetailList = detailByIdIncluded.ToList();
-            
-            ViewData["sDetailList"] = sDetailList;
-            return View();
+                List<StockAdjustmentVoucherDetail> sDetailList = detailByIdIncluded.ToList();
+
+                ViewData["sDetailList"] = sDetailList;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         /*
         *ApproverView

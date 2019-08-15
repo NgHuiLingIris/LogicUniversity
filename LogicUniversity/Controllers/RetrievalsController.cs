@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
 using LogicUniversity.Controllers;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
@@ -95,17 +96,25 @@ namespace LogicUniversity.Controllers
             return ICRList;
         }
         // GET: Retrievals/Create
-        public ActionResult Create(string PendingDeptRequisition)
+        public ActionResult Create(string PendingDeptRequisition,string sessionId)
         {
-            List<Department> dList = splitString(PendingDeptRequisition);
-            List<RequisitionDetails> rdListAll = new List<RequisitionDetails>();
-            List<RequisitionDetails> rdList1 = db.RequisitionDetails.Include(s => s.Requisition).ToList();
-            rdListAll = RetrieveRequisitionDetailsByDepartment(rdListAll, dList,rdList1);
-            List<ItemCodeRequisition> ICRList = ICRListPerProduct(rdListAll);
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                List<Department> dList = splitString(PendingDeptRequisition);
+                List<RequisitionDetails> rdListAll = new List<RequisitionDetails>();
+                List<RequisitionDetails> rdList1 = db.RequisitionDetails.Include(s => s.Requisition).ToList();
+                rdListAll = RetrieveRequisitionDetailsByDepartment(rdListAll, dList, rdList1);
+                List<ItemCodeRequisition> ICRList = ICRListPerProduct(rdListAll);
 
-            ViewData["ICRList"] = ICRList;
-            ViewData["count"] = ICRList.Count();
-            return View();
+                ViewData["ICRList"] = ICRList;
+                ViewData["count"] = ICRList.Count();
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         public StockAdjustmentVoucher PrepareVoucher()
         {
@@ -155,87 +164,100 @@ namespace LogicUniversity.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(FormCollection form)
+        public ActionResult Create(FormCollection form,string sessionId)
         {
-            int count = int.Parse(Request.Form["count"]);
-            string DeptString = "";
-            StockAdjustmentVoucher s = PrepareVoucher();
-            Retrieval r = PrepareRetrieval();
-            List<RetrievalDetail> rdList = new List<RetrievalDetail>();
-            List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
-            for (int i = 0; i < count; i++)
+            sessionId = Request["sessionId"];
+
+            if (Sessions.IsValidSession(sessionId))
             {
-                string itemdesc = Request.Form["ICR[" +i+"].product"];
-                Products p = db.Products.FirstOrDefault(o => o.Description == itemdesc);
-                string itemcode = p.ItemCode;
-                int retrievedqty = int.Parse(Request.Form["ICR[" + i + "].retrieved"]); 
-                int qtyininventory = int.Parse(Request.Form["ICR[" + i + "].qtyininventory"]);
-                int TotalNeeded = int.Parse(Request.Form["ICR[" + i + "].TotalNeeded"]);
-                string dept = Request.Form["ICR[" + i + "].Dept"];
-                List<Department> dList = splitString(dept);
-                DeptString = dept;
-                List<RequisitionDetails> requisitiondetaillist = new List<RequisitionDetails>();
-                List<RequisitionDetails> requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
-                requisitiondetaillist = RetrieveRequisitionDetailsByDepartment(requisitiondetaillist, dList, requisitiondetaillist1);
-                requisitiondetaillist = IncludeSaveAllRequisitionDetails(requisitiondetaillist);
-                if (TotalNeeded != retrievedqty)
-                    {
-                    sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, retrievedqty - TotalNeeded,null);
-                    requisitiondetaillist = requisitiondetaillist.Where(q => q.ItemCode == itemcode).OrderBy(w=>w.Requisition.Date).ToList();
+                ViewData["sessionId"] = sessionId;
 
-                    for(int j = 0; j< requisitiondetaillist.Count(); j++)
+                int count = int.Parse(Request.Form["count"]);
+                string DeptString = "";
+                StockAdjustmentVoucher s = PrepareVoucher();
+                Retrieval r = PrepareRetrieval();
+                List<RetrievalDetail> rdList = new List<RetrievalDetail>();
+                List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
+                for (int i = 0; i < count; i++)
+                {
+                    string itemdesc = Request.Form["ICR[" + i + "].product"];
+                    Products p = db.Products.FirstOrDefault(o => o.Description == itemdesc);
+                    string itemcode = p.ItemCode;
+                    int retrievedqty = int.Parse(Request.Form["ICR[" + i + "].retrieved"]);
+                    int qtyininventory = int.Parse(Request.Form["ICR[" + i + "].qtyininventory"]);
+                    int TotalNeeded = int.Parse(Request.Form["ICR[" + i + "].TotalNeeded"]);
+                    string dept = Request.Form["ICR[" + i + "].Dept"];
+                    List<Department> dList = splitString(dept);
+                    DeptString = dept;
+                    List<RequisitionDetails> requisitiondetaillist = new List<RequisitionDetails>();
+                    List<RequisitionDetails> requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
+                    requisitiondetaillist = RetrieveRequisitionDetailsByDepartment(requisitiondetaillist, dList, requisitiondetaillist1);
+                    requisitiondetaillist = IncludeSaveAllRequisitionDetails(requisitiondetaillist);
+                    if (TotalNeeded != retrievedqty)
                     {
-                        if (retrievedqty >= requisitiondetaillist[j].Quantity)
+                        sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, retrievedqty - TotalNeeded, null);
+                        requisitiondetaillist = requisitiondetaillist.Where(q => q.ItemCode == itemcode).OrderBy(w => w.Requisition.Date).ToList();
+
+                        for (int j = 0; j < requisitiondetaillist.Count(); j++)
                         {
-                            retrievedqty = retrievedqty - requisitiondetaillist[j].Quantity;
+                            if (retrievedqty >= requisitiondetaillist[j].Quantity)
+                            {
+                                retrievedqty = retrievedqty - requisitiondetaillist[j].Quantity;
+                            }
+                            else
+                            {
+                                int newquantity = requisitiondetaillist[j].Quantity - retrievedqty;
+                                requisitiondetaillist[j].Quantity = retrievedqty;
+
+                                RequisitionDetails newRD = new RequisitionDetails();
+                                newRD.Quantity = newquantity;
+                                newRD.ItemCode = itemcode;
+                                newRD.RequisitionId = requisitiondetaillist[j].RequisitionId;
+
+                                db.Entry(newRD).State = EntityState.Added;
+                                db.Entry(requisitiondetaillist[j]).State = EntityState.Modified;
+                                db.SaveChanges();
+                            }
                         }
-                        else
+                        if (!db.StockAdjustmentVouchers.Any(s1 => s1.Id.Contains(s.Id)))
                         {
-                            int newquantity = requisitiondetaillist[j].Quantity - retrievedqty;
-                            requisitiondetaillist[j].Quantity = retrievedqty;
-                            
-                            RequisitionDetails newRD = new RequisitionDetails();
-                            newRD.Quantity = newquantity;
-                            newRD.ItemCode = itemcode;
-                            newRD.RequisitionId = requisitiondetaillist[j].RequisitionId;
-
-                            db.Entry(newRD).State = EntityState.Added;
-                            db.Entry(requisitiondetaillist[j]).State = EntityState.Modified;
+                            db.Entry(s).State = EntityState.Added;
                             db.SaveChanges();
                         }
+                        rdList = AddRetrievalDetailToRdList(rdList, p.ItemCode, retrievedqty, TotalNeeded, s.Id);
                     }
-                    if (!db.StockAdjustmentVouchers.Any(s1 => s1.Id.Contains(s.Id)))
+                    else
                     {
-                        db.Entry(s).State = EntityState.Added;
-                        db.SaveChanges();
+                        rdList = AddRetrievalDetailToRdList(rdList, p.ItemCode, retrievedqty, TotalNeeded, null);
                     }
-                    rdList = AddRetrievalDetailToRdList(rdList, p.ItemCode, retrievedqty, TotalNeeded, s.Id);
-                }
-                else{
-                    rdList = AddRetrievalDetailToRdList(rdList, p.ItemCode, retrievedqty, TotalNeeded,null);
-                }
-                r = CreateRequisitionString(r, requisitiondetaillist);
+                    r = CreateRequisitionString(r, requisitiondetaillist);
 
-            }
-            s.StockAdjustmentVoucherDetails = sList;
-            CheckRequisitionComplete();
-            if (sList.Count() != 0)
-            {
+                }
+                s.StockAdjustmentVoucherDetails = sList;
+                CheckRequisitionComplete();
+                if (sList.Count() != 0)
+                {
 
-                r = SaveRetrieval(r, rdList);
-                ViewData["s"] = s;
-                ViewData["count"] = sList.Count();
-                ViewData["RequisitionDetailsString"] = r.RequisitionString;
-                ViewData["DeptString"] = DeptString;
-                return View("AdjustRetrieval",s);
+                    r = SaveRetrieval(r, rdList);
+                    ViewData["s"] = s;
+                    ViewData["count"] = sList.Count();
+                    ViewData["RequisitionDetailsString"] = r.RequisitionString;
+                    ViewData["DeptString"] = DeptString;
+                    return View("AdjustRetrieval", s);
+                    //TempData["s"] = s;
+                    //return RedirectToAction("AdjustRetrieval", "Retrievals",new { sessionId = sessionId });
+                }
+                else
+                {
+                    r = SaveRetrieval(r, rdList);
+                    string RequisitionDetailsString = r.RequisitionString;
+                    return RedirectToAction("DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = DeptString,sessionId=sessionId });
+                }
             }
             else
             {
-                r = SaveRetrieval(r, rdList);
-                string RequisitionDetailsString = r.RequisitionString;
-                return RedirectToAction("DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = DeptString });
+                return RedirectToAction("Login", "Login");
             }
-
         }
         
         public Retrieval SaveRetrieval(Retrieval r, List<RetrievalDetail> rdList)
@@ -256,12 +278,15 @@ namespace LogicUniversity.Controllers
             }
             return r;
         }
-        public ActionResult AdjustRetrieval([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
+        public ActionResult AdjustRetrieval([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form,string sessionId)
         {
+            //stockAdjustmentVoucher = (StockAdjustmentVoucher)TempData["s"];
             string VoucherId = Request.Form["Id"];
             string DeptString = Request.Form["DeptString"];
             string RequisitionDetailsString = Request.Form["RequisitionDetailsString"];
             int count = int.Parse(Request.Form["count"]);
+            sessionId = Request["sessionId"];
+
             List<StockAdjustmentVoucherDetail> sList = db.StockAdjustmentVoucherDetails.Where(sd1 => sd1.StockAdjustmentVoucherId == VoucherId).ToList();
             for (int i = 0; i< count; i++)
             {
@@ -283,7 +308,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(sList);
 
             ViewData["count"] = count;
-            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = DeptString });
+            return RedirectToAction("DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = DeptString,sessionId=sessionId });
         }
         public void CheckRequisitionComplete()
         {

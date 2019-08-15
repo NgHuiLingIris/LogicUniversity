@@ -1,5 +1,7 @@
 ﻿@model LogicUniversity.Models.StockCard
-
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     ViewBag.Title = "Edit";
 }
@@ -9,7 +11,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+    <input type="hidden" value="@sessionId" name="sessionId" />
     <div class="form-horizontal">
         <h4>StockCard</h4>
         <hr />

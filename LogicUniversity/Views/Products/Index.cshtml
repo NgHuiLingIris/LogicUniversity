@@ -3,7 +3,9 @@
 @{
     ViewBag.Title = "Index";
 }
-
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
@@ -17,7 +19,7 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create",new { sessionId = sessionId })
 </p>
 <div id="tabledropdown">
     <table class="table">

@@ -4,6 +4,9 @@
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
     string sessionId = (string)ViewData["sessionId"];
 }
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     ViewBag.Title = "Index";
 }
@@ -13,6 +16,8 @@
 <form>
  
     <table>
+        <input type="hidden" value="@sessionId" name="sessionId" />
+
         <tr>
             
             <td>Requisition Id </td>

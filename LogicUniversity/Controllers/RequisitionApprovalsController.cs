@@ -96,50 +96,59 @@ namespace LogicUniversity.Controllers
         [HttpPost]
         public ActionResult SCRequisitionView(FormCollection form,string sessionId)
         {
-            List<Requisition> reqList = new List<Requisition>();
-            if (Request.Form["search"] != null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                string fromdate = Request.Form["fromdate"];
-                string cp = Request.Form["SelectedCP"];
-                string todate = Request.Form["todate"];
-                string status = Request.Form["status"];
-                //check the search then bring it over to the logic
-                //check if this redirect action actually brings back to same list
-                reqList = Search(fromdate, todate, cp, status);
+                ViewData["sessionId"] = sessionId;
 
-                ViewData["count"] = reqList.Count();
-                ViewData["reqList"] = reqList;
-                //------------------Prepare SCRequisitionViewPage-------
-                List<CollectionPoint> CPList = db.CollectionPoints.ToList();
-                CPList.Insert(0, new CollectionPoint());
-                List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
-                ViewData["CPList"] = CPList;
-                ViewData["StatusList"] = StatusList;
-                //---------------------END HERE----------------------
-                return View(reqList);
-            }
-            else if (Request.Form["retrieve"] != null)
-            {
-                List<Requisition> SelectedRequests = new List<Requisition>();
-                int count = int.Parse(Request.Form["count"]);
-                string PendingDeptRequisition = ",";
-                for (int i = 0; i < count; i++)
+                List<Requisition> reqList = new List<Requisition>();
+                if (Request.Form["search"] != null)
                 {
-                    if (Request.Form["Requisition[" + i + "].toretrieve"] != null)
-                    {
-                        string dept = Request.Form["Requisition[" + i + "].toretrieve"];
-                        PendingDeptRequisition = PendingDeptRequisition + dept + ",";
+                    string fromdate = Request.Form["fromdate"];
+                    string cp = Request.Form["SelectedCP"];
+                    string todate = Request.Form["todate"];
+                    string status = Request.Form["status"];
+                    //check the search then bring it over to the logic
+                    //check if this redirect action actually brings back to same list
+                    reqList = Search(fromdate, todate, cp, status);
 
+                    ViewData["count"] = reqList.Count();
+                    ViewData["reqList"] = reqList;
+                    //------------------Prepare SCRequisitionViewPage-------
+                    List<CollectionPoint> CPList = db.CollectionPoints.ToList();
+                    CPList.Insert(0, new CollectionPoint());
+                    List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
+                    ViewData["CPList"] = CPList;
+                    ViewData["StatusList"] = StatusList;
+                    //---------------------END HERE----------------------
+                    return View(reqList);
+                }
+                else if (Request.Form["retrieve"] != null)
+                {
+                    List<Requisition> SelectedRequests = new List<Requisition>();
+                    int count = int.Parse(Request.Form["count"]);
+                    string PendingDeptRequisition = ",";
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (Request.Form["Requisition[" + i + "].toretrieve"] != null)
+                        {
+                            string dept = Request.Form["Requisition[" + i + "].toretrieve"];
+                            PendingDeptRequisition = PendingDeptRequisition + dept + ",";
+
+                        }
                     }
+
+                    return RedirectToAction("Create", "Retrievals", new { PendingDeptRequisition = PendingDeptRequisition,sessionId=sessionId });
+
                 }
 
-                return RedirectToAction("Create", "Retrievals", new { PendingDeptRequisition = PendingDeptRequisition });
-                
+                ViewData["reqList"] = reqList;
+
+                return View();
             }
-
-            ViewData["reqList"] = reqList;
-
-            return View();
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 

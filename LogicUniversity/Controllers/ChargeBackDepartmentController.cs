@@ -39,48 +39,56 @@ namespace LogicUniversity.Controllers
 
 
         // GET: Chargeback
-        public ActionResult ShowChargeBackDepartment(string Dept_Name, string yearselected, string monthselected)
+        public ActionResult ShowChargeBackDepartment(string Dept_Name, string yearselected, string monthselected,string sessionId)
         {
-            List<String> dep = db.Departments.Select(r => r.DeptName).ToList();
-            ViewData["DepartmentName"] = dep;
-
-            List<string> months = (System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames).ToList();
-            ViewData["months"] = months;
-
-            int month;
-            string year = yearselected;
-            if (Dept_Name == "")
-            { Dept_Name = (db.Departments.Select(r => r.DeptName).First()).ToString(); }
-
-            if (monthselected == "")
+            sessionId = Request["sessionId"];
+            if (Sessions.IsValidSession(sessionId))
             {
-                month = DateTime.Now.Month;
+                ViewData["sessionId"] = sessionId;
+                List<String> dep = db.Departments.Select(r => r.DeptName).ToList();
+                ViewData["DepartmentName"] = dep;
+
+                List<string> months = (System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames).ToList();
+                ViewData["months"] = months;
+
+                int month;
+                string year = yearselected;
+                if (Dept_Name == "")
+                { Dept_Name = (db.Departments.Select(r => r.DeptName).First()).ToString(); }
+
+                if (monthselected == "")
+                {
+                    month = DateTime.Now.Month;
+                }
+                else
+                {
+                    month = (months.IndexOf(monthselected)) + 1;
+                }
+                if (yearselected == "")
+                {
+                    year = DateTime.Now.Year.ToString();
+
+                }
+
+
+                List<DisbursementDetail> list = new List<DisbursementDetail>();
+                var disbursements = (db.Disbursements.Include(d => d.CollectionPoint).Include(d => d.Representative).Where(d => d.DateDisbursed.Month == month && d.DateDisbursed.Year.ToString() == year && d.Representative.Department.DeptName == Dept_Name && d.Status == "Delivered")).ToList();
+                foreach (Disbursement d in disbursements)
+                {
+                    List<DisbursementDetail> disbursementlist = (db.DisbursementDetails.Include(dd => dd.Products).Where(dd => dd.DisbursementId == d.DisbursementId)).ToList();
+                    foreach (DisbursementDetail item in disbursementlist)
+                    {
+                        list.Add(item);
+                    }
+
+                }
+
+                return View(list);
             }
             else
             {
-                month = (months.IndexOf(monthselected)) + 1;
+                return RedirectToAction("Login", "Login");
             }
-            if (yearselected == "")
-            {
-                year = DateTime.Now.Year.ToString();  
-
-            }
-          
-
-            List<DisbursementDetail> list = new List<DisbursementDetail>();
-            var disbursements = (db.Disbursements.Include(d => d.CollectionPoint).Include(d=>d.Representative).Where(d => d.DateDisbursed.Month == month && d.DateDisbursed.Year.ToString() == year && d.Representative.Department.DeptName == Dept_Name && d.Status == "Delivered")).ToList();
-            foreach (Disbursement d in disbursements)
-            {
-                List<DisbursementDetail> disbursementlist = (db.DisbursementDetails.Include(dd => dd.Products).Where(dd => dd.DisbursementId == d.DisbursementId)).ToList();
-                foreach (DisbursementDetail item in disbursementlist)
-                {
-                    list.Add(item);
-                }
-
-            }
-         
-
-            return View(list);
         }
 
 
