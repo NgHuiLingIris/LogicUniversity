@@ -51,7 +51,7 @@ namespace LogicUniversity.Controllers
         }
 
         
-        public ActionResult AddtoCart(string id)
+        public ActionResult AddtoCart(string id, string sessionId)
         {
             if (Session["UserID"] != null)
             {
@@ -65,13 +65,14 @@ namespace LogicUniversity.Controllers
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
                 List<CartItem> cartItem = db.CartItems.OrderBy(x => x.EmployeeId == obj.EmployeeId).ToList();
                 ViewBag.Message = "Items added to cart";
+                ViewData["sessionId"] = sessionId;
                 return View(cartItem);
             }
             return View();
         }
 
         [HttpPost]
-        public ActionResult AddtoCart(FormCollection CartItems)
+        public ActionResult AddtoCart(FormCollection CartItems,string sessionId)
         {
             if (Session["UserID"] != null)
             {
@@ -80,10 +81,11 @@ namespace LogicUniversity.Controllers
                 if (DepartmentRequestService.CartSubmission(username, CartItems))
                 {
                     TempData["message"] = "Requistion Successful";
-                    return RedirectToAction("Index");
+                    ViewData["sessionId"] = sessionId;
+                    return RedirectToAction("Index",new { sessionId = sessionId });
                 }
                                    
-                return RedirectToAction("AddtoCart");
+                return RedirectToAction("AddtoCart", new { sessionId = sessionId });
             }
             else
             {

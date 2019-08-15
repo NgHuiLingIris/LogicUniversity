@@ -3,6 +3,7 @@
 @{
     var Collectionpoint = (string)ViewData["currentCollectionPoint"];
     int deptid = (int)ViewData["deptid"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 
 @{
@@ -27,7 +28,7 @@
         }
         function back() {
           
-           window.location.href = '@Url.Action("ManageCollection", "CollectionPoint")'
+           window.location.href = '@Url.Action("ManageCollection", "CollectionPoint",new { sessionId = @sessionId})'
         }
 
     </script>
@@ -49,7 +50,7 @@
 
 
 
-    @using (Html.BeginForm("SaveChangedCollectionPoint", "CollectionPoint", FormMethod.Post))
+    @using (Html.BeginForm("SaveChangedCollectionPoint", "CollectionPoint", new { sessionId = @sessionId }, FormMethod.Post))
     {
         <table>
             @foreach (var point in Model)

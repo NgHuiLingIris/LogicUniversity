@@ -30,7 +30,7 @@ namespace LogicUniversity.Controllers
 
 
         //Selecting the new collection point
-        public ActionResult UpdateCollectionPoint()
+        public ActionResult UpdateCollectionPoint(string sessionId)
         {
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
@@ -46,6 +46,7 @@ namespace LogicUniversity.Controllers
             ViewData["currentCollectionPoint"] = currentCollectionPoint;
             ViewData["list"] = cp;
             ViewData["deptid"] = deptId;
+            ViewData["sessionId"] = sessionId;
             return View(cp);
         }
 
@@ -53,20 +54,20 @@ namespace LogicUniversity.Controllers
 
         //Updates the database Department 
         [HttpPost]
-        public ActionResult SaveChangedCollectionPoint(string selection, int deptid)
+        public ActionResult SaveChangedCollectionPoint(string selection, int deptid,string sessionId)
         {
             Department cp = db.Departments.Where(d => d.DeptId == deptid).FirstOrDefault();
             //set to the new collectionpoint
             cp.CollectionLocationId = selection.ToString();
             db.SaveChanges();
             TempData["successmsg"] = "Successfully changed the collection point";
-            return RedirectToAction("Display", "CollectionPoint");
+            return RedirectToAction("Display", "CollectionPoint",new { sessionId = sessionId});
         }
 
 
 
 
-        public ActionResult UpdateRepresentative()
+        public ActionResult UpdateRepresentative(string sessionId)
         {
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
@@ -82,6 +83,7 @@ namespace LogicUniversity.Controllers
             ViewBag.EmployeeId = new SelectList(departmentRepresentatives, "EmployeeId", "EmployeeName");
 
             ViewData["deptid"] = deptId;
+            ViewData["sessionId"] = sessionId;
             return View(departmentRepresentatives.ToList());
         }
 
@@ -89,7 +91,7 @@ namespace LogicUniversity.Controllers
 
         //Saving to database Employee
         [HttpPost]
-        public ActionResult SaveChangedDepartmentrepresentative(Employee emp, string name)
+        public ActionResult SaveChangedDepartmentrepresentative(Employee emp, string name,string sessionId)
         {
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
@@ -101,9 +103,9 @@ namespace LogicUniversity.Controllers
                 newrep.Role = "DEP_REP";
                 db.SaveChanges();
                 TempData["successmsg"] = "Successfully changed the representative";
-                return RedirectToAction("Display", "CollectionPoint");
+                return RedirectToAction("Display", "CollectionPoint",new { sessionId=sessionId});
             }
-            return RedirectToAction("UpdateRepresentative", "CollectionPoint");
+            return RedirectToAction("UpdateRepresentative", "CollectionPoint", new { sessionId = @sessionId });
 
 
         }
@@ -121,6 +123,7 @@ namespace LogicUniversity.Controllers
                 var currentCollectionPoint = db.CollectionPoints.Where(r => r.CollectionPointId.Equals(collectionPoint)).Select(r => r.LocationName).SingleOrDefault();
                 ViewData["rep"] = currentRepresentative;
                 ViewData["cp"] = currentCollectionPoint;
+                ViewBag.Message = TempData["successmsg"];
                 return View();
             }
             else

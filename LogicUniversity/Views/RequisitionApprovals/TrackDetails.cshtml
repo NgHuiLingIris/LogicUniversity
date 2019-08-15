@@ -3,6 +3,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    string sessionId=(string) ViewData["sessionId"];
 }
 
 
@@ -38,5 +39,5 @@
 
     <p>
 
-        @Html.ActionLink("Back to List", "TrackRequisition")
+        @Html.ActionLink("Back to List", "TrackRequisition",new { sessionId = sessionId })
     </p>

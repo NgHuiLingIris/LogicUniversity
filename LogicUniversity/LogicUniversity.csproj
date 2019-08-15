@@ -377,6 +377,8 @@
     <Content Include="Views\Login\StaffDashboard.cshtml" />
     <Content Include="Views\Login\SSDashboard.cshtml" />
     <Content Include="Views\Shared\_Layout_SS.cshtml" />
+    <Content Include="Views\Trend\InventoryStatusTrend.cshtml" />
+    <Content Include="Views\Trend\TwoMonthsCompare.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
