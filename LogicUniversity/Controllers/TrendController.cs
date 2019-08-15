@@ -90,16 +90,21 @@ namespace LogicUniversity.Controllers
 
 
         // Inventory Trend based on Category
-        public ActionResult InventoryStatusTrend()
+        public ActionResult InventoryStatusTrend(string value)
         {
             List<Products> products = db.Products.ToList();
 
             List<DataPoint> dataPoints_1 = new List<DataPoint>();
             List<DataPoint> dataPoints_2 = new List<DataPoint>();
-
+            
 
             // Trend Logic - Category based Inventory Status
+            //if (value != null)
+            //{
             var result_1 = products.Where(s => s.Category == "Clip").ToList();
+            //}
+            ////else
+            //    result_1 = products.Where(s => s.Category == "Clip").ToList();
 
             foreach (var x in result_1)
             {
