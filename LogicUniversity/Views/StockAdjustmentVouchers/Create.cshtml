@@ -4,6 +4,7 @@
     ViewBag.Title = "Place Order";
     var v0 = (StockAdjustmentVoucher)ViewData["StockAdjustmentVoucher_Default"];
     var ProductList = (List<Products>)ViewData["ProductList"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 
 
@@ -27,11 +28,12 @@
 *@
 
 @using (Html.BeginForm())
-
 {
     @Html.AntiForgeryToken()
     <div class="form-group" align="center">
         <table>
+        <input type="hidden" value="@sessionId" name="sessionId" />
+
             <tr>
                 <th>Item Code</th>
                 <th>Quantity Adjusted</th>

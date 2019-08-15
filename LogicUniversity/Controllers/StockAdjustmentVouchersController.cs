@@ -19,12 +19,20 @@ namespace LogicUniversity.Controllers
 
         // GET: StockAdjustmentVouchers
         // Index is ordered by descending so that the latest date is always displayed at the top.
-        public ActionResult Index()
+        public ActionResult Index(string sessionId)
         {
-            var VouchersOrderByDate = from v in db.StockAdjustmentVouchers
-                                      orderby v.DateCreated descending
-                                      select v;
-            return View(VouchersOrderByDate.ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var VouchersOrderByDate = from v in db.StockAdjustmentVouchers
+                                          orderby v.DateCreated descending
+                                          select v;
+                return View(VouchersOrderByDate.ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: StockAdjustmentVouchers/Details/5
@@ -91,49 +99,59 @@ namespace LogicUniversity.Controllers
          */
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
+        public ActionResult Create([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form,string sessionId)
         {
-            if (ModelState.IsValid)
+            if (Sessions.IsValidSession(sessionId))
             {
-                //A:
-                //5 is just the buffer given in the Get
-                int rows = db.Products.Count() + 5;
+                ViewData["sessionId"] = sessionId;
 
-                List<StockAdjustmentVoucherDetail> s0List = new List<StockAdjustmentVoucherDetail>();
-
-                for (int i = 0; i<rows; i++)
+                if (ModelState.IsValid)
                 {
-                    if(form["StockAdjustmentVoucherDetails[" + i + "].ItemCode"] != "")
+                    //A:
+                    //5 is just the buffer given in the Get
+                    int rows = db.Products.Count() + 5;
+
+                    List<StockAdjustmentVoucherDetail> s0List = new List<StockAdjustmentVoucherDetail>();
+
+                    for (int i = 0; i < rows; i++)
                     {
-                        string itemcode = form["StockAdjustmentVoucherDetails[" + i + "].ItemCode"];
-                        //B:
-                        if (s0List.Any(s => s.ItemCode.Contains(itemcode))) {
-                            StockAdjustmentVoucherDetail s0 = s0List.Find(s => s.ItemCode == itemcode);
-                            s0.QuantityAdjusted = s0.QuantityAdjusted + double.Parse(form["StockAdjustmentVoucherDetails[" + i + "].QuantityAdjusted"]);
-                        }
-                        else
+                        if (form["StockAdjustmentVoucherDetails[" + i + "].ItemCode"] != "")
                         {
-                            StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
-                            s0.ItemCode = itemcode;
-                            s0.QuantityAdjusted = double.Parse(form["StockAdjustmentVoucherDetails[" + i + "].QuantityAdjusted"]);
-                            s0.Reason = form["StockAdjustmentVoucherDetails[" + i + "].Reason"];
-                            s0.Status = "Pending";
-                            s0.Product = db.Products.Find(s0.ItemCode);
-                            s0List.Add(s0);
+                            string itemcode = form["StockAdjustmentVoucherDetails[" + i + "].ItemCode"];
+                            //B:
+                            if (s0List.Any(s => s.ItemCode.Contains(itemcode)))
+                            {
+                                StockAdjustmentVoucherDetail s0 = s0List.Find(s => s.ItemCode == itemcode);
+                                s0.QuantityAdjusted = s0.QuantityAdjusted + double.Parse(form["StockAdjustmentVoucherDetails[" + i + "].QuantityAdjusted"]);
+                            }
+                            else
+                            {
+                                StockAdjustmentVoucherDetail s0 = new StockAdjustmentVoucherDetail();
+                                s0.ItemCode = itemcode;
+                                s0.QuantityAdjusted = double.Parse(form["StockAdjustmentVoucherDetails[" + i + "].QuantityAdjusted"]);
+                                s0.Reason = form["StockAdjustmentVoucherDetails[" + i + "].Reason"];
+                                s0.Status = "Pending";
+                                s0.Product = db.Products.Find(s0.ItemCode);
+                                s0List.Add(s0);
+                            }
                         }
                     }
-                }
-                
-                //C:
-                stockAdjustmentVoucher.StockAdjustmentVoucherDetails = s0List;
-                db.StockAdjustmentVouchers.Add(stockAdjustmentVoucher);
-                db.SaveChanges();
-                //D:
-                AllocateAuthorizer(stockAdjustmentVoucher);
-                return RedirectToAction("Index");
-            }
 
-            return View(stockAdjustmentVoucher);
+                    //C:
+                    stockAdjustmentVoucher.StockAdjustmentVoucherDetails = s0List;
+                    db.StockAdjustmentVouchers.Add(stockAdjustmentVoucher);
+                    db.SaveChanges();
+                    //D:
+                    AllocateAuthorizer(stockAdjustmentVoucher);
+                    return RedirectToAction("Index",new { sessionId = sessionId });
+                }
+
+                return View(stockAdjustmentVoucher);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         
         // GET: StockAdjustmentVouchers/Edit/5

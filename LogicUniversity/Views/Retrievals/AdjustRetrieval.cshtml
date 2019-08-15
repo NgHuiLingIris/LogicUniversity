@@ -5,8 +5,9 @@
     var count = (int)ViewData["count"];
     var RequisitionDetailsString = (string)ViewData["RequisitionDetailsString"];
     var DeptString = (string)ViewData["DeptString"];
+    string sessionId = (string)ViewData["sessionId"];
 }
-
+<h1>@sessionId</h1>
 
 @{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
@@ -27,13 +28,14 @@
     </table>
 *@
 
-@using (Html.BeginForm("AdjustRetrieval", "Retrievals"))
+@using (Html.BeginForm("AdjustRetrieval", "Retrievals", FormMethod.Post,new { sessionId=sessionId}))
 
 {
     @Html.AntiForgeryToken()
     <input type="hidden" value="@count" name="count" />
     <input type="hidden" value="@RequisitionDetailsString" name="RequisitionDetailsString" />
     <input type="hidden" value="@DeptString" name="DeptString" />
+    <input type="hidden" value="@sessionId" name="sessionId" />
 
     <div class="form-group" align="center">
         <table>

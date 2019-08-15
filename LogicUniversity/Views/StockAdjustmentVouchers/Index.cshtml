@@ -3,13 +3,16 @@
 @{
     ViewBag.Title = "Index";
 }
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 <h2>Viewx</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create",new { sessionId = sessionId })
 </p>
 <table class="table">
     <tr>
@@ -26,7 +29,7 @@
     {
         <tr>
             <th>
-                <text value="ViewOnly" id="ViewOnly" onclick="window.location.href = '/StockAdjustmentVoucherDetails/FilterView?voucherId=@item.Id';"> @Html.DisplayFor(modelItem => item.Id) </text>
+                <text value="ViewOnly" id="ViewOnly" onclick="window.location.href = '/StockAdjustmentVoucherDetails/FilterView?voucherId=@item.Id&sessionId=@sessionId';"> @Html.DisplayFor(modelItem => item.Id) </text>
 
             </th>
             <td>

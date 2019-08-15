@@ -204,82 +204,91 @@ namespace LogicUniversity.Controllers
             return ddList;
         }
         [HttpPost]
-        public ActionResult DisplayDisbursement(FormCollection form)
+        public ActionResult DisplayDisbursement(FormCollection form,string sessionId)
         {
-            
-            string RequisitionDetailsString = Request.Form["RequisitionDetailsString"];
-            //create another submit button for the search department string
-            if (Request.Form["SearchDept"] != null)
+            sessionId = Request["sessionId"];
+
+            if (Sessions.IsValidSession(sessionId))
             {
-                string deptname = Request.Form["SearchDeptName"];
-                return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = deptname });
-            }
-            if (Request.Form["SearchCP"] != null)
-            {
-                string CPId = Request.Form["SearchCPId"];
-                List<Department> dListByCp = db.Departments.Where(d => d.CollectionLocationId == CPId).ToList();
-                string deptname = "";
-                foreach (Department d in dListByCp)
+                ViewData["sessionId"] = sessionId;
+                string RequisitionDetailsString = Request.Form["RequisitionDetailsString"];
+                //create another submit button for the search department string
+                if (Request.Form["SearchDept"] != null)
                 {
-                    deptname = deptname + "," + d.DeptName;
+                    string deptname = Request.Form["SearchDeptName"];
+                    return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = deptname,sessionId=sessionId });
                 }
-                return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = deptname });
-            }
-            int count = int.Parse(Request.Form["count"]);
-            string dept = Request.Form["DeptString"];
-            List<Department> dList = splitDString(dept);
-            StockAdjustmentVoucher s = PrepareVoucher();
-
-            List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
-            foreach (Department d in dList)
-            {
-                Disbursement disbursement = new Disbursement();
-                disbursement = PrepareAndIncludeAllDisbursement(disbursement, d);
-                List<DisbursementDetail> ddList = new List<DisbursementDetail>();
-
-                
-                for (int i = 0; i < count; i++)
+                if (Request.Form["SearchCP"] != null)
                 {
-                    string itemcode = Request.Form["Disbursement[" + i + "].itemcode"];
-                    Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
-                    int quantity = int.Parse(Request.Form["Disbursement[" + i + "].quantity"]);
-                    int collected = int.Parse(Request.Form["Disbursement[" + i + "].collected"]);
-
-                    if (quantity != collected)
+                    string CPId = Request.Form["SearchCPId"];
+                    List<Department> dListByCp = db.Departments.Where(d => d.CollectionLocationId == CPId).ToList();
+                    string deptname = "";
+                    foreach (Department d in dListByCp)
                     {
-                        //if any of the voucher in sList itemcode == itemcode
-                        if(sList.Any(sdv=>sdv.ItemCode == itemcode))
-                        {
-                            StockAdjustmentVoucherDetail sd1 = sList.FirstOrDefault(sdv1 => sdv1.ItemCode == itemcode);
-                            //sd1.QuantityAdjusted = sd1.QuantityAdjusted;
-                        }
-                        else
-                        {
-                            sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, quantity - collected);
-                        }
+                        deptname = deptname + "," + d.DeptName;
                     }
-                    ddList = AddDisbursementDetailToDDList(ddList, itemcode, quantity, collected);
+                    return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = deptname,sessionId=sessionId });
                 }
-                if (ddList.Count() != 0)
+                int count = int.Parse(Request.Form["count"]);
+                string dept = Request.Form["DeptString"];
+                List<Department> dList = splitDString(dept);
+                StockAdjustmentVoucher s = PrepareVoucher();
+
+                List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
+                foreach (Department d in dList)
                 {
-                    disbursement.Status = RequisitionDetailsString;
-                    disbursement.DisbursementDetails = ddList;
-                    db.Disbursements.Add(disbursement);
-                    db.SaveChanges();
+                    Disbursement disbursement = new Disbursement();
+                    disbursement = PrepareAndIncludeAllDisbursement(disbursement, d);
+                    List<DisbursementDetail> ddList = new List<DisbursementDetail>();
+
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        string itemcode = Request.Form["Disbursement[" + i + "].itemcode"];
+                        Products p = db.Products.FirstOrDefault(o => o.ItemCode == itemcode);
+                        int quantity = int.Parse(Request.Form["Disbursement[" + i + "].quantity"]);
+                        int collected = int.Parse(Request.Form["Disbursement[" + i + "].collected"]);
+
+                        if (quantity != collected)
+                        {
+                            //if any of the voucher in sList itemcode == itemcode
+                            if (sList.Any(sdv => sdv.ItemCode == itemcode))
+                            {
+                                StockAdjustmentVoucherDetail sd1 = sList.FirstOrDefault(sdv1 => sdv1.ItemCode == itemcode);
+                                //sd1.QuantityAdjusted = sd1.QuantityAdjusted;
+                            }
+                            else
+                            {
+                                sList = AddVoucherDetailToVoucherDetailList(sList, itemcode, quantity - collected);
+                            }
+                        }
+                        ddList = AddDisbursementDetailToDDList(ddList, itemcode, quantity, collected);
+                    }
+                    if (ddList.Count() != 0)
+                    {
+                        disbursement.Status = RequisitionDetailsString;
+                        disbursement.DisbursementDetails = ddList;
+                        db.Disbursements.Add(disbursement);
+                        db.SaveChanges();
+                    }
+                    s.StockAdjustmentVoucherDetails = sList;
                 }
-                s.StockAdjustmentVoucherDetails = sList;
-            }
-            
-            if (sList.Count() != 0)
-            {
-                ViewData["s"] = s;
-                ViewData["count"] = sList.Count();
-                return View("AdjustDisbursement", s);
+
+                if (sList.Count() != 0)
+                {
+                    ViewData["s"] = s;
+                    ViewData["count"] = sList.Count();
+                    return View("AdjustDisbursement", s);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Disbursements");
+                }
             }
             else
             {
-                return RedirectToAction("Index", "Disbursements");
-            }
+                return RedirectToAction("Login", "Login");
+            }          
         }
         public ActionResult AdjustDisbursement([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
         {

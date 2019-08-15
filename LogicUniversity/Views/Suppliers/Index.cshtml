@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Supplier List";
     var SupplierList = (List<Supplier>)ViewData["SupplierList"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
 
@@ -12,6 +13,8 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    <input type="hidden" value="@sessionId" name="sessionId" />
+
     <div class="form-horizontal">
         <form action="Post">
             <p align="left">
@@ -76,7 +79,7 @@
 
 }
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index",new { sessionId = sessionId })
 </div>
 
 @section Scripts {

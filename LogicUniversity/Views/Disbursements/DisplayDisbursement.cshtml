@@ -8,19 +8,20 @@
     var RequisitionDetailsString = (string)ViewData["RequisitionDetailsString"];
     var dListAll = (List<Department>)ViewData["dListAll"];
     var CpListAll = (List<CollectionPoint>)ViewData["CpListAll"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 <h2>DisplayDisbursement</h2>
-@using (Html.BeginForm("DisplayDisbursement", "Disbursements"))
+@using (Html.BeginForm("DisplayDisbursement", "Disbursements",new { sessionId = sessionId }))
 
 {
     @Html.AntiForgeryToken()
     <input type="hidden" value="@count" name="count" id="count" />
     <input type="hidden" value="@DeptString" name="DeptString" id="DeptString" />
     <input type="hidden" value="@RequisitionDetailsString" name="RequisitionDetailsString" id="RequisitionDetailsString" />
-    
+    <input type="hidden" value="@sessionId" name="sessionId" id="sessionId" />
         //make a unique id
         int j = 0;
     <table name="search">

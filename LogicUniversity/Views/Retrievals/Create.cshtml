@@ -7,6 +7,7 @@
     var ICRList = (List<ItemCodeRequisition>)ViewData["ICRList"];
     var count = (int)ViewData["count"];
     var dept = (string)"";
+    string sessionId = (string)ViewData["sessionId"];
 }
 
 <h2>Create</h2>
@@ -57,14 +58,14 @@
                                         int k = 0;
                                     <tr>@j.DeptName</tr>
                                     <br />
-                                        var deptname = j.DeptName;
-                                        dept = dept + "," + deptname;
+                                    var deptname = j.DeptName;
+                                    dept = dept + "," + deptname;
 
-                                        k++;
-                                    }
+                                    k++;
+                                }
                                     <input type="hidden" name="ICR[@i].Dept" value="@dept" />
                                     @{dept = "";}
-                    </tr>
+                        </tr>
                     </table>
                     </td>
                     <td>
@@ -80,7 +81,7 @@
                     i++;
                 }
             }
-
+            <input type="hidden" name="sessionId" value="@sessionId" />
             </table>
             <input type="submit" value="Submit" class="btn btn-default" />
         </div>
