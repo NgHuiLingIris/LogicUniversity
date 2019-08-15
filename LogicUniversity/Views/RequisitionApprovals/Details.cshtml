@@ -2,6 +2,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    string sessionId=(string)ViewData["sessionId"];
 }
 
 @{
@@ -10,7 +11,7 @@
 
 <form >
     <div>
-        <h4>Requisition Details</h4>  @Html.ActionLink("Back to List", "ViewRequisition", "RequisitionApprovals")
+        <h4>Requisition Details</h4>  @Html.ActionLink("Back to List", "ViewRequisition", "RequisitionApprovals",new { sessionId = sessionId })
         <hr />
         <table class="table">
             <tr>
@@ -38,7 +39,7 @@
 
 <textarea rows="4" cols="100" value="Remarks"></textarea>
     <br />   <br /> <br />
-
+    <input type="hidden" value=@sessionId name="sessionId" />
     <input type="submit" value="APPROVED" name="status" id="accept"  class="btn btn-primary" />
 
     <input type="submit" value="REJECTED" name="status" id="reject"  class="btn btn-primary" />

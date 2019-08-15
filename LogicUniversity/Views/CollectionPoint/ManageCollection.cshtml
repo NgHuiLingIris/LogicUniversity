@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    string sessionId = (string)ViewData["sessionId"];
 }
 <html>
 <head>
@@ -12,14 +13,14 @@
         function updatecp()
         {
 
-            window.location.href = '@Url.Action("UpdateCollectionPoint", "CollectionPoint")'
+            window.location.href = '@Url.Action("UpdateCollectionPoint", "CollectionPoint", new { sessionId = @sessionId })'
         }
 
         function updateur()
         {
             //var id = model.Id; //if you want to pass an Id parameter
            // window.location.href = '@Url.Action("UpdateCollectionPoint", "CollectionPoint")/' + id;
-            window.location.href = '@Url.Action("UpdateRepresentative", "CollectionPoint")'
+            window.location.href = '@Url.Action("UpdateRepresentative", "CollectionPoint", new { sessionId = @sessionId })'
         }
     </script>
 </head>

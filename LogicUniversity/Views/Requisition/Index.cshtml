@@ -3,6 +3,7 @@
 @model IEnumerable<LogicUniversity.Models.Products>
 @{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    string sessionId=(string)ViewData["sessionId"];
 }
 
 @{
@@ -35,7 +36,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#productName').autocomplete({
-                source: '@Url.Action("Search", "Requisition")'
+                source: '@Url.Action("Search", "Requisition", new { sessionId = @sessionId })'
             });
         });
     </script>
@@ -50,10 +51,10 @@
 </head>
 
 <header>
-    <a href="@Url.Action("AddtoCart", "Requisition")" style="float: right;">Proceed to Checkout</a>
+    <a href="@Url.Action("AddtoCart", "Requisition",new { sessionId = @sessionId})" style="float: right;">Proceed to Checkout</a>
 </header>
 
-@using (Html.BeginForm("Index", "Requisition", FormMethod.Get))
+@using (Html.BeginForm("Index", "Requisition",new { sessionId = @sessionId}, FormMethod.Get))
 {
 
 
@@ -92,7 +93,7 @@
                         <td></td>
 
                         <td align="center">
-                            <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode })">Add to Cart</a>
+                            <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode,sessionId=sessionId })">Add to Cart</a>
                         </td>
                     </tr>
                 }

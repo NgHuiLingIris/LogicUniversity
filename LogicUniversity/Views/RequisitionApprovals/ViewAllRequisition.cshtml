@@ -2,6 +2,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     ViewBag.Title = "Index";
@@ -75,7 +76,7 @@
             </td>
 
             <td>
-                @Html.ActionLink("Details", "TrackDetails", new { id = item.RequisitionId })
+                @Html.ActionLink("Details", "TrackDetails", new { id = item.RequisitionId,sessionId=@sessionId })
             </td>
         </tr>
     }

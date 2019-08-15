@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<LogicUniversity.Models.CartItem>
 @{
     ViewBag.Title = "Addtocart";
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
-    Layout = "~/Views/Shared/_Layout_DS.cshtml";
+           Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
 @if (ViewBag.Message != null)
 {
@@ -50,7 +51,7 @@
                     <td><input type="hidden" value="@item.UOM" name="UOM" /></td>
                     <td><input type="number" name="Quantity" value="0" /></td>
                     <td><input type="reset" name="Quantity" value="Reset" id="Quantity" /></td>
-                    <td> @Html.ActionLink("Delete", "AddtoCart", new { id = item.ItemCode })</td>
+                    <td> @Html.ActionLink("Delete", "AddtoCart", new { id = item.ItemCode,sessionId=@sessionId })</td>
                 </tr>
             }
         </table>

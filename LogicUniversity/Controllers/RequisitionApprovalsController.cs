@@ -94,7 +94,7 @@ namespace LogicUniversity.Controllers
             }
         }
         [HttpPost]
-        public ActionResult SCRequisitionView(FormCollection form)
+        public ActionResult SCRequisitionView(FormCollection form,string sessionId)
         {
             List<Requisition> reqList = new List<Requisition>();
             if (Request.Form["search"] != null)
@@ -142,6 +142,11 @@ namespace LogicUniversity.Controllers
             return View();
         }
 
+
+
+
+
+
         public ActionResult TrackRequisition(string sessionId)
         {
             if (Sessions.IsValidSession(sessionId))
@@ -159,8 +164,9 @@ namespace LogicUniversity.Controllers
 
 
         // GET: Requisitions/Details/5
-        public ActionResult Details(int? id, string status, string Remarks)
+        public ActionResult Details(int? id, string status, string Remarks, string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -177,7 +183,7 @@ namespace LogicUniversity.Controllers
                 db.Requisition.AddOrUpdate(requisition);
                 db.SaveChanges();
                 EmailService.SendNotification(requisition.EmployeeId, requisition.Status, "Your request is" + requisition.Status);
-                return View("ViewRequisition");
+                return RedirectToAction("ViewRequisition",new{sessionId=sessionId});
             }
 
             if (requisitionDetails == null)
@@ -187,8 +193,9 @@ namespace LogicUniversity.Controllers
             return View(requisitionDetails);
         }
 
-        public ActionResult TrackDetails(int? id)
+        public ActionResult TrackDetails(int? id, string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);

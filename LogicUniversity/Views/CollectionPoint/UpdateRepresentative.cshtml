@@ -3,6 +3,7 @@
     ViewBag.Title = "UpdateRepresentative";
     var deptId = (int)ViewData["deptid"];
     var currentRepresentative = (string)ViewData["representative"];
+    string sessionId =(string)ViewData["sessionId"];
 
 }
 
@@ -14,7 +15,7 @@
 <head>
     <script>
         function back() {
-           window.location.href = '@Url.Action("ManageCollection", "CollectionPoint")'
+           window.location.href = '@Url.Action("ManageCollection", "CollectionPoint", new { sessionId = @sessionId })'
         }
     </script>
 
@@ -36,7 +37,7 @@
         <b>@currentRepresentative</b>
     </div>
 
-    @using (Html.BeginForm("SaveChangedDepartmentrepresentative", "CollectionPoint", FormMethod.Post, new { id = "TheForm" }))
+    @using (Html.BeginForm("SaveChangedDepartmentrepresentative", "CollectionPoint", new { sessionId = @sessionId }, FormMethod.Post, new { id = "TheForm" }))
     {
 
         <div class="form-group  ">
