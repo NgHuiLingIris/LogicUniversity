@@ -67,92 +67,99 @@ namespace LogicUniversity.Controllers
             return rdList;
         }
         [HttpGet]
-        public ActionResult DisplayDisbursement(string RequisitionDetailsString, string DeptString)
+        public ActionResult DisplayDisbursement(string RequisitionDetailsString, string DeptString,string sessionId)
         {
-            
-            List<Department> dListAll = db.Departments.ToList();
-            List<CollectionPoint> CpListAll = db.CollectionPoints.ToList();
-            List<Department> dList = new List<Department>();
-            if (DeptString == "All")
+            if (Sessions.IsValidSession(sessionId))
             {
-                dList = dListAll;
-            }
-            else
-            {
-                dList = splitDString(DeptString);
-            }
-            List<RequisitionDetails> rdList = new List<RequisitionDetails>();
-            if (RequisitionDetailsString == "All")
-            {
-                foreach (Department d in dList)
+                ViewData["sessionId"] = sessionId;
+                List<Department> dListAll = db.Departments.ToList();
+                List<CollectionPoint> CpListAll = db.CollectionPoints.ToList();
+                List<Department> dList = new List<Department>();
+                if (DeptString == "All")
                 {
-                    //rd that are retrieved and from the dept - all disbursement string (have not been disbursed)
-                    string dept = d.DeptName;
-                    List<Requisition> RequisitionsThatAreFromDept = db.Requisition.Where(s => s.Department == dept).ToList();
-                    
-                    foreach (Requisition r in RequisitionsThatAreFromDept)
-                    {
-                        List<RequisitionDetails> AllRdByDept = db.RequisitionDetails.Where(rd => rd.RequisitionId == r.RequisitionId).Where(rd1 => rd1.Status == "Retrieved").ToList();
-                        foreach (RequisitionDetails rd2 in AllRdByDept)
-                        {
-                            rdList.Add(rd2);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                rdList = SplitRDString(RequisitionDetailsString, rdList);
-            }
-            //--start here: List<RequisitionDetails> RDThatHaveBeenDisbursed
-            string RequisitionDetailThatHasBeenDisbursed = "";
-            foreach (Disbursement d in db.Disbursements)
-            {
-                RequisitionDetailThatHasBeenDisbursed = RequisitionDetailThatHasBeenDisbursed + "," + d.Status;
-            }
-            string[] RequisitionDetailThatHasBeenDisbursedArray = RequisitionDetailThatHasBeenDisbursed.Split(',');
-            List<RequisitionDetails> rdListRemove = new List<RequisitionDetails>();
-            foreach (RequisitionDetails rd3 in rdList)
-            {
-                //if it is not in the RequisitionDetailThatHasBeenDisbursed
-                if (RequisitionDetailThatHasBeenDisbursedArray.Contains(rd3.RequisitionDetailsId.ToString()))
-                {
-                    rdListRemove.Add(rd3);
-                }
-
-            }
-            foreach(RequisitionDetails ToRemove in rdListRemove)
-            {
-                rdList.Remove(ToRemove);
-            }
-            //---end here
-            rdList = SaveIncludeAllRD(rdList);
-            List<RequisitionDetails> rdListByDept = GetRequisitionDetailsBFromDList(dList, rdList);
-
-            List<ItemCodeDisbursement> ICDList = new List<ItemCodeDisbursement>();
-            
-            foreach(RequisitionDetails rd2 in rdListByDept)
-            {
-                if (ICDList.Any(i=>i.Product == rd2.Products))
-                {
-                    ItemCodeDisbursement ICD = ICDList.FirstOrDefault(i1 => i1.Product == rd2.Products);
-                    ICD.Quantity = ICD.Quantity+rd2.Quantity;
+                    dList = dListAll;
                 }
                 else
                 {
-                    ItemCodeDisbursement ICD = new ItemCodeDisbursement();
-                    ICD.Product = rd2.Products;
-                    ICD.Quantity = rd2.Quantity;
-                    ICDList.Add(ICD);
+                    dList = splitDString(DeptString);
                 }
+                List<RequisitionDetails> rdList = new List<RequisitionDetails>();
+                if (RequisitionDetailsString == "All")
+                {
+                    foreach (Department d in dList)
+                    {
+                        //rd that are retrieved and from the dept - all disbursement string (have not been disbursed)
+                        string dept = d.DeptName;
+                        List<Requisition> RequisitionsThatAreFromDept = db.Requisition.Where(s => s.Department == dept).ToList();
+
+                        foreach (Requisition r in RequisitionsThatAreFromDept)
+                        {
+                            List<RequisitionDetails> AllRdByDept = db.RequisitionDetails.Where(rd => rd.RequisitionId == r.RequisitionId).Where(rd1 => rd1.Status == "Retrieved").ToList();
+                            foreach (RequisitionDetails rd2 in AllRdByDept)
+                            {
+                                rdList.Add(rd2);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    rdList = SplitRDString(RequisitionDetailsString, rdList);
+                }
+                //--start here: List<RequisitionDetails> RDThatHaveBeenDisbursed
+                string RequisitionDetailThatHasBeenDisbursed = "";
+                foreach (Disbursement d in db.Disbursements)
+                {
+                    RequisitionDetailThatHasBeenDisbursed = RequisitionDetailThatHasBeenDisbursed + "," + d.Status;
+                }
+                string[] RequisitionDetailThatHasBeenDisbursedArray = RequisitionDetailThatHasBeenDisbursed.Split(',');
+                List<RequisitionDetails> rdListRemove = new List<RequisitionDetails>();
+                foreach (RequisitionDetails rd3 in rdList)
+                {
+                    //if it is not in the RequisitionDetailThatHasBeenDisbursed
+                    if (RequisitionDetailThatHasBeenDisbursedArray.Contains(rd3.RequisitionDetailsId.ToString()))
+                    {
+                        rdListRemove.Add(rd3);
+                    }
+
+                }
+                foreach (RequisitionDetails ToRemove in rdListRemove)
+                {
+                    rdList.Remove(ToRemove);
+                }
+                //---end here
+                rdList = SaveIncludeAllRD(rdList);
+                List<RequisitionDetails> rdListByDept = GetRequisitionDetailsBFromDList(dList, rdList);
+
+                List<ItemCodeDisbursement> ICDList = new List<ItemCodeDisbursement>();
+
+                foreach (RequisitionDetails rd2 in rdListByDept)
+                {
+                    if (ICDList.Any(i => i.Product == rd2.Products))
+                    {
+                        ItemCodeDisbursement ICD = ICDList.FirstOrDefault(i1 => i1.Product == rd2.Products);
+                        ICD.Quantity = ICD.Quantity + rd2.Quantity;
+                    }
+                    else
+                    {
+                        ItemCodeDisbursement ICD = new ItemCodeDisbursement();
+                        ICD.Product = rd2.Products;
+                        ICD.Quantity = rd2.Quantity;
+                        ICDList.Add(ICD);
+                    }
+                }
+                ViewData["CpListAll"] = CpListAll;
+                ViewData["DeptString"] = DeptString;
+                ViewData["count"] = ICDList.Count();
+                ViewData["ICDList"] = ICDList;
+                ViewData["RequisitionDetailsString"] = RequisitionDetailsString;
+                ViewData["dListAll"] = dListAll;
+                return View();
             }
-            ViewData["CpListAll"] = CpListAll;
-            ViewData["DeptString"] = DeptString;
-            ViewData["count"] = ICDList.Count();
-            ViewData["ICDList"] = ICDList;
-            ViewData["RequisitionDetailsString"] = RequisitionDetailsString;
-            ViewData["dListAll"] = dListAll;
-            return View();
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }    
         }
         public StockAdjustmentVoucher PrepareVoucher()
         {

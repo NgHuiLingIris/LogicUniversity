@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
@@ -16,10 +17,18 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: StockCards
-        public ActionResult Index()
+        public ActionResult Index(string sessionId)
         {
-            var stockCards = db.StockCards.Include(s => s.product);
-            return View(stockCards.ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var stockCards = db.StockCards.Include(s => s.product);
+                return View(stockCards.ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: StockCards/Details/5

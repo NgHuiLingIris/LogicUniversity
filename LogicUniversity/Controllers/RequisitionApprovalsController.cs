@@ -51,39 +51,47 @@ namespace LogicUniversity.Controllers
 
         //Requisition ALL Details for Store Clerk
         [HttpGet]
-        public ActionResult SCRequisitionView()
+        public ActionResult SCRequisitionView(string sessionId)
         {
-            //------------------Prepare SCRequisitionViewPage-------
-            List<CollectionPoint> CPList = db.CollectionPoints.ToList();
-            CPList.Insert(0, new CollectionPoint());
-            List<string> StatusList = new List<string>{ "", "PENDING", "OUTSTANDING" };
-            ViewData["CPList"] = CPList;
-            ViewData["StatusList"] = StatusList;
-            //---------------------END HERE----------------------
-            List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING" || s.Status=="OUTSTANDING").OrderByDescending(s => s.Date).ToList();
-            List<Requisition> reqByDept = new List<Requisition>();
-            foreach (Requisition r in reqListAll)
+            if (Sessions.IsValidSession(sessionId))
             {
-                Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
-                r.Employee = e;
-                r.Employee.Department = db.Departments.FirstOrDefault(c=>c.DeptId == e.DeptId);
-                r.Department = r.Employee.Department.DeptName;
-                string deptName = r.Department;
-
-                if (!reqByDept.Any(s => s.Department.Contains(r.Department)))
+                ViewData["sessionId"] = sessionId;
+                //------------------Prepare SCRequisitionViewPage-------
+                List<CollectionPoint> CPList = db.CollectionPoints.ToList();
+                CPList.Insert(0, new CollectionPoint());
+                List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
+                ViewData["CPList"] = CPList;
+                ViewData["StatusList"] = StatusList;
+                //---------------------END HERE----------------------
+                List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING" || s.Status == "OUTSTANDING").OrderByDescending(s => s.Date).ToList();
+                List<Requisition> reqByDept = new List<Requisition>();
+                foreach (Requisition r in reqListAll)
                 {
-                    reqByDept.Add(r);
-                }
-            }
+                    Employee e = db.Employees.FirstOrDefault(a => a.EmployeeId == r.EmployeeId);
+                    r.Employee = e;
+                    r.Employee.Department = db.Departments.FirstOrDefault(c => c.DeptId == e.DeptId);
+                    r.Department = r.Employee.Department.DeptName;
+                    string deptName = r.Department;
 
-            List<Requisition> reqList = new List<Requisition>();
-            foreach (Requisition req in reqByDept)
-            {
-                reqList.Add(req);
+                    if (!reqByDept.Any(s => s.Department.Contains(r.Department)))
+                    {
+                        reqByDept.Add(r);
+                    }
+                }
+
+                List<Requisition> reqList = new List<Requisition>();
+                foreach (Requisition req in reqByDept)
+                {
+                    reqList.Add(req);
+                }
+                ViewData["count"] = reqList.Count();
+                ViewData["reqList"] = reqList;
+                return View(reqList);
             }
-            ViewData["count"] = reqList.Count();
-            ViewData["reqList"] = reqList;
-            return View(reqList);
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         [HttpPost]
         public ActionResult SCRequisitionView(FormCollection form)

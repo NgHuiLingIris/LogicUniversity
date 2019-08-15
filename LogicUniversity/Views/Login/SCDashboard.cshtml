@@ -1,7 +1,8 @@
-﻿
-
-@{
+﻿@{
     ViewBag.Title = "Store Clerk Dashboard";
+}
+@{
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
@@ -22,22 +23,22 @@
 
 <table>
     <tr>
-        <td>@Html.ActionLink("Requisition", "SCRequisitionView", "RequisitionApprovals")</td>
-        <td>@Html.ActionLink("Disbursement","DisplayDisbursement","Disbursements",new { RequisitionDetailsString ="All", DeptString ="All"},null)</td>
-        <td>@Html.ActionLink("Catalogue", "Index", "Products")</td>
+        <td>@Html.ActionLink("Requisition", "SCRequisitionView", "RequisitionApprovals",new { sessionId = sessionId },null)</td>
+        <td>@Html.ActionLink("Disbursement", "DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = "All", DeptString = "All" ,sessionId=sessionId}, null)</td>
+        <td>@Html.ActionLink("Catalogue", "Index", "Products",new { sessionId = sessionId },null)</td>
     </tr>
     <tr>
-        <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder")</td>
-        <td>@Html.ActionLink("Adjustment Voucher", "Create", "StockAdjustmentVouchers")</td>
-        <td>@Html.ActionLink("Stock Cards", "Index", "stockcards")</td>
+        <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Adjustment Voucher", "Create", "StockAdjustmentVouchers", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Stock Cards", "Index", "stockcards", new { sessionId = sessionId }, null)</td>
     </tr>
     <tr>
-        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals")</td>
-        <td>@Html.ActionLink("Supplier List", "Index", "Suppliers")</td>
+        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Supplier List", "Index", "Suppliers", new { sessionId = sessionId }, null)</td>
         <td>@Html.ActionLink("View Tender", "Tender")</td>
     </tr>
     <tr>
-        <td>@Html.ActionLink("Charge Department", "ChargeBackDepartment", "ChargeBackDepartment")</td>
+        <td>@Html.ActionLink("Charge Department", "ChargeBackDepartment", "ChargeBackDepartment", new { sessionId = sessionId }, null)</td>
         <td>@Html.ActionLink("View Department", "Department")</td>
         <td></td>
     </tr>

@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
+using LogicUniversity.Services;
 
 namespace LogicUniversity.Controllers
 {
@@ -47,28 +48,36 @@ namespace LogicUniversity.Controllers
          * It prepares the form by giving the number of rows that match with the number of product types, with an additional buffer of 5.
          * An improvement could be done that allows the user to add the number of rows in the view.
          */
-        public ActionResult Create()
+        public ActionResult Create(string sessionId)
         {
-            List<Products> ProductList = new List<Products>(db.Products);
-            ProductList.Insert(0, new Products());
-            //5 is just an estimate on the extras
-            int rows = db.Products.Count() + 5;
-
-            StockAdjustmentVoucher s0 = new StockAdjustmentVoucher();
-            int id = db.StockAdjustmentVouchers.Count() + 1;
-            s0.Id = "V" + id;
-            s0.DateCreated = DateTime.Now;
-
-            List<StockAdjustmentVoucherDetail> s0List = new List<StockAdjustmentVoucherDetail>();
-            for(int i = 0; i < rows; i++)
+            if (Sessions.IsValidSession(sessionId))
             {
-                s0List.Add(new StockAdjustmentVoucherDetail());
-            }
-            s0.StockAdjustmentVoucherDetails = s0List;
-            ViewData["ProductList"] = ProductList;
-            ViewData["StockAdjustmentVoucher_Default"] = s0;
+                ViewData["sessionId"] = sessionId;
+                List<Products> ProductList = new List<Products>(db.Products);
+                ProductList.Insert(0, new Products());
+                //5 is just an estimate on the extras
+                int rows = db.Products.Count() + 5;
 
-            return View(s0);
+                StockAdjustmentVoucher s0 = new StockAdjustmentVoucher();
+                int id = db.StockAdjustmentVouchers.Count() + 1;
+                s0.Id = "V" + id;
+                s0.DateCreated = DateTime.Now;
+
+                List<StockAdjustmentVoucherDetail> s0List = new List<StockAdjustmentVoucherDetail>();
+                for (int i = 0; i < rows; i++)
+                {
+                    s0List.Add(new StockAdjustmentVoucherDetail());
+                }
+                s0.StockAdjustmentVoucherDetails = s0List;
+                ViewData["ProductList"] = ProductList;
+                ViewData["StockAdjustmentVoucher_Default"] = s0;
+
+                return View(s0);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // POST: StockAdjustmentVouchers/Create
