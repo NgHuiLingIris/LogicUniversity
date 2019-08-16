@@ -1,5 +1,7 @@
 ﻿@model LogicUniversity.Models.CollectionPoint
-
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     ViewBag.Title = "Delete";
 }
@@ -48,7 +50,8 @@
 
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            <input type="hidden" value="@sessionId" name="sessionId" />
+            @Html.ActionLink("Back to List", "ViewCollectionPoint", new { sessionId = sessionId })
         </div>
     }
 </div>

@@ -3,6 +3,9 @@
 @{
     ViewBag.Title = "ViewCollectionPoint";
 }
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
@@ -10,7 +13,7 @@
 <h2>ViewCollectionPoint</h2>
 
 <p>
-    @Html.ActionLink("Create New", "CreateNewCollectionPoint")
+    @Html.ActionLink("Create New", "CreateNewCollectionPoint",new { sessionId = sessionId })
 </p>
 <table class="table">
     <tr>
@@ -47,9 +50,9 @@
                 @Html.DisplayFor(modelItem => item.Employee.EmployeeName)
             </td>
             <td>
-                @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = item.CollectionPointId }) |
-                @Html.ActionLink("Details", "GetCollectionPointDetails", new { id = item.CollectionPointId }) |
-                @Html.ActionLink("Delete", "DeleteCollectionPoint", new { id = item.CollectionPointId })
+                @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = item.CollectionPointId ,sessionId=sessionId}) |
+                @Html.ActionLink("Details", "GetCollectionPointDetails", new { id = item.CollectionPointId, sessionId = sessionId }) |
+                @Html.ActionLink("Delete", "DeleteCollectionPoint", new { id = item.CollectionPointId, sessionId = sessionId })
             </td>
         </tr>
     }
