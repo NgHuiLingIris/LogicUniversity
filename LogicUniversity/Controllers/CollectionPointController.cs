@@ -61,7 +61,7 @@ namespace LogicUniversity.Controllers
             cp.CollectionLocationId = selection.ToString();
             db.SaveChanges();
             TempData["successmsg"] = "Successfully changed the collection point";
-            return RedirectToAction("Display", "CollectionPoint",new { sessionId = sessionId});
+            return RedirectToAction("Display", "CollectionPoint",new { sessionId = sessionId,Role="HOD"});
         }
 
 
@@ -105,18 +105,19 @@ namespace LogicUniversity.Controllers
                 department.ContactName = newrep.EmployeeName;
                 db.SaveChanges();
                 TempData["successmsg"] = "Successfully changed the representative";
-                return RedirectToAction("Display", "CollectionPoint",new { sessionId=sessionId});
+                return RedirectToAction("Display", "CollectionPoint",new { sessionId=sessionId,Role="HOD"});
             }
             return RedirectToAction("UpdateRepresentative", "CollectionPoint", new { sessionId = @sessionId });
 
 
         }
 
-        public ActionResult Display(string sessionId)
+        public ActionResult Display(string sessionId,string Role)
         {
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
+                ViewData["Role"] = Role;
 
                 int empId = (int)Session["empId"];
                 var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
