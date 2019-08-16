@@ -7,7 +7,8 @@
     string sessionId = (string)ViewData["sessionId"];
 }
 @{
-
+    //this page is used by store manager
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
 <h2 align="center">Supplier List</h2>
 @using (Html.BeginForm())

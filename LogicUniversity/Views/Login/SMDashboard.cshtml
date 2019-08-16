@@ -21,7 +21,7 @@
 
     <tr>
         <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)</td>
-        <td>@Html.ActionLink("Catalogue", "Index", "Products",new {sessionId = sessionId,Role="StoreManager"},null)</td>
+        <td>@Html.ActionLink("Catalogue", "Index", "Products",new {sessionId = sessionId, Role="StoreManager"},null)</td>
         @*<td><button class="btn" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Manager';">Pending Approval/Rejection</button></td>*@
         <td>@Html.ActionLink("Pending Approval","ApproverView", "StockAdjustmentVoucherDetails",new { Role = "Manager",sessionId=sessionId},null)</td>
     </tr>
@@ -31,7 +31,7 @@
         <td>@Html.ActionLink("View Tender", "Tender", new { sessionId = sessionId }, null)</td>
     </tr>
     <tr>
-        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals", new { sessionId = sessionId,Role = "StoreManager"}, null)</td>
         <td>@Html.ActionLink("View Department", "Department", new { sessionId = sessionId }, null)</td>
         <td>@Html.ActionLink("Charge Department", "ChargeBackDepartment", "ChargeBackDepartment", new { sessionId = sessionId }, null)</td>
     </tr>
