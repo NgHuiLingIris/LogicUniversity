@@ -312,7 +312,12 @@ namespace LogicUniversity.Controllers
         }
         public void CheckRequisitionComplete()
         {
-            List<Requisition> rList = db.Requisition.Where(s => s.Status == "PENDING").ToList();
+            List<Requisition> rOutstandingList = db.Requisition.Where(s => s.Status == "OUTSTANDING").ToList();
+            List<Requisition> rList = db.Requisition.Where(s => s.Status == "APPROVED").ToList();
+            foreach(Requisition r in rOutstandingList)
+            {
+                rList.Add(r);
+            }
             foreach(Requisition r in rList)
             {
                 List<RequisitionDetails> rdList = db.RequisitionDetails.Where(s => s.RequisitionId == r.RequisitionId).ToList();
