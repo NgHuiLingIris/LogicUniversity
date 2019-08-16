@@ -17,26 +17,26 @@
 }
 
 <head>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            text-align: center;
-        }
-    </style>
+    @*<style>
+            table, th, td {
+                border: 1px solid black;
+                text-align: center;
+            }
+        </style>*@
 </head>
 
-<h2>Viewallrequisitions</h2>
+<h2>View Requisitions</h2>
 
 @using (Html.BeginForm())
 {
     int j = 0;
-    <table>
+    <table class="table">
         <tr>
             <td>From date: </td>
-            <td><input type="text" id="fromdate" name="fromdate"></td>
+            <td><input type="text" id="fromdate" name="fromdate" class="form-control"></td>
             <td>Collection Point: </td>
             <td>
-                <select name="SelectedCP">
+                <select name="SelectedCP" class="mdb-select md-form">
                     @foreach (CollectionPoint cp in CPList)
                     {
                         <option Id="CollectionPoint[@j]" name="CollectionPoint[@j]" value="@cp.CollectionPointId" typeof="text">
@@ -49,11 +49,11 @@
         <tr>
             <td>To date: </td>
             <td>
-                <input type="text" id="todate" name="todate">
+                <input type="text" id="todate" name="todate" class="form-control">
             </td>
             <td>Status: </td>
             <td>
-                <select name="status">
+                <select name="status" cclass="mdb-select md-form">
                     @foreach (string Status in StatusList)
                     {
                         <option Id="Status[@j]" name="Status[@j]" value="@Status" typeof="text">
@@ -63,60 +63,67 @@
                 </select>
             </td>
         </tr>
-        <tr>
 
-            <td><input type="submit" value="search" name="search" id="search" /></td>
-            <td><input type="submit" value="retrieve" name="retrieve" id="retrieve" /></td>
-        </tr>
+
+
     </table>
+    <br />
+
+    <input type="submit" value="Search" name="search" id="search" class="btn btn-primary" />
+
     <input type="hidden" value=@count name="count" id="count" />
-<table>
+    <br />
+    <br />
 
-    <tr>
-        <td></td>
-        <td>Date </td>
-        <td>Status </td>
-        <td>Department </td>
-    </tr>
-    @{
-        //To make unique Id
-        int i = 0;
-        foreach (var item in reqList)
-        {
+    <table class="table">
 
-            <tr>
-                <td>
-                    <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" value=@Html.DisplayFor(model => item.Department) />
-                </td>
-                <td>@Html.DisplayFor(model => item.Date)</td>
-                <td>@Html.DisplayFor(model => item.Status)</td>
-                <td>@Html.DisplayFor(model => item.Department)</td>
-            </tr>
-            i++;
-        }
-    }
-    @*
-            <tr>
-            <td>Requisition Id </td>
-            <td>Employee Id </td>
-            <td>Date </td>
-            <td>Status </td>
-            <td>Remarkss </td>
-            <td>Approver Id </td>
-            <td>Department </td>
+        <tr>
+            <th></th>
+            <th>Date </th>
+            <th>Status </th>
+            <th>Department </th>
         </tr>
-        @foreach (var requisition in reqList)
-        {
-            <tr>
-                <td>@Html.DisplayFor(model => requisition.RequisitionId)</td>
-                <td>@Html.DisplayFor(model => requisition.EmployeeId)</td>
-                <td>@Html.DisplayFor(model => requisition.Date)</td>
-                <td>@Html.DisplayFor(model => requisition.Status)</td>
-                <td>@Html.DisplayFor(model => requisition.Remarks)</td>
-                <td>@Html.DisplayFor(model => requisition.ApproverId)</td>
-                <td>@Html.DisplayFor(model => requisition.Department)</td>
-            </tr>
+        @{
+            //To make unique Id
+            int i = 0;
+            foreach (var item in reqList)
+            {
+
+                <tr>
+                    <td>
+                        <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" value=@Html.DisplayFor(model => item.Department) />
+                    </td>
+                    <td>@Html.DisplayFor(model => item.Date)</td>
+                    <td>@Html.DisplayFor(model => item.Status)</td>
+                    <td>@Html.DisplayFor(model => item.Department)</td>
+                </tr>
+                i++;
+            }
         }
-    *@
-</table>
+        @*
+                <tr>
+                <td>Requisition Id </td>
+                <td>Employee Id </td>
+                <td>Date </td>
+                <td>Status </td>
+                <td>Remarkss </td>
+                <td>Approver Id </td>
+                <td>Department </td>
+            </tr>
+            @foreach (var requisition in reqList)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(model => requisition.RequisitionId)</td>
+                    <td>@Html.DisplayFor(model => requisition.EmployeeId)</td>
+                    <td>@Html.DisplayFor(model => requisition.Date)</td>
+                    <td>@Html.DisplayFor(model => requisition.Status)</td>
+                    <td>@Html.DisplayFor(model => requisition.Remarks)</td>
+                    <td>@Html.DisplayFor(model => requisition.ApproverId)</td>
+                    <td>@Html.DisplayFor(model => requisition.Department)</td>
+                </tr>
+            }
+        *@
+    </table>
+
+    <input type="submit" value="Retrieve" name="retrieve" id="retrieve" class="btn btn-primary" />
 }

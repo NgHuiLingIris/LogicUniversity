@@ -19,35 +19,46 @@
 </head>
 
 
-<h2>Storeclerkdash</h2>
+<h2>Store Clerk Dashboard</h2>
+<a href="@Url.Action("SCRequisitionView","RequisitionApprovals",new { sessionId = sessionId  }, null)" class="button">Requistion</a>
+<a href="@Url.Action("DisplayDisbursement","Disbursements",new { RequisitionDetailsString = "All", DeptString = "All" ,sessionId=sessionId}, null)" class="button">Disbursement</a>
+<a href="@Url.Action("PlaceOrder","PurchaseOrder",new { sessionId = sessionId  }, null)" class="button">Purchase Order</a>
+<a href="@Url.Action("Create","StockAdjustmentVouchers",new { sessionId = sessionId  }, null)" class="button">Adjustment Voucher</a>
+<a href="@Url.Action("Index","stockcards",new { sessionId = sessionId })" class="button">Stock Cards</a>
+<a href="@Url.Action("ViewAllRequisition","RequisitionApprovals",new { sessionId = sessionId  }, null)" class="button">Requisition History</a>
+<a href="@Url.Action("Index","Suppliers",new { sessionId = sessionId  }, null)" class="button">Supplier List</a>
+<a href="@Url.Action("Index","Tender",new { sessionId = sessionId  }, null)" class="button">View Tender</a>
+<a href="@Url.Action("ChargeBackDepartment","ChargeBackDepartment",new { sessionId = sessionId  }, null)" class="button">Charge Department</a>
+<a href="@Url.Action("Index","Department",new { sessionId = sessionId  }, null)" class="button">View Department</a>
 
-<table>
-    <tr>
-        <td>@Html.ActionLink("Requisition", "SCRequisitionView", "RequisitionApprovals",new { sessionId = sessionId },null)</td>
-        <td>@Html.ActionLink("Disbursement", "DisplayDisbursement", "Disbursements", new { RequisitionDetailsString = "All", DeptString = "All" ,sessionId=sessionId}, null)</td>
-        <td>@Html.ActionLink("Catalogue", "Index", "Products",new { sessionId = sessionId },null)</td>
-    </tr>
-    <tr>
-        <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)</td>
-        <td>@Html.ActionLink("Adjustment Voucher", "Create", "StockAdjustmentVouchers", new { sessionId = sessionId }, null)</td>
-        <td>@Html.ActionLink("Stock Cards", "Index", "stockcards", new { sessionId = sessionId }, null)</td>
-    </tr>
-    <tr>
-        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals", new { sessionId = sessionId }, null)</td>
-        <td>@Html.ActionLink("Supplier List", "Index", "Suppliers", new { sessionId = sessionId }, null)</td>
-        <td>@Html.ActionLink("View Tender", "Tender")</td>
-    </tr>
-    <tr>
-        <td>@Html.ActionLink("Charge Department", "ChargeBackDepartment", "ChargeBackDepartment", new { sessionId = sessionId }, null)</td>
-        <td>@Html.ActionLink("View Department", "Department")</td>
-        <td></td>
-    </tr>
-</table>
-@*
-    <table>
-            <tr><td><button class="btn-primary" onclick="window.location.href = '/StockAdjustmentVouchers/Create';">Raise Stock Adjustment Voucher</button></td></tr>
-        <tr><td><button class="btn-primary" onclick="window.location.href = '/Suppliers/Index';">View Suppliers</button></td></tr>
-        <tr><td><button class="btn-primary" onclick="window.location.href = '/stockcards/Index';">View StockCards</button></td></tr>
-        <tr><td><button class="btn-primary" onclick="window.location.href = '/PurchaseOrder/Index';">Create Purchase Order</button></td></tr>
-    </table>
-*@
+
+
+<style>
+    fieldset {
+        display: block;
+        margin-left: 2px;
+        margin-right: 2px;
+        padding-top: 0.35em;
+        padding-bottom: 0.625em;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+        border: 2px groove;
+    }
+
+    .button {
+        background-color: #0000ff; /* Green */
+        border: none;
+        color: white;
+        width: 300px ;
+        height: 100px;
+        padding: 40px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 15px 20px;
+        cursor: pointer;
+        border-radius: 2px;
+        position: relative;
+    }
+</style>

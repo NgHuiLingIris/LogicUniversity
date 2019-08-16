@@ -11,16 +11,15 @@
 
 
 <head>
-    <link rel="stylesheet" type="text/css" href="~/css/newst.css">
+    @*<link rel="stylesheet" type="text/css" href="~/css/newst.css">*@
 
 </head>
 
 
 <h2>Store Supervisor Dashboard</h2>
-<table class="container">
+<a href="@Url.Action("ViewRequisition","RequisitionApprovals",new { sessionId = sessionId })" class="button">Requistion Approvals</a>
 
-    <tr>
-        <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)</td>
+<a href="@Url.Action( "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)" class="button">PurchaseOrder</a>
         <td>@Html.ActionLink("Catalogue", "Index", "Products", new { sessionId = sessionId }, null)</td>
         <td><button class="btn" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Supervisor';">Pending Approval/Rejection</button></td>
 

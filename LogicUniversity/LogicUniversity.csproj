@@ -199,6 +199,7 @@
     <Content Include="Content\styles.css" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
+    <Content Include="css\basic.css" />
     <Content Include="css\newst.css" />
     <Content Include="css\pikaday.css" />
     <Content Include="css\site.css" />

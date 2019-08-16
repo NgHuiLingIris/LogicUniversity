@@ -1,7 +1,9 @@
 ﻿@using LogicUniversity.Models
 @model LogicUniversity.Models.ItemCodeRequisition
 
-
+@{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
 @{
     ViewBag.Title = "Create";
     var ICRList = (List<ItemCodeRequisition>)ViewData["ICRList"];
@@ -10,7 +12,7 @@
     string sessionId = (string)ViewData["sessionId"];
 }
 
-<h2>Create</h2>
+<h2>Retrieval Form</h2>
 
 
 @using (Html.BeginForm("Create", "Retrievals", FormMethod.Post))
@@ -19,7 +21,7 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <table border="1">
+        <table class="table">
             <tr>
                 <th>Product</th>
                 <th>Retrieved</th>
@@ -85,12 +87,12 @@
             </table>
             <input type="submit" value="Submit" class="btn btn-default" />
         </div>
+    }
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
 }
-
-        <div>
-            @Html.ActionLink("Back to List", "Index")
-        </div>
-
-        @section Scripts {
-            @Scripts.Render("~/bundles/jqueryval")
-        }

@@ -1,6 +1,6 @@
-/**
+*
  * This theme is an example to show how you can create your own.
- */
+ 
 .pika-single.dark-theme {
     color: #fff;
     background: #333;
@@ -53,4 +53,4 @@
 .dark-theme .pika-button:hover {
     color: #fff !important;
     background: #ff8000 !important;
-}
+}*
