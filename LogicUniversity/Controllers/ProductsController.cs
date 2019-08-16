@@ -17,11 +17,12 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: Products
-        public ActionResult Index(string sessionId)
+        public ActionResult Index(string sessionId,string Role)
         {
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
+                ViewData["Role"] = Role;
                 return View(db.Products.ToList());
             }
             else
