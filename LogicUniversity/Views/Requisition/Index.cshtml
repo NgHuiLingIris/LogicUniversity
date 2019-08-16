@@ -3,7 +3,7 @@
 @model IEnumerable<LogicUniversity.Models.Products>
 @{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
-    string sessionId = (string)ViewData["sessionId"];
+    string sessionId=(string)ViewData["sessionId"];
 }
 
 @{
@@ -24,8 +24,6 @@
     }
 
 }
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -53,17 +51,18 @@
 </head>
 
 <header>
-    <a href="@Url.Action("AddtoCart", "Requisition",new { sessionId = @sessionId})" style="float: right;"><span class="glyphicon glyphicon-home">Proceed to Checkout</a>
+    <a href="@Url.Action("AddtoCart", "Requisition",new { sessionId = @sessionId})" style="float: right;">Proceed to Checkout</a>
 </header>
 
-@using (Html.BeginForm("Index", "Requisition", new { sessionId = @sessionId }, FormMethod.Get))
+@using (Html.BeginForm("Index", "Requisition",new { sessionId = @sessionId}, FormMethod.Get))
 {
-
+    <input type="hidden" value="@sessionId" name="sessionId" />
 
     <form>
-        Search Products:
+        Search Products By Category:
 
-        @Html.TextBox("search", null, new { @class = "form-control", sessionId = sessionId }) <br /> <button class="btn btn-primary">Search</button>
+        @Html.TextBox("search", null, new { @class = "form-control"}) <br /> <button class="btn btn-primary">Search</button>
+        @Html.ActionLink("Show All", "Index",new { sessionId = sessionId })
     </form>
 
 }
@@ -74,7 +73,7 @@
         {
             <table class="table">
                 <tr>
-                    <th> &emsp; Category</th>
+                    <th> Category</th>
                     <th> Description </th>
                     <th> UOM </th>
                     <th> Button </th>
@@ -84,7 +83,6 @@
                 {
                     <tr>
                         <td>
-                            &emsp;
                             @Html.DisplayFor(modelItem => item.Category)
                         </td>
                         <td>
@@ -96,7 +94,7 @@
                         <td></td>
 
                         <td align="center">
-                            <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode,sessionId=sessionId ,@class="button"})">Add to Cart</a>
+                            <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode,sessionId=sessionId })">Add to Cart</a>
                         </td>
                     </tr>
                 }

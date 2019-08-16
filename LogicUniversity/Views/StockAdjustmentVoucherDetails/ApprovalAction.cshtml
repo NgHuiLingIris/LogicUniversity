@@ -7,6 +7,7 @@
     var TotalAmount = (double)ViewData["TotalAmount"];
     var ItemCodeString = (string)ViewData["ItemCodeString"];
     var Role = (string)ViewData["Role"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
@@ -19,8 +20,9 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 @using (Html.BeginForm())
-
 {
+    <input type="hidden" value="@sessionId" name="sessionId" />
+
     <table class="table">
         <tr>
             <th>

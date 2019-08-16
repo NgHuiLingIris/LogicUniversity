@@ -48,17 +48,24 @@ namespace LogicUniversity.Controllers
         // GET: Delegations/Details/5
         public ActionResult GetDelegationDetails(int? id, string sessionId)
         {
-            ViewData["sessionId"] = sessionId;
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Delegation delegation = db.Delegations.Find(id);
+                if (delegation == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(delegation);
             }
-            Delegation delegation = db.Delegations.Find(id);
-            if (delegation == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(delegation);
         }
 
         // GET: Delegations/Create
@@ -622,17 +629,24 @@ namespace LogicUniversity.Controllers
         // GET: Delegations/Delete/5
         public ActionResult CancelDelegation(int? id,string sessionId)
         {
-            ViewData["sessionId"] = sessionId;
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Delegation delegation = db.Delegations.Find(id);
+                if (delegation == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(delegation);
             }
-            Delegation delegation = db.Delegations.Find(id);
-            if (delegation == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(delegation);
         }
 
         // POST: Delegations/Delete/5

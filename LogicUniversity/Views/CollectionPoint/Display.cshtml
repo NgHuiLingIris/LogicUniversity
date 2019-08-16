@@ -2,12 +2,17 @@
     ViewBag.Title = "Display";
     var collectionpoint = (string)ViewData["cp"];
     var representative = (string)ViewData["rep"];
-
+    string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
-@{
+@if (Role == "HOD")
+{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
-
+else if(Role == "Staff")
+{
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
+}
 @if (ViewBag.Message != null)
 {
     @section scripts{

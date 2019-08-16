@@ -7,6 +7,7 @@
     var StatusList = (List<string>)ViewData["StatusList"];
     var Datetimelist = (List<DateTime>)ViewData["Datetimelist"];
     var Role = (String)ViewData["Role"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
@@ -19,12 +20,13 @@
 @using (Html.BeginForm("ApproverView", "StockAdjustmentVoucherDetails", FormMethod.Get))
 {
     <input type="hidden" name="Role" value="@Role" />
+    <input type="hidden" name="sessionId" value="@sessionId" />
     @Html.TextBox("SearchString")
-    <button type="submit">Search Request</button>
+    <button type="submit">Search Request By Desc</button>
 }
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create",new { sessionId = sessionId })
 </p>
 @using (Html.BeginForm())
 
@@ -61,7 +63,7 @@
                         <td>
                             @if (StatusList[i] == "Pending")
                             {
-                                @Html.ActionLink("Approve/Reject", "ApprovalAction", new { ItemCode = @PendingItemList[i].ItemCode, Role = @Role })
+                                @Html.ActionLink("Approve/Reject", "ApprovalAction", new { ItemCode = @PendingItemList[i].ItemCode, Role = @Role ,sessionId=sessionId})
                             }
                             else
                             {
