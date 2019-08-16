@@ -72,7 +72,7 @@ namespace LogicUniversity.Controllers
 
 
                 List<DisbursementDetail> list = new List<DisbursementDetail>();
-                var disbursements = (db.Disbursements.Include(d => d.CollectionPoint).Include(d => d.Representative).Where(d => d.DateDisbursed.Month == month && d.DateDisbursed.Year.ToString() == year && d.Representative.Department.DeptName == Dept_Name && d.Status == "Delivered")).ToList();
+                var disbursements = (db.Disbursements.Include(d => d.CollectionPoint).Include(d => d.Representative).Where(d => d.DateDisbursed.Month == month && d.DateDisbursed.Year.ToString() == year && d.Representative.Department.DeptName == Dept_Name)).ToList();
                 foreach (Disbursement d in disbursements)
                 {
                     List<DisbursementDetail> disbursementlist = (db.DisbursementDetails.Include(dd => dd.Products).Where(dd => dd.DisbursementId == d.DisbursementId)).ToList();

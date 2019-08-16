@@ -96,11 +96,13 @@ namespace LogicUniversity.Controllers
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             var rep = db.Employees.Where(r => r.DeptId == deptId && r.Role == "DEP_REP").SingleOrDefault();
+            var department = db.Departments.Find(deptId);
             if (ModelState.IsValid)
             {
                 rep.Role = "DEP_STAFF";
                 Employee newrep = db.Employees.Find(emp.EmployeeId);
                 newrep.Role = "DEP_REP";
+                department.ContactName = newrep.EmployeeName;
                 db.SaveChanges();
                 TempData["successmsg"] = "Successfully changed the representative";
                 return RedirectToAction("Display", "CollectionPoint",new { sessionId=sessionId});

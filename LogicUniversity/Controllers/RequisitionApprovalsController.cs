@@ -36,9 +36,9 @@ namespace LogicUniversity.Controllers
 
         public ActionResult ViewAllRequisition(string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             if (Sessions.IsValidSession(sessionId))
             {
-                ViewData["sessionId"] = sessionId;
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
                 return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList());
@@ -59,11 +59,11 @@ namespace LogicUniversity.Controllers
                 //------------------Prepare SCRequisitionViewPage-------
                 List<CollectionPoint> CPList = db.CollectionPoints.ToList();
                 CPList.Insert(0, new CollectionPoint());
-                List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
+                List<string> StatusList = new List<string> { "", "APPROVED", "OUTSTANDING" };
                 ViewData["CPList"] = CPList;
                 ViewData["StatusList"] = StatusList;
                 //---------------------END HERE----------------------
-                List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "PENDING" || s.Status == "OUTSTANDING").OrderByDescending(s => s.Date).ToList();
+                List<Requisition> reqListAll = db.Requisition.Include(s => s.RequisitionDetails).Where(s => s.Status == "APPROVED" || s.Status == "OUTSTANDING").OrderByDescending(s => s.Date).ToList();
                 List<Requisition> reqByDept = new List<Requisition>();
                 foreach (Requisition r in reqListAll)
                 {
@@ -116,7 +116,7 @@ namespace LogicUniversity.Controllers
                     //------------------Prepare SCRequisitionViewPage-------
                     List<CollectionPoint> CPList = db.CollectionPoints.ToList();
                     CPList.Insert(0, new CollectionPoint());
-                    List<string> StatusList = new List<string> { "", "PENDING", "OUTSTANDING" };
+                    List<string> StatusList = new List<string> { "", "APPROVED", "OUTSTANDING" };
                     ViewData["CPList"] = CPList;
                     ViewData["StatusList"] = StatusList;
                     //---------------------END HERE----------------------
@@ -158,9 +158,9 @@ namespace LogicUniversity.Controllers
 
         public ActionResult TrackRequisition(string sessionId)
         {
+            ViewData["sessionId"] = sessionId;
             if (Sessions.IsValidSession(sessionId))
-            {
-                ViewData["sessionId"] = sessionId;
+            {   
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
                 var req = db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList();
