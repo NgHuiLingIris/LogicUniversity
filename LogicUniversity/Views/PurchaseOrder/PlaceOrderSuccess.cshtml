@@ -4,6 +4,9 @@
 @{
     ViewBag.Title = "PlaceOrderSuccess";
 }
+@{ 
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
 
 <h2>PlaceOrderSuccess</h2>
 
@@ -32,4 +35,4 @@
 @{
     var datetime = ViewData["date"];
 }
-<p>@datetime</p>
+<p>Expected delivery date and time is: @datetime</p>
