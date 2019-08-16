@@ -164,7 +164,12 @@ namespace LogicUniversity.Controllers
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
                 var req = db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList();
-                return View(db.Requisition.Where(x => x.EmployeeId == obj.EmployeeId).ToList());
+                
+               if(obj.Role == "DEP_MNGR")
+                { req = db.Requisition.Where(x => x.ApproverId == obj.EmployeeId).ToList(); }
+
+                return View(req);
+
             }
             else
             {
@@ -182,7 +187,7 @@ namespace LogicUniversity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            List<RequisitionDetails> requisitionDetails = db.RequisitionDetails.Where(x => x.RequisitionDetailsId == id).ToList();
+            List<RequisitionDetails> requisitionDetails = db.RequisitionDetails.Where(x => x.RequisitionId == id).ToList();
             if (id != 0 && status != null)
             {
                 Requisition requisition = db.Requisition.Where(x => x.RequisitionId == id).FirstOrDefault();
@@ -211,7 +216,7 @@ namespace LogicUniversity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            List<RequisitionDetails> requisitionDetails = db.RequisitionDetails.Where(x => x.RequisitionDetailsId == id).ToList();
+            List<RequisitionDetails> requisitionDetails = db.RequisitionDetails.Where(x => x.RequisitionId == id).ToList();
 
             if (requisitionDetails == null)
             {
