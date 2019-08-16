@@ -18,10 +18,18 @@ namespace LogicUniversity.Controllers //Written By Iris
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: StockAdjustmentVoucherDetails
-        public ActionResult Index()
+        public ActionResult Index(string sessionId)
         {
-            var stockAdjustmentVoucherDetails = db.StockAdjustmentVoucherDetails.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher);
-            return View(stockAdjustmentVoucherDetails.ToList());
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var stockAdjustmentVoucherDetails = db.StockAdjustmentVoucherDetails.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher);
+                return View(stockAdjustmentVoucherDetails.ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: StockAdjustmentVoucherDetails/Details/5
@@ -40,11 +48,19 @@ namespace LogicUniversity.Controllers //Written By Iris
         }
 
         // GET: StockAdjustmentVoucherDetails/Create
-        public ActionResult Create()
+        public ActionResult Create(string sessionId)
         {
-            ViewBag.ItemCode = new SelectList(db.Products, "ItemCode", "Category");
-            ViewBag.StockAdjustmentVoucherId = new SelectList(db.StockAdjustmentVouchers, "Id", "Id");
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                ViewBag.ItemCode = new SelectList(db.Products, "ItemCode", "Category");
+                ViewBag.StockAdjustmentVoucherId = new SelectList(db.StockAdjustmentVouchers, "Id", "Id");
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // POST: StockAdjustmentVoucherDetails/Create
@@ -52,18 +68,30 @@ namespace LogicUniversity.Controllers //Written By Iris
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "StockAdjustmentVoucherId,ItemCode,Reason,QuantityAdjusted,Status,ApproverRemarks,Balance,Approver")] StockAdjustmentVoucherDetail stockAdjustmentVoucherDetail)
+        public ActionResult Create([Bind(Include = "StockAdjustmentVoucherId,ItemCode,Reason,QuantityAdjusted,Status,ApproverRemarks,Balance,Approver")] StockAdjustmentVoucherDetail stockAdjustmentVoucherDetail,string sessionId)
         {
-            if (ModelState.IsValid)
+            if (sessionId == null)
             {
-                db.StockAdjustmentVoucherDetails.Add(stockAdjustmentVoucherDetail);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                sessionId = Request["sessionId"];
             }
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.StockAdjustmentVoucherDetails.Add(stockAdjustmentVoucherDetail);
+                    db.SaveChanges();
+                    return RedirectToAction("Index",new { sessionId = sessionId });
+                }
 
-            ViewBag.ItemCode = new SelectList(db.Products, "ItemCode", "Category", stockAdjustmentVoucherDetail.ItemCode);
-            ViewBag.StockAdjustmentVoucherId = new SelectList(db.StockAdjustmentVouchers, "Id", "Id", stockAdjustmentVoucherDetail.StockAdjustmentVoucherId);
-            return View(stockAdjustmentVoucherDetail);
+                ViewBag.ItemCode = new SelectList(db.Products, "ItemCode", "Category", stockAdjustmentVoucherDetail.ItemCode);
+                ViewBag.StockAdjustmentVoucherId = new SelectList(db.StockAdjustmentVouchers, "Id", "Id", stockAdjustmentVoucherDetail.StockAdjustmentVoucherId);
+                return View(stockAdjustmentVoucherDetail);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: StockAdjustmentVoucherDetails/Edit/5
@@ -215,22 +243,30 @@ namespace LogicUniversity.Controllers //Written By Iris
 	        Improvement: StockAdjustmentVoucherDetails could be pass as a string from the view to this controller.
             */
         [HttpGet]
-        public ActionResult ApprovalAction(string ItemCode, string Role)
+        public ActionResult ApprovalAction(string ItemCode, string Role,string sessionId)
         {
-            var VoucherDetail = from v in db.StockAdjustmentVoucherDetails
-                                    where v.ItemCode == ItemCode && v.Status=="Pending"
-                                    select v;
-            List<StockAdjustmentVoucherDetail> DetailList = VoucherDetail.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher).ToList();
-            double TotalAmount = 0;
-            foreach(StockAdjustmentVoucherDetail d in DetailList)
+            if (Sessions.IsValidSession(sessionId))
             {
-                TotalAmount += d.QuantityAdjusted * d.Product.UnitPrice;
+                ViewData["sessionId"] = sessionId;
+                var VoucherDetail = from v in db.StockAdjustmentVoucherDetails
+                                    where v.ItemCode == ItemCode && v.Status == "Pending"
+                                    select v;
+                List<StockAdjustmentVoucherDetail> DetailList = VoucherDetail.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher).ToList();
+                double TotalAmount = 0;
+                foreach (StockAdjustmentVoucherDetail d in DetailList)
+                {
+                    TotalAmount += d.QuantityAdjusted * d.Product.UnitPrice;
+                }
+                ViewData["Role"] = Role;
+                ViewData["ItemCodeString"] = ItemCode;
+                ViewData["DetailList"] = DetailList;
+                ViewData["TotalAmount"] = TotalAmount;
+                return View();
             }
-            ViewData["Role"] = Role;
-            ViewData["ItemCodeString"] = ItemCode;
-            ViewData["DetailList"] = DetailList;
-            ViewData["TotalAmount"] = TotalAmount;
-            return View();
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         /*
          In the Post Method of ApproverAction,
@@ -243,44 +279,55 @@ namespace LogicUniversity.Controllers //Written By Iris
 	        Both Manager and Supervisor access will have the same logic
              */
         [HttpPost]
-        public ActionResult ApprovalAction(FormCollection form)
+        public ActionResult ApprovalAction(FormCollection form, string sessionId)
         {
-            
-            string Remarks = form["ApproverRemarks"];
-            string ItemCodeString = form["ItemCodeString"];
-            string Role = form["Role"];
-
-            var VoucherDetail = from v in db.StockAdjustmentVoucherDetails
-                                where v.ItemCode == ItemCodeString && v.Status == "Pending"
-                                select v;
-            var VoucherDetailInclude = VoucherDetail.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher);
-            var VoucherDetailListOrderDate = from v in VoucherDetailInclude
-                                             orderby v.StockAdjustmentVoucher.DateCreated ascending
-                                             select v;
-            List<StockAdjustmentVoucherDetail> VoucherDetailList = VoucherDetailListOrderDate.ToList();
-
-            double FinalProductBalance = 0;
-            foreach (StockAdjustmentVoucherDetail v in VoucherDetailList)
+            if (sessionId == null)
             {
-                
-                v.ApproverRemarks = Remarks;
-                
-                if (Request.Form["Reject"] != null)
-                {
-                    v.Status = "Rejected";
-                }
-                else if (Request.Form["Approve"] != null)
-                {
-                    double NewBalance = v.Product.Balance + v.QuantityAdjusted;
-                    v.Balance = NewBalance;
-                    v.Product.Balance = NewBalance;
-                    FinalProductBalance = NewBalance;
-                    v.Status = "Approved";
-                }
-                db.Entry(v).State = EntityState.Modified;
-                db.SaveChanges();
+                sessionId = Request["sessionId"];
             }
-            return RedirectToAction("ApproverView", new { Role=Role});
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                string Remarks = form["ApproverRemarks"];
+                string ItemCodeString = form["ItemCodeString"];
+                string Role = form["Role"];
+
+                var VoucherDetail = from v in db.StockAdjustmentVoucherDetails
+                                    where v.ItemCode == ItemCodeString && v.Status == "Pending"
+                                    select v;
+                var VoucherDetailInclude = VoucherDetail.Include(s => s.Product).Include(s => s.StockAdjustmentVoucher);
+                var VoucherDetailListOrderDate = from v in VoucherDetailInclude
+                                                 orderby v.StockAdjustmentVoucher.DateCreated ascending
+                                                 select v;
+                List<StockAdjustmentVoucherDetail> VoucherDetailList = VoucherDetailListOrderDate.ToList();
+
+                double FinalProductBalance = 0;
+                foreach (StockAdjustmentVoucherDetail v in VoucherDetailList)
+                {
+
+                    v.ApproverRemarks = Remarks;
+
+                    if (Request.Form["Reject"] != null)
+                    {
+                        v.Status = "Rejected";
+                    }
+                    else if (Request.Form["Approve"] != null)
+                    {
+                        double NewBalance = v.Product.Balance + v.QuantityAdjusted;
+                        v.Balance = NewBalance;
+                        v.Product.Balance = NewBalance;
+                        FinalProductBalance = NewBalance;
+                        v.Status = "Approved";
+                    }
+                    db.Entry(v).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                return RedirectToAction("ApproverView", new { Role = Role ,sessionId=sessionId});
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         /*
          The RetrieveApproveList is a sub-method called by the preceding methods and do not return any view.

@@ -3,13 +3,16 @@
 @{
     ViewBag.Title = "Create";
 }
-
+@{ 
+    string sessionId = (string)ViewData["sessionId"];
+}
 <h2>Create</h2>
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
-    
+    <input type="hidden" value="@sessionId" name="sessionId" />
+
     <div class="form-horizontal">
         <h4>StockAdjustmentVoucherDetail</h4>
         <hr />
@@ -87,5 +90,5 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index",new { sessionId = sessionId })
 </div>
