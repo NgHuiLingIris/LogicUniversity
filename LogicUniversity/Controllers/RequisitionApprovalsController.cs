@@ -79,6 +79,8 @@ namespace LogicUniversity.Controllers
                     {
                         reqByDept.Add(r);
                     }
+                    db.Requisition.AddOrUpdate(r);
+                    db.SaveChanges();
                 }
 
                 List<Requisition> reqList = new List<Requisition>();
