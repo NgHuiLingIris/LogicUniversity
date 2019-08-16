@@ -56,12 +56,13 @@
 
 @using (Html.BeginForm("Index", "Requisition",new { sessionId = @sessionId}, FormMethod.Get))
 {
-
+    <input type="hidden" value="@sessionId" name="sessionId" />
 
     <form>
-        Search Products:
+        Search Products By Category:
 
-        @Html.TextBox("search", null, new { @class = "form-control" }) <br /> <button class="btn btn-primary">Search</button>
+        @Html.TextBox("search", null, new { @class = "form-control"}) <br /> <button class="btn btn-primary">Search</button>
+        @Html.ActionLink("Show All", "Index",new { sessionId = sessionId })
     </form>
 
 }
