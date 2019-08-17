@@ -49,7 +49,6 @@
     @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment"
         , FormMethod.Post,new{ sessionId=sessionId}))
     {
-        <input type="hidden" value="@sessionId" name="sessionId" />
         <br />
         <table>
             <tr>
@@ -77,6 +76,7 @@
             <input type="hidden" id="yearselected" name="yearselected" />
             <input type="hidden" id="monthselected" name="monthselected" />
             <input type="submit" value="Charge-back" />
+            <input type="hidden" value=@sessionId name="sessionId" />
         </div>
     }
 </body>

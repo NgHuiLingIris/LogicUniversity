@@ -42,9 +42,9 @@ namespace LogicUniversity.Controllers
         public ActionResult ShowChargeBackDepartment(string Dept_Name, string yearselected, string monthselected,string sessionId)
         {
             sessionId = Request["sessionId"];
+            ViewData["sessionId"] = sessionId;
             if (Sessions.IsValidSession(sessionId))
             {
-                ViewData["sessionId"] = sessionId;
                 List<String> dep = db.Departments.Select(r => r.DeptName).ToList();
                 ViewData["DepartmentName"] = dep;
 

@@ -13,6 +13,7 @@
     var month = (string)ViewData["month"];
     var Department_List = (List<string>)ViewData["DepartmentName"];
     var months = (List<string>)ViewData["months"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 
 <html>
@@ -47,7 +48,7 @@
 </head>
 <br />
 <body>
-    @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment", FormMethod.Post))
+    @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment",new { sessionId=sessionId}, FormMethod.Post))
     {
         <table>
             <tr>
@@ -74,6 +75,7 @@
             <input type="hidden" id="yearselected" name="yearselected" />
             <input type="hidden" id="monthselected" name="monthselected" />
             <input type="submit" value="Charge-back" />
+            <input type="hidden" value=@sessionId name="sessionId" />
         </div>
     }
     <div class="container-fluid py-4">
