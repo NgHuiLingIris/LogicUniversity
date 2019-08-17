@@ -1,22 +1,32 @@
 ﻿@model LogicUniversity.Models.CollectionPoint
 @{
     string sessionId = (string)ViewData["sessionId"];
+    string role = (string)ViewData["role"];
 }
-@{
+@if (role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
+else if (role == "STORE_MNGR")
+{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
-<h2>Details</h2>
+else if (role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
 
+<br /><br />
+<h3>Collection Point Details</h3>
 <div>
-    <h4>CollectionPoint</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Employee.EmployeeName)
+            Store Clerk In Charge
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Employee.EmployeeName)
+            @Html.DisplayFor(model =>model.Employee.EmployeeName)
         </dd>
 
         <dt>
@@ -46,6 +56,6 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = Model.CollectionPointId,sessionId=sessionId }) |
-    @Html.ActionLink("Back to List", "ViewCollectionPoint",new { sessionId = sessionId })
+    @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = Model.CollectionPointId, sessionId = sessionId }) |
+    @Html.ActionLink("Back to List", "ViewCollectionPoint", new { sessionId = sessionId })
 </p>

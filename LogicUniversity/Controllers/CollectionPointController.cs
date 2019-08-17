@@ -145,6 +145,8 @@ namespace LogicUniversity.Controllers
         {
             if (Sessions.IsValidSession(sessionId))
             {
+                int empId = (int)Session["empId"];
+                ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
                 ViewData["sessionId"] = sessionId;
                 var collectionPoints = db.CollectionPoints.Include(c => c.Employee);
                 return View(collectionPoints.ToList());
@@ -158,6 +160,8 @@ namespace LogicUniversity.Controllers
         // GET: CollectionPoints/Details/5
         public ActionResult GetCollectionPointDetails(string id,string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
@@ -165,7 +169,7 @@ namespace LogicUniversity.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                CollectionPoint collectionPoint = (db.CollectionPoints).Find(id);
+                CollectionPoint collectionPoint = (db.CollectionPoints).Include(d=>d.Employee).Where(d=>d.CollectionPointId==id).FirstOrDefault();
 
                 if (collectionPoint == null)
                 {
@@ -182,6 +186,8 @@ namespace LogicUniversity.Controllers
         // GET: CollectionPoints/Create
         public ActionResult CreateNewCollectionPoint(string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
@@ -201,6 +207,8 @@ namespace LogicUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreateNewCollectionPoint([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint,string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (sessionId == null)
             {
                 sessionId = Request["sessionId"];
@@ -229,6 +237,8 @@ namespace LogicUniversity.Controllers
         {
             if (Sessions.IsValidSession(sessionId))
             {
+                int empId = (int)Session["empId"];
+                ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
                 ViewData["sessionId"] = sessionId;
                 if (id == null)
                 {
@@ -258,6 +268,8 @@ namespace LogicUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditCollectionPointDetails([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint,string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (sessionId == null)
             {
                 sessionId = Request["sessionId"];
@@ -284,6 +296,9 @@ namespace LogicUniversity.Controllers
         // GET: CollectionPoints/Delete/5
         public ActionResult DeleteCollectionPoint(string id,string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
+            ViewData["id"] = id;
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
@@ -309,6 +324,7 @@ namespace LogicUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id,string sessionId)
         {
+          
             if (sessionId == null)
             {
                 sessionId = Request["sessionId"];
