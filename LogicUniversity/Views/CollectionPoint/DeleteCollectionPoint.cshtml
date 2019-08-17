@@ -1,55 +1,64 @@
 ﻿@model LogicUniversity.Models.CollectionPoint
-@{ 
+@{
     string sessionId = (string)ViewData["sessionId"];
-}
-@{
     ViewBag.Title = "Delete";
+    string role = (string)ViewData["role"];
+    string id = (string)ViewData["id"];
 }
-@{
+
+@if (role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
+else if (role == "STORE_MNGR")
+{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
-
-<h2>Delete</h2>
-
-<h3>Are you sure you want to delete this?</h3>
+else if (role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
+<br />
+<br />
+<h3>Delete Collection Point</h3>
+<br />
+<p>Are you sure you want to delete this?</p>
 <div>
-    <h4>CollectionPoint</h4>
+   
     <hr />
     <dl class="dl-horizontal">
 
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LocationName)
-        </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.LocationName)
+            <b>@Html.DisplayNameFor(model => model.LocationName):</b>&ensp;
+               @Html.DisplayFor(model => model.LocationName)
+
         </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Time)
-        </dt>
-
+           
+    </dl>
+ 
+    <dl class="dl-horizontal">
         <dd>
+            <b>@Html.DisplayNameFor(model => model.Time):</b> &ensp;
             @Html.DisplayFor(model => model.Time)
         </dd>
+           
+    </dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Day)
-        </dt>
+    <dl class="dl-horizontal">
 
         <dd>
+            <b>@Html.DisplayNameFor(model => model.Day):</b>&ensp;&emsp;
             @Html.DisplayFor(model => model.Day)
         </dd>
 
     </dl>
 
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("Delete", "CollectionPoint", new { sessionId = sessionId, id = @id }, FormMethod.Post))
     {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
+            <input type="submit" value="Delete" class="btn btn-primary" /> |
             <input type="hidden" value="@sessionId" name="sessionId" />
             @Html.ActionLink("Back to List", "ViewCollectionPoint", new { sessionId = sessionId })
         </div>

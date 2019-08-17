@@ -3,17 +3,28 @@
 @{
     ViewBag.Title = "ViewCollectionPoint";
 }
-@{ 
-    string sessionId = (string)ViewData["sessionId"];
-}
 @{
+    string sessionId = (string)ViewData["sessionId"];
+    string role = (string)ViewData["role"];
+}
+@if (role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
+else if (role == "STORE_MNGR")
+{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
+else if (role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
 
-<h2>View Collection Point</h2>
+<br /><br />
+<h3>View Collection Point</h3>
 
 <p>
-    @Html.ActionLink("Create New", "CreateNewCollectionPoint",new { sessionId = sessionId })
+    @Html.ActionLink("Add New", "CreateNewCollectionPoint", new { sessionId = sessionId })
 </p>
 <table class="table">
     <tr>
@@ -50,7 +61,7 @@
                 @Html.DisplayFor(modelItem => item.Employee.EmployeeName)
             </td>
             <td>
-                @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = item.CollectionPointId ,sessionId=sessionId}) |
+                @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = item.CollectionPointId, sessionId = sessionId }) |
                 @Html.ActionLink("Details", "GetCollectionPointDetails", new { id = item.CollectionPointId, sessionId = sessionId }) |
                 @Html.ActionLink("Delete", "DeleteCollectionPoint", new { id = item.CollectionPointId, sessionId = sessionId })
             </td>

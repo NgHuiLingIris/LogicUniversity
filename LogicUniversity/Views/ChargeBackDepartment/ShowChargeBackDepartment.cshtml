@@ -21,6 +21,10 @@ else if (role == "STORE_MNGR")
 {
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
+else if (role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -79,7 +83,7 @@ else if (role == "STORE_MNGR")
             <input type="hidden" id="Dept_Name" name="Dept_Name" />
             <input type="hidden" id="yearselected" name="yearselected" />
             <input type="hidden" id="monthselected" name="monthselected" />
-            <input type="submit" value="Charge-back" />
+            <input type="submit" value="Charge-back" class="btn btn-primary" />
             <input type="hidden" value=@sessionId name="sessionId" />
         </div>
     }
