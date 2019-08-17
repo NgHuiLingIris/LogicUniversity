@@ -4,12 +4,14 @@
     ViewBag.Title = "CancelDelegation";
     string sessionId = (string)ViewData["sessionId"];
 }
+@{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
 
 <h2>CancelDelegation</h2>
 
-<h2>Are you sure you want to delete this?</h2>
 <div>
-   
+
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -38,7 +40,8 @@
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
