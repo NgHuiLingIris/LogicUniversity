@@ -76,9 +76,10 @@
     <div class="form-group">
         <input type="hidden" name="Role" id="Role" value=@Role />
         <input type="hidden" name="ItemCodeString" id="ItemCodeString" value=@ItemCodeString />
-        <input type="text" name="ApproverRemarks" id="ApproverRemarks" />
-        <input type="submit" name="Approve" value="Approve" />
-        <input type="submit" name="Reject" value="Reject" />
+        
+        <textarea rows="4" cols="100" value="ApproverRemarks" name="ApproverRemarks" id="ApproverRemarks" class="form-control"></textarea> <br />
+        <input type="submit" name="Approve" value="Approve" class="btn btn-primary"/>
+        <input type="submit" name="Reject" value="Reject" class="btn btn-primary" />
 
         @*<input type="submit" value="Create" class="btn btn-default" />*@
     </div>
