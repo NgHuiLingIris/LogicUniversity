@@ -29,7 +29,7 @@ namespace LogicUniversity.Controllers
                 if (obj != null)
                 {
                     string uname = username.ToString();
-
+                    Session["USER"] = obj;
                     Session["UserID"] = uname;
                     Session["UserName"] = password.ToString();
                     Session["role"] = obj.Role;

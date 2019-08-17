@@ -11,7 +11,10 @@ else if(Role == "HOD")
 {
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
-
+else if (Role == "Staff")
+{
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
+}
 @{
     ViewBag.Title = "Index";
 }
@@ -19,12 +22,12 @@ else if(Role == "HOD")
 <h2>Track Requisition</h2>
 
 <form>
-
+    <input type="hidden" value="@sessionId" name="sessionId" />
     <table>
-        
+
 
         <tr>
-            <td><input type="hidden" value="@sessionId" name="sessionId" /></td>
+
             <td>Requisition Id </td>
             <td><input type="text" name="reqid" class="form-control" /></td>
         </tr>
@@ -44,7 +47,7 @@ else if(Role == "HOD")
         </tr>
         <tr>
 
-            <td><input type="submit" value="submit" class="btn btn-primary" /></td>
+            <td><input type="submit" value="Submit" class="btn btn-primary" /></td>
         </tr>
     </table>
 

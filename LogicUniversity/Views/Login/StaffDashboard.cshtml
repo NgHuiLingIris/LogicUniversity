@@ -1,56 +1,69 @@
-﻿
+﻿@using LogicUniversity.Models;
 @{
+    /**/
+
     ViewBag.Title = "Employee Dashboard";
 }
 @{
     string sessionId = (string)ViewData["sessionId"];
+    Employee user = (Employee)Session["USER"];
 }
-@{
-    Layout = "~/Views/Shared/_Layout_DS.cshtml";
-}
-<head>
-    @*<link rel="stylesheet" type="text/css" href="~/css/basic.css">*@
+    @{
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
+    <head>
+        @*<link rel="stylesheet" type="text/css" href="~/css/basic.css">*@
 
-</head>
+    </head>
 
-<h2>Staff Dashboard</h2>
-<a href="@Url.Action("Index","Requisition",new {sessionId = sessionId})" class="button">
-    <i class="fa fa-user fa-100x"></i><br />
-    Make Requistion <br><br>
-</a>
-<a href="@Url.Action("TrackRequisition","RequisitionApprovals",new {sessionId = sessionId})" class="button">
-    <i class="fa fa-user fa-100x"></i><br />
-    Track Requisition <br><br>
-</a>
-<a href="@Url.Action("Display","CollectionPoint",new {sessionId = sessionId,Role="Staff"})" class="button">
-    <i class="fa fa-user fa-100x"></i><br />
-    Collection Point <br> <br>
-</a>
-
-<style>
-    fieldset {
-        display: block;
-        margin-left: 2px;
-        margin-right: 2px;
-        padding-top: 0.35em;
-        padding-bottom: 0.625em;
-        padding-left: 0.75em;
-        padding-right: 0.75em;
-        border: 2px groove;
+    <h2>Staff Dashboard</h2>
+    <a href="@Url.Action("Index","Requisition",new {sessionId = sessionId})" class="button">
+        <i class="fa fa-user fa-100x"></i><br />
+        Make Requistion <br><br>
+    </a>
+    <a href="@Url.Action("TrackRequisition","RequisitionApprovals",new {sessionId = sessionId})" class="button">
+        <i class="fa fa-user fa-100x"></i><br />
+        Track Requisition <br><br>
+    </a>
+    <a href="@Url.Action("Display","CollectionPoint",new {sessionId = sessionId,Role="Staff"})" class="button">
+        <i class="fa fa-user fa-100x"></i><br />
+        Collection Point <br> <br>
+    </a>
+    @if (user.Isdelegateded == "Y")
+    {
+        <a href="@Url.Action("ViewRequisition","RequisitionApprovals",new { sessionId = sessionId,Role = "Staff"})" class="button">Requistion Approvals</a>
+        <a href="@Url.Action("ViewAllRequisition","RequisitionApprovals",new { sessionId = sessionId,Role = "Staff"})" class="button">View all Requistion </a>
+        <a href="@Url.Action("ManageCollection","CollectionPoint",new { sessionId = sessionId })" class="button">Manage Collection</a>
+        <a href="@Url.Action("ManageDelegation","Delegations",new { sessionId = sessionId })" class="button">Manage Delegation </a>
     }
 
-    .button {
-        background-color: #0000ff; /* Green */
-        border: none;
-        color: white;
-        padding: 100px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 20px 20px;
-        cursor: pointer;
-        border-radius: 2px;
-    }
-</style>
 
+        <style>
+            fieldset {
+                display: block;
+                margin-left: 2px;
+                margin-right: 2px;
+                padding-top: 0.35em;
+                padding-bottom: 0.625em;
+                padding-left: 0.75em;
+                padding-right: 0.75em;
+                border: 2px groove;
+            }
+
+            .button {
+                background-color: #0000ff; /* Green */
+                border: none;
+                color: white;
+                width: 300px;
+                height: 100px;
+                padding: 40px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 15px 20px;
+                cursor: pointer;
+                border-radius: 2px;
+                position: relative;
+            }
+        </style>

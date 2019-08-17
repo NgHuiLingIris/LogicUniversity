@@ -27,7 +27,7 @@ namespace LogicUniversity.Controllers
                 ViewData["Role"] = Role;
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
-                return View(db.Requisition.Where(x => x.ApproverId == obj.EmployeeId && x.Status == "PENDING").ToList());
+                return View(db.Requisition.Where(x => x.Status == "PENDING" && (x.DeptId==obj.DeptId) ).ToList());
             }
             else
             {
