@@ -163,6 +163,8 @@ namespace LogicUniversity.Controllers
         public ActionResult TrackRequisition(string sessionId)
         {
             ViewData["sessionId"] = sessionId;
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {   
                 var username = Session["UserID"].ToString();
@@ -214,6 +216,8 @@ namespace LogicUniversity.Controllers
 
         public ActionResult TrackDetails(int? id, string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             ViewData["sessionId"] = sessionId;
             if (id == null)
             {

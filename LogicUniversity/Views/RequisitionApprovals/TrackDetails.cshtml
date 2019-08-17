@@ -2,19 +2,23 @@
 
 
 @{
+    string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["role"];
+}
+@if (Role == "DEP_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+else if (Role == "DEP_STAFF")
+{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
-    string sessionId=(string) ViewData["sessionId"];
 }
 
-
-@{
-    ViewBag.Title = "Details";
-}
-
-<h2>Details</h2>
+<br />
+<br />
+<h3>Requistion Details</h3>
 <form>
     <div>
-        <h4>Requisition</h4>
         <hr />
         <table class="table">
             <tr>
@@ -41,4 +45,4 @@
 
         @Html.ActionLink("Back to List", "TrackRequisition", new { sessionId = sessionId })
     </p>
-    </form>
+</form>

@@ -3,12 +3,19 @@
 @{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["role"];
 }
-@{
-    ViewBag.Title = "Index";
+@if (Role == "DEP_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+else if (Role == "DEP_STAFF")
+{
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
 
-<h2>Track Requisition</h2>
+<br /><br />
+<h3>Track Requisition</h3>
 
 
 <table class="table">
@@ -47,7 +54,7 @@
             </td>
 
             <td>
-                @Html.ActionLink("Details", "TrackDetails", new { id = item.RequisitionId,sessionId=sessionId})
+                @Html.ActionLink("Details", "TrackDetails", new { id = item.RequisitionId, sessionId = sessionId })
             </td>
         </tr>
     }

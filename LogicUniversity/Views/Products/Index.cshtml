@@ -1,23 +1,33 @@
-﻿@model IEnumerable<LogicUniversity.Models.Products>
+﻿@using PagedList.Mvc
+@using PagedList
+@model IPagedList<LogicUniversity.Models.Products>
 
 @{
     ViewBag.Title = "Index";
 }
-@{ 
+@{
     string sessionId = (string)ViewData["sessionId"];
-    string Role = (string)ViewData["Role"];
+    string Role = (string)ViewData["role"];
 }
-@if (Role == "HOD")
+@if (Role == "DEP_MNGR")
 {
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
-else if(Role == "Staff")
+else if (Role == "DEP_STAFF")
 {
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
-else if(Role == "StoreManager")
+else if (Role == "STORE_MNGR")
 {
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+else if (Role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
+else if (Role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 <style>
     #tabledropdown {
@@ -26,28 +36,53 @@ else if(Role == "StoreManager")
         overflow-y: scroll;
     }
 </style>
-<h2>Index</h2>
+<style>
+    /*.pagination {
+        display: inline-block;
+    }*/
 
-<p>
-    @*@Html.ActionLink("Create New", "Create",new { sessionId = sessionId })*@
-</p>
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .pagination a:hover:not(.active) {
+                background-color: #ddd;
+            }
+</style>
+<br /><br />
+<h3>Index</h3>
+
+@if (Role == "STORE_SUP")
+{
+    @Html.ActionLink("Create New", "Create", new { sessionId = sessionId })
+}
+<br />
+
 <div id="tabledropdown">
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                @Html.DisplayNameFor(model => model.First().Category)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.First().Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReorderLevel)
+                @Html.DisplayNameFor(model => model.First().ReorderLevel)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReorderQty)
+                @Html.DisplayNameFor(model => model.First().ReorderQty)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UOM)
+                @Html.DisplayNameFor(model => model.First().UOM)
             </th>
             <th></th>
         </tr>
@@ -70,9 +105,12 @@ else if(Role == "StoreManager")
                 <td>
                     @Html.DisplayFor(modelItem => item.UOM)
                 </td>
-               
+
             </tr>
         }
 
     </table>
+</div>
+<div class="pagination">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sessionId = @sessionId }))
 </div>

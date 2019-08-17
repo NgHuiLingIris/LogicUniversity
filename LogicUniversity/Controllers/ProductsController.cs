@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using LogicUniversity.Context;
 using LogicUniversity.Models;
 using LogicUniversity.Services;
+using PagedList;
+using PagedList.Mvc;
 
 namespace LogicUniversity.Controllers
 {
@@ -17,13 +19,15 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: Products
-        public ActionResult Index(string sessionId,string Role)
+        public ActionResult Index(string sessionId,string Role,int ?page)
         {
+
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
-                ViewData["Role"] = Role;
-                return View(db.Products.ToList());
+                return View(db.Products.ToList().ToPagedList(page ?? 1, 5));
             }
             else
             {
@@ -49,6 +53,8 @@ namespace LogicUniversity.Controllers
         // GET: Products/Create
         public ActionResult Create(string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
@@ -68,6 +74,8 @@ namespace LogicUniversity.Controllers
         public ActionResult Create([Bind(Include = "ItemCode,Category,Description,ReorderLevel,ReorderQty,UOM")] Products products,string sessionId)
         {
             sessionId = Request["sessionId"];
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;

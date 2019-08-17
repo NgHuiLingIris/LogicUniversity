@@ -1,12 +1,33 @@
 ﻿@model LogicUniversity.Models.Products
 @{
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["role"];
 }
 @{
     ViewBag.Title = "Create";
 }
-
-<h2>Create</h2>
+@if (Role == "DEP_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+else if (Role == "DEP_STAFF")
+{
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
+}
+else if (Role == "STORE_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+else if (Role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
+else if (Role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
+<br /><br />
+<h3>Add New Product</h3>
 
 
 @using (Html.BeginForm())
@@ -15,7 +36,7 @@
     <input type="hidden" value="@sessionId" name="sessionId" />
 
     <div class="form-horizontal">
-        <h4>Products</h4>
+    
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -43,7 +64,7 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ReorderLevel, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Reorder Level", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.ReorderLevel, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.ReorderLevel, "", new { @class = "text-danger" })
@@ -51,7 +72,7 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ReorderQty, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Reorder Quantity", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.ReorderQty, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.ReorderQty, "", new { @class = "text-danger" })
@@ -59,7 +80,7 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.UOM, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Unit Of Measure", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.UOM, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.UOM, "", new { @class = "text-danger" })
@@ -68,15 +89,13 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-primary" />&nbsp;|&nbsp;
+                @Html.ActionLink("Back to List", "Index", new { sessionId = sessionId })
             </div>
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index",new { sessionId = sessionId })
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
