@@ -91,16 +91,18 @@ namespace LogicUniversity.Controllers
                         //rd that are retrieved and from the dept - all disbursement string (have not been disbursed)
                         string dept = d.DeptName;
                         List<Requisition> RequisitionsThatAreFromDept = db.Requisition.Where(s => s.Department == dept).ToList();
-
+                        RequisitionDetailsString = "";
                         foreach (Requisition r in RequisitionsThatAreFromDept)
                         {
                             List<RequisitionDetails> AllRdByDept = db.RequisitionDetails.Where(rd => rd.RequisitionId == r.RequisitionId).Where(rd1 => rd1.Status == "Retrieved").ToList();
                             foreach (RequisitionDetails rd2 in AllRdByDept)
                             {
                                 rdList.Add(rd2);
+                                RequisitionDetailsString = RequisitionDetailsString + "," + rd2.RequisitionDetailsId;
                             }
                         }
                     }
+
                 }
                 else
                 {
@@ -216,7 +218,8 @@ namespace LogicUniversity.Controllers
                 if (Request.Form["SearchDept"] != null)
                 {
                     string deptname = Request.Form["SearchDeptName"];
-                    return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = RequisitionDetailsString, DeptString = deptname,sessionId=sessionId });
+                    
+                    return RedirectToAction("DisplayDisbursement", new { RequisitionDetailsString = "All", DeptString = deptname,sessionId=sessionId });
                 }
                 if (Request.Form["SearchCP"] != null)
                 {

@@ -19,7 +19,7 @@
 </head>
 <h2>Store Supervisor Dashboard</h2>
 
-<a href="@Url.Action("ViewRequisition","RequisitionApprovals",new { sessionId = sessionId })" class="button">Requistion Approvals</a>
+<a href="@Url.Action("ApproverView","StockAdjustmentVoucherDetails",new { sessionId = sessionId,role="Supervisor"  }, null)" class="button">Pending Approval</a>
 <a href="@Url.Action( "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId })" class="button">PurchaseOrder</a>
 <a href="@Url.Action( "Index", "Products", new { sessionId = sessionId })" class="button">Catalogue</a>
 <a href="@Url.Action( "ViewCollectionPoint", "CollectionPoint", new { sessionId = sessionId })" class="button">Manage Collection Point</a>
