@@ -33,7 +33,7 @@
 {
     @Html.AntiForgeryToken()
     <div class="form-group">
-        <table>
+        <table class="table">
             <tr>
                 <th>Item Code</th>
                 <th>Description</th>
@@ -63,7 +63,7 @@
                         <td>
                             @if (StatusList[i] == "Pending")
                             {
-                                @Html.ActionLink("Approve/Reject", "ApprovalAction", new { ItemCode = @PendingItemList[i].ItemCode, Role = @Role ,sessionId=sessionId})
+                                @Html.ActionLink("View", "ApprovalAction", new { ItemCode = @PendingItemList[i].ItemCode, Role = @Role ,sessionId=sessionId})
                             }
                             else
                             {

@@ -71,7 +71,9 @@ namespace LogicUniversity.Controllers
                     {
                         PredictViewModel element = new PredictViewModel
                         {
-                            ItemCode = int.Parse(p.ItemCode.Substring(1, p.ItemCode.Length - 1)),
+                            ItemCode = int.Parse((p.ItemCode[0] % 32).ToString()
+                            + p.ItemCode.Substring(1, p.ItemCode.Length - 1)),
+                            //ItemCode = int.Parse(p.ItemCode.Substring(1, p.ItemCode.Length - 1)),
                             Month = DateTime.Now.Month,
                         };
                         predModel.Add(element);
