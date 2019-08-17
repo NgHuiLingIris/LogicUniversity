@@ -70,7 +70,7 @@
                         </tr>
                     </table>
                     </td>
-                    <td>
+                   
                         <table>
                             @foreach (double k in item.NeededList)
                             {
@@ -78,15 +78,18 @@
                                 <br />
                             }
                         </table>
-                    </td>
+                   
                     </tr>
                     i++;
                 }
             }
             <input type="hidden" name="sessionId" value="@sessionId" />
             </table>
-            <input type="submit" value="Submit" class="btn btn-default" />
-        </div>
+            @if (Model!= null)
+            {
+                <input type="submit" value="Submit" class="btn btn-default" />
+            }
+            </div>
     }
 
 <div>

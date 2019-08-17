@@ -7,7 +7,7 @@
     string sessionId = (string)ViewData["sessionId"];
 }
 @{
-
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 <h2 align="center">Supplier List</h2>
 @using (Html.BeginForm())
@@ -18,11 +18,11 @@
     <div class="form-horizontal">
         <form action="Post">
             <p align="left">
-                <input type="submit" name="Create" value="Create" />
-                <input type="submit" name="Edit" value="Edit" />
-                <input type="submit" name="Delete" value="Delete" />
+                <input type="submit" name="Create" value="Create" class="btn btn-primary" />
+                <input type="submit" name="Edit" value="Edit" class="btn btn-primary"/>
+                <input type="submit" name="Delete" value="Delete" class="btn btn-primary" />
                 @Html.TextBox("SearchString")
-                <input type="submit" name="Search" value="Search by supplier ID"/>
+                <input type="submit" name="Search" value="Search by supplier ID" class="btn btn-primary" />
             </p>
 
             <hr />
@@ -79,7 +79,7 @@
 
 }
 <div>
-    @Html.ActionLink("Back to List", "Index",new { sessionId = sessionId })
+    @Html.ActionLink("Back to List", "Index", new { sessionId = sessionId })
 </div>
 
 @section Scripts {

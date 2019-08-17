@@ -100,30 +100,10 @@
                 i++;
             }
         }
-        @*
-                <tr>
-                <td>Requisition Id </td>
-                <td>Employee Id </td>
-                <td>Date </td>
-                <td>Status </td>
-                <td>Remarkss </td>
-                <td>Approver Id </td>
-                <td>Department </td>
-            </tr>
-            @foreach (var requisition in reqList)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(model => requisition.RequisitionId)</td>
-                    <td>@Html.DisplayFor(model => requisition.EmployeeId)</td>
-                    <td>@Html.DisplayFor(model => requisition.Date)</td>
-                    <td>@Html.DisplayFor(model => requisition.Status)</td>
-                    <td>@Html.DisplayFor(model => requisition.Remarks)</td>
-                    <td>@Html.DisplayFor(model => requisition.ApproverId)</td>
-                    <td>@Html.DisplayFor(model => requisition.Department)</td>
-                </tr>
-            }
-        *@
-    </table>
 
-    <input type="submit" value="Retrieve" name="retrieve" id="retrieve" class="btn btn-primary" />
-}
+    </table>
+    if (Model!=null)
+    {
+        <input type="submit" value="Retrieve" name="retrieve" id="retrieve" class="btn btn-primary" />
+    }
+            }
