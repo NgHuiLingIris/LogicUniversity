@@ -9,18 +9,64 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
+    <style>
+        .topnav {
+            overflow: hidden;
+            background-color: #333;
+            position: relative;
+            top: 0;
+            width: 100%;
+        }
+
+            .topnav a {
+                float: left;
+                color: #f2f2f2;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
+                height: 25px;
+            }
+
+                .topnav a:hover {
+                    background-color: #ddd;
+                    color: black;
+                }
+
+                .topnav a.active {
+                    background-color: #4CAF50;
+                    color: white;
+                }
+
+        body {
+            position: relative;
+            margin: 0px;
+            padding: 0px;
+        }
+
+
+        footer {
+            position: relative;
+            bottom: 0;
+            clear: both;
+        }
+    </style>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 </head>
 <body>
     <header>
         <div class="topnav">
-            @*    @Html.Action("Index", "SM")*@
+            <h3 style="color:white ; text-align:center">Logic University</h3>
             <label>
-                <button class="btn" onclick="window.location.href = '/Login/SSDashboard?sessionId=@sessionId';">Go to Dashboard</button>
-                <button class="btn" onclick="window.location.href = '/Products/Index';">Go to Product Catalogue</button>
+                <button class="btn" style="color:white" onclick="window.location.href = '/Login/SSDashboard?sessionId=@sessionId';">Dashboard</button>
+                <button class="btn" style="color:white" onclick="window.location.href = '/Products/Index';">Product Catalogue</button>
 
 
             </label> <label style="float: right;">
-                <button class="btn" onclick="window.location.href = '/Login/Logout?sessionId=@sessionId';">Log out</button>
+                <button class="btn" style="color:white" onclick="window.location.href = '/Login/Logout?sessionId=@sessionId';">Log out</button>
 
             </label>
         </div>
@@ -37,7 +83,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - Logic University Application</p>
         </footer>
     </div>
     @Scripts.Render("~/bundles/jquery")

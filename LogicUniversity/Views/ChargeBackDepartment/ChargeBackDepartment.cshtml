@@ -8,10 +8,18 @@
     var months = (List<string>)ViewData["months"];
     var deptname = (string)ViewData["deptName"];
     string sessionId = (string)ViewData["sessionId"];
+    string role = (string)ViewData["role"];
 }
-@{
+
+@if (role == "STORE_CLRK")
+{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
+else if (role == "STORE_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -47,7 +55,7 @@
 
 <body>
     @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment"
-        , FormMethod.Post,new{ sessionId=sessionId}))
+        , FormMethod.Post, new { sessionId = sessionId }))
     {
         <br />
         <table>
