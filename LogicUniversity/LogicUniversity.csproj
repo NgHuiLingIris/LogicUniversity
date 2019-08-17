@@ -142,6 +142,7 @@
     <Compile Include="Controllers\ChargeBackDepartmentController.cs" />
     <Compile Include="Controllers\CollectionPointController.cs" />
     <Compile Include="Controllers\DelegationsController.cs" />
+    <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\DisbursementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -380,6 +381,11 @@
     <Content Include="Views\Shared\_Layout_SS.cshtml" />
     <Content Include="Views\Trend\InventoryStatusTrend.cshtml" />
     <Content Include="Views\Trend\TwoMonthsCompare.cshtml" />
+    <Content Include="Views\Departments\Create.cshtml" />
+    <Content Include="Views\Departments\Delete.cshtml" />
+    <Content Include="Views\Departments\Details.cshtml" />
+    <Content Include="Views\Departments\Edit.cshtml" />
+    <Content Include="Views\Departments\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
