@@ -13,12 +13,10 @@
 <h2>Store Manager Dashboard</h2>
 
 <a href="@Url.Action("PlaceOrder","PurchaseOrder",new { sessionId = sessionId  }, null)" class="button">Purchase Order</a>
-<a href="@Url.Action("ApproverView","StockAdjustmentVoucherDetails",new { sessionId = sessionId  }, null)" class="button">Pending Approval</a>
+<a href="@Url.Action("ApproverView","StockAdjustmentVoucherDetails",new { sessionId = sessionId,role="Manager"  }, null)" class="button">Pending Approval</a>
 <a href="@Url.Action("ViewCollectionPoint","CollectionPoint",new { sessionId = sessionId  }, null)" class="button">Manage Collection Point</a>
 <a href="@Url.Action("Index","Suppliers",new { sessionId = sessionId  }, null)" class="button">Supplier List</a>
-<a href="@Url.Action("Index","Tender",new { sessionId = sessionId  }, null)" class="button">View Tender</a>
-<a href="@Url.Action("ViewAllRequisition","RequisitionApprovals",new { sessionId = sessionId  }, null)" class="button">Requisitions History</a>
-<a href="@Url.Action("Index","Department",new { sessionId = sessionId  }, null)" class="button">View Department</a>
+<a href="@Url.Action("Index","Departments",new { sessionId = sessionId ,role="Manager"}, null)" class="button">View Department</a>
 <a href="@Url.Action("ChargeBackDepartment","ChargeBackDepartment",new { sessionId = sessionId  }, null)" class="button">Charge Department</a>
 <a href="@Url.Action("Index","Trend",new { sessionId = sessionId  }, null)" class="button">Reorder Report</a>
 <a href="@Url.Action("InventoryStatusTrend","Trend",new { sessionId = sessionId  }, null)" class="button">Inventory Status Report</a>

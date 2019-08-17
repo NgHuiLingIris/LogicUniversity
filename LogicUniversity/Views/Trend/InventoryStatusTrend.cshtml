@@ -10,7 +10,7 @@
             var chart = new CanvasJS.Chart("chartContainer", {
                 animationEnabled: true,
                 title: {
-                    text: "Inventory Status of Clip"
+                    text: "Inventory Status"
                 },
                 toolTip: {
                     shared: true
@@ -57,29 +57,31 @@
     @*@Html.BeginForm()*@
     @*{*@
 
-    Select the Category:
-    <select>
-        <option value="Clip">Clip</option>
-        <option value="Envolope">Envolope</option>
-        <option value="Eraser">Eraser</option>
-        <option value="Exercise">Exercise</option>
-        <option value="File">File</option>
-        <option value="Pen">Pen</option>
-        <option value="Puncher">Puncher</option>
-        <option value="Pad">Pad</option>
-        <option value="Ruler">Ruler</option>
-        <option value="Scissors">Scissors</option>
-        <option value="Tape">Tape</option>
-        <option value="Sharpener">Sharpener</option>
-        <option value="Shorthand">Shorthand</option>
-        <option value="Stapler">Stapler</option>
-        <option value="Tacks">Tacks</option>
-        <option value="Tparency">Tparency</option>
-        <option value="Tray">Tray</option>
-    </select>
-    <input type="submit" value="Submit" />
-    <br />
-
+    <form>
+        </br>
+        Select the Category:
+        <select name="myDropDownList" >
+            <option value="Clip">Clip</option>
+            <option value="Envolope">Envolope</option>
+            <option value="Eraser">Eraser</option>
+            <option value="Exercise">Exercise</option>
+            <option value="File">File</option>
+            <option value="Pen">Pen</option>
+            <option value="Puncher">Puncher</option>
+            <option value="Pad">Pad</option>
+            <option value="Ruler">Ruler</option>
+            <option value="Scissors">Scissors</option>
+            <option value="Tape">Tape</option>
+            <option value="Sharpener">Sharpener</option>
+            <option value="Shorthand">Shorthand</option>
+            <option value="Stapler">Stapler</option>
+            <option value="Tacks">Tacks</option>
+            <option value="Tparency">Tparency</option>
+            <option value="Tray">Tray</option>
+        </select>
+        <input type="submit" value="Submit" class="btn btn-primary" />
+        <br />
+    </form>
 
     @*}*@
     <div id="chartContainer" style="height: 370px; width: 100%;"></div>

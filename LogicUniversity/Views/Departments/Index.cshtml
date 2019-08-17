@@ -1,0 +1,70 @@
+﻿@model IEnumerable<LogicUniversity.Models.Department>
+
+@{
+    ViewBag.Title = "Index";
+}
+@{
+    string sessionId = (string)ViewData["sessionId"];
+    string role = (string)ViewData["role"];
+}
+@if (role == "Manager")
+{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+else
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DeptName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CollectionLocationId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ContactName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TelephoneNo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fax)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeptName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CollectionLocationId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ContactName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TelephoneNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fax)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.DeptId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.DeptId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.DeptId })
+            </td>
+        </tr>
+    }
+
+</table>

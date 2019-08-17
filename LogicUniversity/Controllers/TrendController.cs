@@ -90,7 +90,7 @@ namespace LogicUniversity.Controllers
 
 
         // Inventory Trend based on Category
-        public ActionResult InventoryStatusTrend(string value)
+        public ActionResult InventoryStatusTrend(string myDropDownList)
         {
             List<Products> products = db.Products.ToList();
 
@@ -101,7 +101,7 @@ namespace LogicUniversity.Controllers
             // Trend Logic - Category based Inventory Status
             //if (value != null)
             //{
-            var result_1 = products.Where(s => s.Category == "Clip").ToList();
+            var result_1 = products.Where(s => s.Category == myDropDownList).ToList();
             //}
             ////else
             //    result_1 = products.Where(s => s.Category == "Clip").ToList();
@@ -123,7 +123,7 @@ namespace LogicUniversity.Controllers
 
 
             //ViewData["dListAll"] = products;
-            ViewBag.Category = new SelectList( category, "Category");
+            //ViewBag.Category = new SelectList( category, "Category");
 
             ViewBag.DataPoints_1 = JsonConvert.SerializeObject(dataPoints_1);
             ViewBag.DataPoints_2 = JsonConvert.SerializeObject(dataPoints_2);
