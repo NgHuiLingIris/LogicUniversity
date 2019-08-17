@@ -13,6 +13,9 @@
 }
 
 <h2>Retrieval Form</h2>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
 
 
 @using (Html.BeginForm("Create", "Retrievals", FormMethod.Post))
@@ -70,7 +73,7 @@
                         </tr>
                     </table>
                     </td>
-                   
+                    <td>
                         <table>
                             @foreach (double k in item.NeededList)
                             {
@@ -78,23 +81,20 @@
                                 <br />
                             }
                         </table>
-                   
+                    </td>
                     </tr>
                     i++;
                 }
             }
             <input type="hidden" name="sessionId" value="@sessionId" />
             </table>
-            @if (Model!= null)
-            {
-                <input type="submit" value="Submit" class="btn btn-default" />
-            }
-            </div>
+
+
+            <input type="submit" value="Submit" class="btn btn-primary" />
+
+        </div>
     }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
