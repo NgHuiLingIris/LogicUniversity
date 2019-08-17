@@ -20,6 +20,8 @@ namespace LogicUniversity.Controllers
 
         public ActionResult ChargeBackDepartment(string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
@@ -43,6 +45,8 @@ namespace LogicUniversity.Controllers
         {
             sessionId = Request["sessionId"];
             ViewData["sessionId"] = sessionId;
+            int empId = (int)Session["empId"];
+            ViewData["role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 List<String> dep = db.Departments.Select(r => r.DeptName).ToList();

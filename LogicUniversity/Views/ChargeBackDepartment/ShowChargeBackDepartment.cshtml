@@ -2,20 +2,25 @@
 @model IEnumerable<LogicUniversity.Models.DisbursementDetail>
 
 @{
-    Layout = "~/Views/Shared/_Layout_SC.cshtml";
-}
-
-@{
     ViewBag.Title = "ChargeDepartment";
 
-    var deptname=(string)ViewData["dept"];
+    var deptname = (string)ViewData["dept"];
     var year = (string)ViewData["year"];
     var month = (string)ViewData["month"];
     var Department_List = (List<string>)ViewData["DepartmentName"];
     var months = (List<string>)ViewData["months"];
     string sessionId = (string)ViewData["sessionId"];
+    string role = (string)ViewData["role"];
 }
 
+@if (role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
+else if (role == "STORE_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -48,7 +53,7 @@
 </head>
 <br />
 <body>
-    @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment",new { sessionId=sessionId}, FormMethod.Post))
+    @using (Html.BeginForm("ShowChargeBackDepartment", "ChargeBackDepartment", new { sessionId = sessionId }, FormMethod.Post))
     {
         <table>
             <tr>
@@ -118,7 +123,7 @@
             </tbody>
         </table>
     </div>
-   
+
 
 </body>
 </html>
