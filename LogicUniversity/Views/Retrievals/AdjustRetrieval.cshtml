@@ -7,7 +7,7 @@
     var DeptString = (string)ViewData["DeptString"];
     string sessionId = (string)ViewData["sessionId"];
 }
-<h1>@sessionId</h1>
+@*<h1>@sessionId</h1>*@
 
 @{
     Layout = "~/Views/Shared/_Layout_SC.cshtml";
@@ -16,7 +16,6 @@
 <h1 align="center">Stock Adjustment Voucher</h1>
 <p style="text-align:left;">
     Voucher: @v0.Id<br />
-    Name: Sally Lim (hardcoded)
     <span style="float:right;">
         Date Issued:@v0.DateCreated
     </span>

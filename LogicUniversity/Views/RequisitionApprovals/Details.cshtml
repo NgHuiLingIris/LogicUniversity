@@ -2,16 +2,16 @@
 
 @{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
-    string sessionId=(string)ViewData["sessionId"];
 }
 
 @{
     ViewBag.Title = "Details";
+    string sessionId = (string)ViewData["sessionId"];
 }
 
-<form >
+<form>
     <div>
-        <h4>Requisition Details</h4>  @Html.ActionLink("Back to List", "ViewRequisition", "RequisitionApprovals",new { sessionId = sessionId })
+        <h4>Requisition Details</h4>  @Html.ActionLink("Back to List", "ViewRequisition", new { sessionId = @sessionId })
         <hr />
         <table class="table">
             <tr>
@@ -33,21 +33,18 @@
 
         </table>
     </div>
-
-
-
-
 <textarea rows="4" cols="100" value="Remarks"></textarea>
     <br />   <br /> <br />
     <input type="hidden" value=@sessionId name="sessionId" />
-    <input type="submit" value="APPROVED" name="status" id="accept"  class="btn btn-primary" />
+    <input type="submit" value="APPROVED" name="status" id="accept" class="btn btn-primary" />
 
-    <input type="submit" value="REJECTED" name="status" id="reject"  class="btn btn-primary" />
+    <input type="submit" value="REJECTED" name="status" id="reject" class="btn btn-primary" />
 
 </form>
+
 @*<script>
-    function myFunction() {
-        document.getElementById("accept").disabled = true;
-        document.getElementById("reject").disabled = true;
-    }
-</script>*@
+        function myFunction() {
+            document.getElementById("accept").disabled = true;
+            document.getElementById("reject").disabled = true;
+        }
+    </script>*@
