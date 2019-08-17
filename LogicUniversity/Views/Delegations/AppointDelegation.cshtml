@@ -4,10 +4,18 @@
 @{
 
     var delegation = (List<string>)ViewData["list"];
-   string sessionId=(string)  ViewData["sessionId"] ;
+    string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
 @{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    if (Role == "DEP_MNGR")
+    {
+        Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    }
+    else if (Role == "DEP_STAFF")
+    {
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
 }
 
 @using (Html.BeginForm())
@@ -23,13 +31,13 @@
                     foreach (var item in delegation)
                     {
                         <p style="color:red">@item</p>
-                        
+
                     }
 
                 }
             }
         </div>
-      
+
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
             @Html.Label("Select Employee")
@@ -59,8 +67,8 @@
 
         <div class="form-group" align="center">
             <div class="col-md-offset-2 col-md-10">
-                <input type="reset" value="Reset" class="btn btn-default" align="center"/>
-                <input type="submit" value="Appoint" class="btn btn-default"  />
+                <input type="reset" value="Reset" class="btn btn-primary" align="center" />
+                <input type="submit" value="Appoint" class="btn btn-primary" />
                 <input type="hidden" value=@sessionId name="sessionId" />
             </div>
         </div>
@@ -68,7 +76,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "ViewDelegation",new { sessionId=sessionId})
+    @Html.ActionLink("Back to List", "ViewDelegation", new { sessionId = sessionId })
 </div>
 
 

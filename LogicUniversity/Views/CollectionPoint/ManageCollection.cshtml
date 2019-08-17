@@ -1,7 +1,19 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
+@{
+    if (Role == "DEP_MNGR")
+    {
+        Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    }
+    else if (Role == "DEP_STAFF")
+    {
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
+}
+
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -13,14 +25,12 @@
         function updatecp()
         {
 
-            window.location.href = '@Url.Action("UpdateCollectionPoint", "CollectionPoint", new { sessionId = @sessionId })'
+            window.location.href = '@Url.Action("UpdateCollectionPoint", "CollectionPoint", new { sessionId = @sessionId})'
         }
 
         function updateur()
         {
-            //var id = model.Id; //if you want to pass an Id parameter
-           // window.location.href = '@Url.Action("UpdateCollectionPoint", "CollectionPoint")/' + id;
-            window.location.href = '@Url.Action("UpdateRepresentative", "CollectionPoint", new { sessionId = @sessionId })'
+            window.location.href = '@Url.Action("UpdateRepresentative", "CollectionPoint", new { sessionId = @sessionId})'
         }
     </script>
 </head>

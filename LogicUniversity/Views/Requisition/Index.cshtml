@@ -3,28 +3,26 @@
 @model IEnumerable<LogicUniversity.Models.Products>
 @{
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
-    string sessionId=(string)ViewData["sessionId"];
+    string sessionId = (string)ViewData["sessionId"];
+    string toastmsg = (string)ViewData["toast"];
 }
 
-@{
-    /**/
-
-    ViewBag.Title = "Index";
-}
-
-@if (ViewBag.Message != null)
+@if (toastmsg != null)
 {
     @section scripts{
         <script src="~/Scripts/toastr.js"></script>
         <script>
         $(document).ready(function () {
-            toastr.success('@ViewBag.Message')
+
+
+            toastr.success('@toastmsg')
+
+
         });
         </script>
     }
 
 }
-
 <head>
     <meta name="viewport" content="width=device-width" />
 
@@ -40,6 +38,7 @@
             });
         });
     </script>
+
     <style>
         #tabledropdown {
             max-height: 470px;
@@ -49,20 +48,19 @@
     </style>
 
 </head>
-
 <header>
     <a href="@Url.Action("AddtoCart", "Requisition",new { sessionId = @sessionId})" style="float: right;">Proceed to Checkout</a>
 </header>
 
-@using (Html.BeginForm("Index", "Requisition",new { sessionId = @sessionId}, FormMethod.Get))
+@using (Html.BeginForm("Index", "Requisition", new { sessionId = @sessionId }, FormMethod.Get))
 {
     <input type="hidden" value="@sessionId" name="sessionId" />
 
     <form>
         Search Products By Category:
 
-        @Html.TextBox("search", null, new { @class = "form-control"}) <br /> <button class="btn btn-primary">Search</button>
-        @Html.ActionLink("Show All", "Index",new { sessionId = sessionId })
+        @Html.TextBox("search", null, new { @class = "form-control" }) <br /> <button class="btn btn-primary">Search</button>
+        @Html.ActionLink("Show All", "Index", new { sessionId = sessionId })
     </form>
 
 }
@@ -76,8 +74,8 @@
                     <th> &ensp; Category</th>
                     <th> Description </th>
                     <th> UOM </th>
-                    <th> Button </th>
-                    <th> Button </th>
+                    <th> &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&emsp;&ensp;Action </th>
+
                 </tr>
                 @foreach (var item in Model)
                 {
@@ -92,10 +90,10 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.UOM)
                         </td>
-                        <td></td>
+
 
                         <td align="center">
-                            <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode,sessionId=sessionId })">Add to Cart</a>
+                            <a href="@Url.Action("Index", "Requisition", new { id = item.ItemCode,sessionId=sessionId})">Add to Cart</a>
                         </td>
                     </tr>
                 }
@@ -120,6 +118,7 @@
 </nav>
 
 <script>
+
     $(document).ready(function () {
         $('#table').DataTable({
             "pagingType": "full_numbers" // "simple" option for 'Previous' and 'Next' buttons only

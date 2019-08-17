@@ -70,6 +70,18 @@ namespace LogicUniversity.Controllers
         {
             if (Sessions.IsValidSession(sessionId))
             {
+                int empId = (int)Session["empId"];
+                bool delegated = false;
+                List<Delegation> delegations = db.Delegations.Where(d => d.EmployeeId == empId).ToList();
+                foreach(var delegation in delegations)
+                {
+                    if(delegation.StartDate<=DateTime.Today&&delegation.EndDate>=DateTime.Today)
+                    {
+                        delegated = true;
+                        break;
+                    }
+                }
+                ViewData["delegated"] = delegated;
                 ViewData["sessionId"] = sessionId;
                 return View();
             }

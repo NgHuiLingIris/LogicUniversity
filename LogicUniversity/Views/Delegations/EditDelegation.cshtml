@@ -4,9 +4,17 @@
     ViewBag.Title = "Edit";
     var delegation = (List<string>)ViewData["list"];
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
 @{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    if (Role == "DEP_MNGR")
+    {
+        Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    }
+    else if (Role == "DEP_STAFF")
+    {
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
 }
 
 
@@ -14,58 +22,58 @@
 {
     @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <h4 style="text-align:center">Edit Delegation</h4>
-    <hr />
-    <div class="form-group">
-        @{ if (delegation != null)
-            {
-                foreach (var item in delegation)
+    <div class="form-horizontal">
+        <h4 style="text-align:center">Edit Delegation</h4>
+        <hr />
+        <div class="form-group">
+            @{ if (delegation != null)
                 {
-                    <p style="color:red">@item</p>
+                    foreach (var item in delegation)
+                    {
+                        <p style="color:red">@item</p>
+
+                    }
 
                 }
-
             }
-        }
-    </div>
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.DelegationId)
+        </div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.DelegationId)
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.EmployeeId, "EmployeeId", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownList("EmployeeId", null, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.EmployeeId, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmployeeId, "EmployeeId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("EmployeeId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EmployeeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="hidden" value=Model.StartDate name="startdate" />
+                <input type="hidden" value=@sessionId name="sessionId" />
+            </div>
         </div>
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-primary" />
-            <input type="hidden" value=Model.StartDate name="startdate" />
-            <input type="hidden" value=@sessionId name="sessionId" />
-        </div>
-    </div>
-</div>
 }
 
 <div>

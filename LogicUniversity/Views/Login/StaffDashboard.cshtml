@@ -7,6 +7,7 @@
 @{
     string sessionId = (string)ViewData["sessionId"];
     Employee user = (Employee)Session["USER"];
+    bool delegated = (bool)ViewData["delegated"];
 }
     @{
         Layout = "~/Views/Shared/_Layout_DS.cshtml";
@@ -25,15 +26,15 @@
         <i class="fa fa-user fa-100x"></i><br />
         Track Requisition <br><br>
     </a>
-    <a href="@Url.Action("Display","CollectionPoint",new {sessionId = sessionId,Role="Staff"})" class="button">
+    <a href="@Url.Action("Display","CollectionPoint",new {sessionId = sessionId,Role="DEP_STAFF"})" class="button">
         <i class="fa fa-user fa-100x"></i><br />
         Collection Point <br> <br>
     </a>
-    @if (user.Isdelegateded == "Y")
+    @if (delegated==true)
     {
-        <a href="@Url.Action("ViewRequisition","RequisitionApprovals",new { sessionId = sessionId,Role = "Staff"})" class="button">Requistion Approvals</a>
-        <a href="@Url.Action("ViewAllRequisition","RequisitionApprovals",new { sessionId = sessionId,Role = "Staff"})" class="button">View all Requistion </a>
-        <a href="@Url.Action("ManageCollection","CollectionPoint",new { sessionId = sessionId })" class="button">Manage Collection</a>
+        <a href="@Url.Action("ViewRequisition","RequisitionApprovals",new { sessionId = sessionId,Role = "DEP_STAFF"})" class="button">Requistion Approvals</a>
+        <a href="@Url.Action("ViewAllRequisition","RequisitionApprovals",new { sessionId = sessionId,Role = "DEP_STAFF"})" class="button">View all Requistion </a>
+        <a href="@Url.Action("ManageCollection","CollectionPoint",new { sessionId = sessionId,Role="Staff" })" class="button">Manage Collection</a>
         <a href="@Url.Action("ManageDelegation","Delegations",new { sessionId = sessionId })" class="button">Manage Delegation </a>
     }
 

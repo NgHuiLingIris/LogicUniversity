@@ -4,10 +4,17 @@
     var Collectionpoint = (string)ViewData["currentCollectionPoint"];
     int deptid = (int)ViewData["deptid"];
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
-
 @{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    if (Role == "DEP_MNGR")
+    {
+        Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    }
+    else if (Role == "DEP_STAFF")
+    {
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
 }
 <html>
 <head>
@@ -27,8 +34,8 @@
             document.getElementById('selection').value = etochange;
         }
         function back() {
-          
-           window.location.href = '@Url.Action("ManageCollection", "CollectionPoint",new { sessionId = @sessionId})'
+
+           window.location.href = '@Url.Action("ManageCollection", "CollectionPoint",new { sessionId = @sessionId,Role=@Role})'
         }
 
     </script>
@@ -50,7 +57,7 @@
 
 
 
-    @using (Html.BeginForm("SaveChangedCollectionPoint", "CollectionPoint", new { sessionId = @sessionId }, FormMethod.Post))
+    @using (Html.BeginForm("SaveChangedCollectionPoint", "CollectionPoint", new { sessionId = @sessionId}, FormMethod.Post))
     {
         <table>
             @foreach (var point in Model)
@@ -71,8 +78,8 @@
         <br />
 
 
-        <div style="float:right;margin-right:200px"><input type="submit" name="Update" value="Update" /></div>
-        <div style="float:left;margin-left:200px"><input type="button" name="Back" value="Back" onclick="back()" /></div>
+        <div style="float:right;margin-right:200px"><input type="submit" name="Update" value="Update" class="btn btn-primary"/></div>
+        <div style="float:left;margin-left:200px"><input type="button" name="Back" value="Back" onclick="back()" class="btn btn-primary"/></div>
         <input type="hidden" id="deptid" name="deptid" value=@deptid />
         <input type="hidden" id="selection" name="selection" />
 

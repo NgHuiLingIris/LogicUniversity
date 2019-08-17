@@ -24,7 +24,8 @@ namespace LogicUniversity.Controllers
             if (Sessions.IsValidSession(sessionId))
             {
                 ViewData["sessionId"] = sessionId;
-                ViewData["Role"] = Role;
+                int empId = (int)Session["empId"];
+                ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
                 return View(db.Requisition.Where(x => x.Status == "PENDING" && (x.DeptId==obj.DeptId) ).ToList());
@@ -38,7 +39,8 @@ namespace LogicUniversity.Controllers
         public ActionResult ViewAllRequisition(string sessionId,string Role)
         {
             ViewData["sessionId"] = sessionId;
-            ViewData["Role"] = Role;
+            int empId = (int)Session["empId"];
+            ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (Sessions.IsValidSession(sessionId))
             {
                 var username = Session["UserID"].ToString();
@@ -187,6 +189,8 @@ namespace LogicUniversity.Controllers
         // GET: Requisitions/Details/5
         public ActionResult Details(int? id, string status, string Remarks, string sessionId)
         {
+            int empId = (int)Session["empId"];
+            ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             ViewData["sessionId"] = sessionId;
             if (id == null)
             {

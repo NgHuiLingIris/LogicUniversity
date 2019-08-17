@@ -1,13 +1,21 @@
 ﻿@model IEnumerable<LogicUniversity.Models.RequisitionDetails>
 
-@{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
-}
 
 @{
     ViewBag.Title = "Details";
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["role"];
 }
+
+@if (Role == "DEP_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+else if (Role == "DEP_STAFF")
+{
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
+}
+
 
 <form>
     <div>

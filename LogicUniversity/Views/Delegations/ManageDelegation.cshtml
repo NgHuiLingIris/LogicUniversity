@@ -1,7 +1,17 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
-    string sessionId=(string)ViewData["sessionId"];
-    
+    string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
+}
+@{
+    if (Role == "DEP_MNGR")
+    {
+        Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    }
+    else if (Role == "DEP_STAFF")
+    {
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
 }
 
 

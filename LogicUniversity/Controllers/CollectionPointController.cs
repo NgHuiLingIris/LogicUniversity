@@ -14,10 +14,14 @@ namespace LogicUniversity.Controllers
 
         private LogicUniversityContext db = new LogicUniversityContext();
 
-        public ActionResult ManageCollection(string sessionId)
+        public ActionResult ManageCollection(string sessionId,string Role)
         {
+            int empId = (int)Session["empId"];
+            ViewData["Role"]= db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
+
             if (Sessions.IsValidSession(sessionId))
             {
+                //ViewData["Role"] = Role;
                 ViewData["sessionId"] = sessionId;
                 return View();
             }
@@ -42,7 +46,7 @@ namespace LogicUniversity.Controllers
             //gets the current collection point name
             var currentCollectionPoint = db.CollectionPoints.Where(r => r.CollectionPointId.Equals(collectionPoint)).Select(r => r.LocationName).SingleOrDefault();
 
-
+            ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             ViewData["currentCollectionPoint"] = currentCollectionPoint;
             ViewData["list"] = cp;
             ViewData["deptid"] = deptId;
@@ -56,12 +60,14 @@ namespace LogicUniversity.Controllers
         [HttpPost]
         public ActionResult SaveChangedCollectionPoint(string selection, int deptid,string sessionId)
         {
+            int empId = (int)Session["empId"];
+            string Role = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             Department cp = db.Departments.Where(d => d.DeptId == deptid).FirstOrDefault();
             //set to the new collectionpoint
             cp.CollectionLocationId = selection.ToString();
             db.SaveChanges();
             TempData["successmsg"] = "Successfully changed the collection point";
-            return RedirectToAction("Display", "CollectionPoint",new { sessionId = sessionId,Role="HOD"});
+            return RedirectToAction("Display", "CollectionPoint",new { sessionId = sessionId,Role=Role});
         }
 
 
@@ -71,7 +77,7 @@ namespace LogicUniversity.Controllers
         {
             int empId = (int)Session["empId"];
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
-
+            ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             //extracting the dep rep details of the department whom the employee belongs to
             var currentRepresentative = db.Employees.Where(r => r.DeptId == deptId && r.Role == "DEP_REP").Select(x => x.EmployeeName).SingleOrDefault();
 
@@ -97,6 +103,7 @@ namespace LogicUniversity.Controllers
             var deptId = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Department.DeptId).SingleOrDefault();
             var rep = db.Employees.Where(r => r.DeptId == deptId && r.Role == "DEP_REP").SingleOrDefault();
             var department = db.Departments.Find(deptId);
+            string Roles = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             if (ModelState.IsValid)
             {
                 rep.Role = "DEP_STAFF";
@@ -105,7 +112,7 @@ namespace LogicUniversity.Controllers
                 department.ContactName = newrep.EmployeeName;
                 db.SaveChanges();
                 TempData["successmsg"] = "Successfully changed the representative";
-                return RedirectToAction("Display", "CollectionPoint",new { sessionId=sessionId,Role="HOD"});
+                return RedirectToAction("Display", "CollectionPoint",new { sessionId=sessionId,Role=Roles});
             }
             return RedirectToAction("UpdateRepresentative", "CollectionPoint", new { sessionId = @sessionId });
 

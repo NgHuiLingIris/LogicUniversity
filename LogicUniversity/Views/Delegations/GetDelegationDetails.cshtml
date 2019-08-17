@@ -3,10 +3,20 @@
 @{
     ViewBag.Title = "Details";
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
 @{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    if (Role == "DEP_MNGR")
+    {
+        Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    }
+    else if (Role == "DEP_STAFF")
+    {
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
 }
+
+
 <br />
 <br />
 <div>
@@ -41,7 +51,7 @@
 </div>
 <p>
     @Html.ActionLink("Edit", "EditDelegation", new { id = Model.DelegationId, sessionId = @sessionId }) |
-    @Html.ActionLink("Back to List", "ViewDelegation", new {  sessionId = @sessionId })
+    @Html.ActionLink("Back to List", "ViewDelegation", new { sessionId = @sessionId })
 </p>
 
 

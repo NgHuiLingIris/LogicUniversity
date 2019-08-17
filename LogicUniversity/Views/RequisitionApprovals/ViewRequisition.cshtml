@@ -6,11 +6,11 @@
     string Role = (string)ViewData["Role"];
 }
 @{ 
-     if (Role == "HOD")
+     if (Role == "DEP_MNGR")
     {
         Layout = "~/Views/Shared/_Layout_DH.cshtml";
     }
-    else if (Role == "Staff")
+    else if (Role == "DEP_STAFF")
     {
         Layout = "~/Views/Shared/_Layout_DS.cshtml";
     }

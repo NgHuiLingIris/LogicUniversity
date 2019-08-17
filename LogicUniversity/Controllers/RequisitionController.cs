@@ -27,6 +27,7 @@ namespace LogicUniversity.Controllers
             {
                 ViewData["sessionId"] = sessionId;
 
+                ViewData["toast"] = TempData["message"];
                 if (Id != null)
                 {
                     var username = Session["UserID"].ToString();
@@ -39,10 +40,12 @@ namespace LogicUniversity.Controllers
                     c.UOM = p.UOM;
                     c.EmployeeId = obj.EmployeeId;
 
+                    ViewData["toast"] = p.Description+ " added to cart";
 
                     db.CartItems.AddOrUpdate(c);
                     db.SaveChanges();
                 }
+               
                 if (search != null)
                 {
                     return View(db.Products.Where(x => x.Category == search).ToList());
@@ -69,7 +72,6 @@ namespace LogicUniversity.Controllers
                 var username = Session["UserID"].ToString();
                 Employee obj = db.Employees.Where(a => a.Username.Equals(username)).FirstOrDefault();
                 List<CartItem> cartItem = db.CartItems.OrderBy(x => x.EmployeeId == obj.EmployeeId).ToList();
-                ViewBag.Message = "Items added to cart";
                 ViewData["sessionId"] = sessionId;
                 return View(cartItem);
             }

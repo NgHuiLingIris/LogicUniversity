@@ -6,22 +6,6 @@
 @{
            Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
-@if (ViewBag.Message != null)
-{
-    @section scripts{
-        <script src="~/Scripts/toastr.js"></script>
-        <script>
-        $(document).ready(function () {
-
-
-            toastr.success('@ViewBag.Message')
-
-
-        });
-        </script>
-    }
-
-}
 
 <br />
 <br />
@@ -58,7 +42,7 @@
 
         @if (Model.Count() > 0)
         {
-            <input type="submit" value="Submit" class="btn btn-default" />
+            <input type="submit" value="Submit" class="btn btn-primary" />
         }
 
 

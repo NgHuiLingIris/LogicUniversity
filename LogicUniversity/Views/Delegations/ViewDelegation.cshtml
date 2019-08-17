@@ -5,11 +5,20 @@
 @{
     ViewBag.Title = "Index";
     string msg = (string)ViewData["msg"];
-    string sessionId=(string)ViewData["sessionId"];
+    string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
 @{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    if (Role == "DEP_MNGR")
+    {
+        Layout = "~/Views/Shared/_Layout_DH.cshtml";
+    }
+    else if (Role == "DEP_STAFF")
+    {
+        Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    }
 }
+
 @if (ViewBag.Message != null)
 {
     @section scripts{
@@ -34,24 +43,24 @@
         display: inline-block;
     }*/
 
-        .pagination a {
-            color: black;
-            float: left;
-            padding: 8px 16px;
-            text-decoration: none;
+    .pagination a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
         }
 
-            .pagination a.active {
-                background-color: #4CAF50;
-                color: white;
-            }
-
-            .pagination a:hover:not(.active) {
-                background-color: #ddd;
-            }
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
 </style>
 <p>
-    @Html.ActionLink("Create New", "AppointDelegation",new { sessionId=@sessionId})
+    @Html.ActionLink("Create New", "AppointDelegation", new { sessionId = @sessionId })
 </p>
 <script>
     function back()
@@ -93,8 +102,8 @@
             <td>
                 @if (!(item.EndDate < DateTime.Today))
                 {
-                    @Html.ActionLink("Edit |", "EditDelegation", new { id = item.DelegationId, sessionId = @sessionId  })
-                    @Html.ActionLink("Details |", "GetDelegationDetails", new { id = item.DelegationId , sessionId = @sessionId})
+                    @Html.ActionLink("Edit |", "EditDelegation", new { id = item.DelegationId, sessionId = @sessionId })
+                    @Html.ActionLink("Details |", "GetDelegationDetails", new { id = item.DelegationId, sessionId = @sessionId })
                     @Html.ActionLink("Delete", "CancelDelegation", new { id = item.DelegationId, sessionId = @sessionId })
                 }
             </td>
@@ -105,4 +114,4 @@
 <div class="pagination">
     @Html.PagedListPager(Model, page => Url.Action("ViewDelegation", new { page, sessionId = @sessionId }))
 </div>
-<input type="submit" value="Back" onclick="back()" />
+<input type="submit" value="Back" onclick="back()" class="btn btn-primary" />
