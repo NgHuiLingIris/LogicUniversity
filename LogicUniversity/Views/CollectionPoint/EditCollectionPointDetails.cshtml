@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Edit";
     var employee = (Employee)ViewData["Employee"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 @{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
@@ -15,6 +16,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    <input type="hidden" value="@sessionId" name="sessionId" />
 
     <div class="form-horizontal">
         <h4>CollectionPoint</h4>
@@ -65,7 +67,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "ViewCollectionPoint")
+    @Html.ActionLink("Back to List", "ViewCollectionPoint",new { sessionId = sessionId })
 </div>
 
 @section Scripts {

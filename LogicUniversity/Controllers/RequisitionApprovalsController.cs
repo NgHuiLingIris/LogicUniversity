@@ -35,9 +35,10 @@ namespace LogicUniversity.Controllers
             }
         }
 
-        public ActionResult ViewAllRequisition(string sessionId)
+        public ActionResult ViewAllRequisition(string sessionId,string Role)
         {
             ViewData["sessionId"] = sessionId;
+            ViewData["Role"] = Role;
             if (Sessions.IsValidSession(sessionId))
             {
                 var username = Session["UserID"].ToString();
@@ -78,6 +79,8 @@ namespace LogicUniversity.Controllers
                     {
                         reqByDept.Add(r);
                     }
+                    db.Requisition.AddOrUpdate(r);
+                    db.SaveChanges();
                 }
 
                 List<Requisition> reqList = new List<Requisition>();

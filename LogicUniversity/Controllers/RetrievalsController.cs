@@ -35,6 +35,7 @@ namespace LogicUniversity.Controllers
         {
             
             IncludeSaveAllRequisitionDetails(InputRDList);
+            dList = dList.Distinct().ToList();
             foreach (Department d in dList)
             {
                 List<RequisitionDetails> rdList2 = InputRDList.Where(rd => rd.Status == null).Where(rd => rd.Requisition.Department == d.DeptName).ToList();
@@ -174,6 +175,7 @@ namespace LogicUniversity.Controllers
 
                 int count = int.Parse(Request.Form["count"]);
                 string DeptString = "";
+                List<Department> dStringList = new List<Department>();
                 StockAdjustmentVoucher s = PrepareVoucher();
                 Retrieval r = PrepareRetrieval();
                 List<RetrievalDetail> rdList = new List<RetrievalDetail>();
@@ -188,7 +190,13 @@ namespace LogicUniversity.Controllers
                     int TotalNeeded = int.Parse(Request.Form["ICR[" + i + "].TotalNeeded"]);
                     string dept = Request.Form["ICR[" + i + "].Dept"];
                     List<Department> dList = splitString(dept);
-                    DeptString = dept;
+                    foreach(Department d in dList)
+                    {
+                        if (!dStringList.Any(d1 => d1 == d))
+                        {
+                            dStringList.Add(d);
+                        }
+                    }
                     List<RequisitionDetails> requisitiondetaillist = new List<RequisitionDetails>();
                     List<RequisitionDetails> requisitiondetaillist1 = db.RequisitionDetails.Where(a => a.ItemCode == itemcode).Where(b => b.Status != "Retrieved").Include(c => c.Requisition).ToList();
                     requisitiondetaillist = RetrieveRequisitionDetailsByDepartment(requisitiondetaillist, dList, requisitiondetaillist1);
@@ -235,6 +243,10 @@ namespace LogicUniversity.Controllers
                 }
                 s.StockAdjustmentVoucherDetails = sList;
                 CheckRequisitionComplete();
+                foreach(Department dString in dStringList)
+                {
+                    DeptString = DeptString + "," + dString.DeptName;
+                }
                 if (sList.Count() != 0)
                 {
 

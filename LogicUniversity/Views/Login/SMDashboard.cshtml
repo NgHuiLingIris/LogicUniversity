@@ -10,18 +10,12 @@
 }
 
 
-    <head>
-        <link rel="stylesheet" type="text/css" href="~/css/newst.css">
-
-    </head>
-
-
 <h2>Store Manager Dashboard</h2>
 <table class="container">
 
     <tr>
         <td>@Html.ActionLink("Purchase Order", "PlaceOrder", "PurchaseOrder", new { sessionId = sessionId }, null)</td>
-        <td>@Html.ActionLink("Catalogue", "Index", "Products",new {sessionId = sessionId,Role="StoreManager"},null)</td>
+        <td>@Html.ActionLink("Catalogue", "Index", "Products",new {sessionId = sessionId, Role="StoreManager"},null)</td>
         @*<td><button class="btn" onclick="window.location.href = '/StockAdjustmentVoucherDetails/ApproverView?Role=Manager';">Pending Approval/Rejection</button></td>*@
         <td>@Html.ActionLink("Pending Approval","ApproverView", "StockAdjustmentVoucherDetails",new { Role = "Manager",sessionId=sessionId},null)</td>
     </tr>
@@ -31,7 +25,7 @@
         <td>@Html.ActionLink("View Tender", "Tender", new { sessionId = sessionId }, null)</td>
     </tr>
     <tr>
-        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals", new { sessionId = sessionId }, null)</td>
+        <td>@Html.ActionLink("Requisitions History", "ViewAllRequisition", "RequisitionApprovals", new { sessionId = sessionId,Role = "StoreManager"}, null)</td>
         <td>@Html.ActionLink("View Department", "Department", new { sessionId = sessionId }, null)</td>
         <td>@Html.ActionLink("Charge Department", "ChargeBackDepartment", "ChargeBackDepartment", new { sessionId = sessionId }, null)</td>
     </tr>
@@ -43,3 +37,33 @@
     </tr>
 
 </table>
+
+<style>
+    fieldset {
+        display: block;
+        margin-left: 2px;
+        margin-right: 2px;
+        padding-top: 0.35em;
+        padding-bottom: 0.625em;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+        border: 2px groove;
+    }
+
+    .button {
+        background-color: #0000ff; /* Green */
+        border: none;
+        color: white;
+        width: 300px;
+        height: 100px;
+        padding: 40px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 15px 20px;
+        cursor: pointer;
+        border-radius: 2px;
+        position: relative;
+    }
+</style>

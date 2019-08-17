@@ -1,5 +1,8 @@
 ﻿@model LogicUniversity.Models.CollectionPoint
 @{
+    string sessionId = (string)ViewData["sessionId"];
+}
+@{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
 <h2>Details</h2>
@@ -43,6 +46,6 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = Model.CollectionPointId }) |
-    @Html.ActionLink("Back to List", "ViewCollectionPoint")
+    @Html.ActionLink("Edit", "EditCollectionPointDetails", new { id = Model.CollectionPointId,sessionId=sessionId }) |
+    @Html.ActionLink("Back to List", "ViewCollectionPoint",new { sessionId = sessionId })
 </p>

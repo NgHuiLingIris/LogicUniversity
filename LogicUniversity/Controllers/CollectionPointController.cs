@@ -156,26 +156,42 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: CollectionPoints/Details/5
-        public ActionResult GetCollectionPointDetails(string id)
+        public ActionResult GetCollectionPointDetails(string id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            CollectionPoint collectionPoint = (db.CollectionPoints).Find(id);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                CollectionPoint collectionPoint = (db.CollectionPoints).Find(id);
 
-            if (collectionPoint == null)
-            {
-                return HttpNotFound();
+                if (collectionPoint == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(collectionPoint);
             }
-            return View(collectionPoint);
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: CollectionPoints/Create
-        public ActionResult CreateNewCollectionPoint()
+        public ActionResult CreateNewCollectionPoint(string sessionId)
         {
-            ViewBag.StoreClerkId = new SelectList(db.Employees.Where(x => x.Role == "STORE_CLRK"), "EmployeeId", "EmployeeName");
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                ViewBag.StoreClerkId = new SelectList(db.Employees.Where(x => x.Role == "STORE_CLRK"), "EmployeeId", "EmployeeName");
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // POST: CollectionPoints/Create
@@ -183,36 +199,56 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateNewCollectionPoint([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint)
+        public ActionResult CreateNewCollectionPoint([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint,string sessionId)
         {
-            if (ModelState.IsValid)
+            if (sessionId == null)
             {
-                db.CollectionPoints.Add(collectionPoint);
-                db.SaveChanges();
-                return RedirectToAction("ViewCollectionPoint");
+                sessionId = Request["sessionId"];
             }
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.CollectionPoints.Add(collectionPoint);
+                    db.SaveChanges();
+                    return RedirectToAction("ViewCollectionPoint",new { sessionId = sessionId });
+                }
 
-            ViewBag.StoreClerkId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
-            return View(collectionPoint);
+                ViewBag.StoreClerkId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
+                return View(collectionPoint);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: CollectionPoints/Edit/5
-        public ActionResult EditCollectionPointDetails(string id)
+        public ActionResult EditCollectionPointDetails(string id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
-            Employee emp = db.Employees.Find(collectionPoint.StoreClerkId);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
+                Employee emp = db.Employees.Find(collectionPoint.StoreClerkId);
 
-            if (collectionPoint == null)
-            {
-                return HttpNotFound();
+                if (collectionPoint == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewData["Employee"] = emp;
+                ViewBag.StoreClerkId = new SelectList(db.Employees.Where(x => x.Role == "STORE_CLRK"), "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
+                return View(collectionPoint);
             }
-            ViewData["Employee"] = emp;
-            ViewBag.StoreClerkId = new SelectList(db.Employees.Where(x => x.Role == "STORE_CLRK"), "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
-            return View(collectionPoint);
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // POST: CollectionPoints/Edit/5
@@ -220,42 +256,76 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditCollectionPointDetails([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint)
+        public ActionResult EditCollectionPointDetails([Bind(Include = "CollectionPointId,LocationName,Time,Day,StoreClerkId")] CollectionPoint collectionPoint,string sessionId)
         {
-            if (ModelState.IsValid)
+            if (sessionId == null)
             {
-                db.Entry(collectionPoint).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("ViewCollectionPoint");
+                sessionId = Request["sessionId"];
             }
-            ViewBag.StoreClerkId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
-            return View(collectionPoint);
+
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.Entry(collectionPoint).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("ViewCollectionPoint",new { sessionId = sessionId });
+                }
+                ViewBag.StoreClerkId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", collectionPoint.StoreClerkId);
+                return View(collectionPoint);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: CollectionPoints/Delete/5
-        public ActionResult DeleteCollectionPoint(string id)
+        public ActionResult DeleteCollectionPoint(string id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
+                if (collectionPoint == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(collectionPoint);
             }
-            CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
-            if (collectionPoint == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(collectionPoint);
         }
 
         // POST: CollectionPoints/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string id,string sessionId)
         {
-            CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
-            db.CollectionPoints.Remove(collectionPoint);
-            db.SaveChanges();
-            return RedirectToAction("ViewCollectionPoint");
+            if (sessionId == null)
+            {
+                sessionId = Request["sessionId"];
+            }
+
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                CollectionPoint collectionPoint = db.CollectionPoints.Find(id);
+                db.CollectionPoints.Remove(collectionPoint);
+                db.SaveChanges();
+                return RedirectToAction("ViewCollectionPoint", new { sessionId = sessionId });
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
 

@@ -1,12 +1,17 @@
 ﻿@model IEnumerable<LogicUniversity.Models.Requisition>
-
 @{
-    Layout = "~/Views/Shared/_Layout_DH.cshtml";
-   
-}
-@{ 
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
+@if (Role == "StoreManager")
+{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+else if(Role == "HOD")
+{
+    Layout = "~/Views/Shared/_Layout_DH.cshtml";
+}
+
 @{
     ViewBag.Title = "Index";
 }
@@ -14,7 +19,7 @@
 <h2>Track Requisition</h2>
 
 <form>
- 
+
     <table>
         
 
@@ -33,12 +38,12 @@
         <tr>
             <td>Status: </td>
             <td><input type="datetime" name="status" id="status" class="form-control" /></td>
-           
+
             <td></td>
-           
+
         </tr>
         <tr>
-           
+
             <td><input type="submit" value="submit" class="btn btn-primary" /></td>
         </tr>
     </table>
@@ -81,7 +86,7 @@
             </td>
 
             <td>
-                @Html.ActionLink("Details", "TrackDetails", new { id = item.RequisitionId, sessionId=@sessionId })
+                @Html.ActionLink("Details", "TrackDetails", new { id = item.RequisitionId, sessionId = @sessionId })
             </td>
         </tr>
     }
