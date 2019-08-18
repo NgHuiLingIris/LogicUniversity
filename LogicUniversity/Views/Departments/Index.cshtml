@@ -11,15 +11,15 @@
 {
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
-else
+else if(role=="StoreClerk")
 {
-    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create",new { sessionId = sessionId })
 </p>
 <table class="table">
     <tr>
@@ -60,9 +60,9 @@ else
                 @Html.DisplayFor(modelItem => item.Fax)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.DeptId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.DeptId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.DeptId })
+                @Html.ActionLink("Edit", "Edit", new { id = item.DeptId,sessionId=sessionId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.DeptId, sessionId = sessionId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.DeptId, sessionId = sessionId })
             </td>
         </tr>
     }

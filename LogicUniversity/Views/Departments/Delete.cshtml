@@ -1,5 +1,7 @@
 ﻿@model LogicUniversity.Models.Department
-
+@{
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     ViewBag.Title = "Delete";
 }
@@ -53,12 +55,13 @@
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
-
+        <input type="hidden" value="@sessionId" name="sessionId" />
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            @Html.ActionLink("Back to List", "Index",new { sessionId = sessionId, role = "StoreClerk" })
         </div>
     }
 </div>

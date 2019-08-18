@@ -32,24 +32,40 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Departments/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Department department = db.Departments.Find(id);
+                if (department == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(department);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(department);
         }
 
         // GET: Departments/Create
-        public ActionResult Create()
+        public ActionResult Create(string sessionId)
         {
-            return View();
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // POST: Departments/Create
@@ -57,31 +73,51 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DeptId,DeptName,CollectionLocationId,ContactName,TelephoneNo,Fax")] Department department)
+        public ActionResult Create([Bind(Include = "DeptId,DeptName,CollectionLocationId,ContactName,TelephoneNo,Fax")] Department department,string sessionId)
         {
-            if (ModelState.IsValid)
+            if (sessionId == null)
             {
-                db.Departments.Add(department);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                sessionId = Request["sessionId"];
             }
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.Departments.Add(department);
+                    db.SaveChanges();
+                    return RedirectToAction("Index",new { sessionId = sessionId, role = "StoreClerk" });
+                }
 
-            return View(department);
+                return View(department);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: Departments/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Department department = db.Departments.Find(id);
+                if (department == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(department);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(department);
         }
 
         // POST: Departments/Edit/5
@@ -89,41 +125,73 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DeptId,DeptName,CollectionLocationId,ContactName,TelephoneNo,Fax")] Department department)
+        public ActionResult Edit([Bind(Include = "DeptId,DeptName,CollectionLocationId,ContactName,TelephoneNo,Fax")] Department department,string sessionId)
         {
-            if (ModelState.IsValid)
+            if (sessionId == null)
             {
-                db.Entry(department).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                sessionId = Request["sessionId"];
             }
-            return View(department);
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.Entry(department).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index",new { sessionId = sessionId , role = "StoreClerk" });
+                }
+                return View(department);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: Departments/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Department department = db.Departments.Find(id);
+                if (department == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(department);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(department);
         }
 
         // POST: Departments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id,string sessionId)
         {
-            Department department = db.Departments.Find(id);
-            db.Departments.Remove(department);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (sessionId == null)
+            {
+                sessionId = Request["sessionId"];
+            }
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                Department department = db.Departments.Find(id);
+                db.Departments.Remove(department);
+                db.SaveChanges();
+                return RedirectToAction("Index",new { sessionId = sessionId, role = "StoreClerk" });
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         protected override void Dispose(bool disposing)
