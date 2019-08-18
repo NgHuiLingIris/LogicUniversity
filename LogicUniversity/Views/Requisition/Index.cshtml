@@ -48,6 +48,9 @@
     </style>
 
 </head>
+<br />
+<h4 class="text-center text-uppercase">place order</h4>
+<br />
 <header>
     <a href="@Url.Action("AddtoCart", "Requisition",new { sessionId = @sessionId})" style="float: right;">Proceed to Checkout</a>
 </header>
@@ -74,7 +77,7 @@
                     <th> &ensp; Category</th>
                     <th> Description </th>
                     <th> UOM </th>
-                    <th> &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&emsp;&ensp;Action </th>
+                    <th style="text-align:center"> Action </th>
 
                 </tr>
                 @foreach (var item in Model)

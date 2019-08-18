@@ -4,11 +4,12 @@
     string sessionId = (string)ViewData["sessionId"];
 }
 @{
-           Layout = "~/Views/Shared/_Layout_DS.cshtml";
+    Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
 
 <br />
-<br />
+<h4 class="text-center text-uppercase">Confirm order</h4>
+
 <br />
 @using (@Html.BeginForm())
 {
@@ -34,8 +35,8 @@
                     <td><input type="hidden" value="@item.Description" name="Description" />@item.Description</td>
                     <td><input type="hidden" value="@item.UOM" name="UOM" /></td>
                     <td><input type="number" name="Quantity" value="0" /></td>
-                    <td><input type="reset" name="Quantity" value="Reset" id="Quantity" /></td>
-                    <td> @Html.ActionLink("Delete", "AddtoCart", new { id = item.ItemCode,sessionId=@sessionId })</td>
+                    <td><input type="reset" name="Quantity" value="Reset" id="Quantity" class="btn btn-dark" /></td>
+                    <td> @Html.ActionLink("Delete", "AddtoCart", new { id = item.ItemCode, sessionId = @sessionId},new { @class = "btn btn-dark" })</td>
                 </tr>
             }
         </table>
