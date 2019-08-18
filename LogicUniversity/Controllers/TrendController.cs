@@ -90,7 +90,7 @@ namespace LogicUniversity.Controllers
 
 
         // Inventory Trend based on Category
-        public ActionResult InventoryStatusTrend(string myDropDownList)
+        public ActionResult InventoryStatusTrend(string myDropDownList,string sessionId)
         {
             List<Products> products = db.Products.ToList();
 
@@ -127,7 +127,7 @@ namespace LogicUniversity.Controllers
 
             ViewBag.DataPoints_1 = JsonConvert.SerializeObject(dataPoints_1);
             ViewBag.DataPoints_2 = JsonConvert.SerializeObject(dataPoints_2);
-
+            ViewData["sessionId"] = sessionId;
 
             return View();
         }

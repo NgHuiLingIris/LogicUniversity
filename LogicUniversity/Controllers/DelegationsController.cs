@@ -317,6 +317,7 @@ namespace LogicUniversity.Controllers
                         ViewData["list"] = msglist;
                         return RedirectToAction("EditDelegation", new { sessionId = sessionId });
                     }
+                    
                     else
                     {
 
@@ -492,6 +493,12 @@ namespace LogicUniversity.Controllers
                         ViewData["list"] = msglist;
                         return View("EditDelegation");
                     }
+                    if (delegation.StartDate < DateTime.Today)
+                    {
+                        msglist.Add("Please check the start date");
+                        ViewData["list"] = msglist;
+                        return View("EditDelegation");
+                    }
                     else
                     {
 
@@ -508,7 +515,7 @@ namespace LogicUniversity.Controllers
                         }
                         else
                         {
-
+                            
                             if (case3.Count != 0)
                             {
 

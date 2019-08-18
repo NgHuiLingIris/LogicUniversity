@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
+    string sessionId = (string)ViewData["sessionId"];
 }
 
 <!DOCTYPE HTML>
@@ -62,7 +63,7 @@ var chart_2 = new CanvasJS.Chart("chartContainer_2", {
 </head>
 <body>
 
-    @Html.ActionLink("Compare Results", "TwoMonthsCompare")
+    @Html.ActionLink("Compare Results", "TwoMonthsCompare",new { sessionId =sessionId})
 
     <div class="card shadow">
 
