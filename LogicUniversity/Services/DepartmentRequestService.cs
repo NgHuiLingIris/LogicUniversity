@@ -48,12 +48,15 @@ namespace LogicUniversity.Services
 
                 for (int i = 0; i < item_code_s.Length; i++)
                 {
-                    requestDetails.RequisitionId = request.RequisitionId;
-                    requestDetails.ItemCode = item_code_s[i];
-                    requestDetails.Quantity = Int32.Parse(item_qty_s[i]);
-                    db.RequisitionDetails.Add(requestDetails);
-                    db.SaveChanges();
-                }
+                 if (Int32.Parse(item_qty_s[i]) !=0)
+                    {
+                        requestDetails.RequisitionId = request.RequisitionId;
+                        requestDetails.ItemCode = item_code_s[i];
+                        requestDetails.Quantity = Int32.Parse(item_qty_s[i]);
+                        db.RequisitionDetails.Add(requestDetails);
+                        db.SaveChanges();
+                    }
+                 }
 
                 db.CartItems.RemoveRange(db.CartItems.Where(x => x.EmployeeId == obj.EmployeeId));
                 db.SaveChanges();
