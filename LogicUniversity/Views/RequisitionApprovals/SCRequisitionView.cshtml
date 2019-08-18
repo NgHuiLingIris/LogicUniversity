@@ -79,9 +79,10 @@
 
         <tr>
             <th></th>
-            <th>Date </th>
-            <th>Status </th>
+
             <th>Department </th>
+            <th>Status </th>
+            <th>Date </th>
         </tr>
         @{
             //To make unique Id
@@ -89,14 +90,15 @@
             foreach (var item in reqList)
             {
 
-                <tr>
-                    <td>
-                        <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" value=@Html.DisplayFor(model => item.Department) />
-                    </td>
-                    <td>@Html.DisplayFor(model => item.Date)</td>
-                    <td>@Html.DisplayFor(model => item.Status)</td>
-                    <td>@Html.DisplayFor(model => item.Department)</td>
-                </tr>
+        <tr>
+            <td>
+                <input type="checkbox" name="Requisition[@i].toretrieve" id="Requisition[@i].toretrieve" value=@Html.DisplayFor(model => item.Department) />
+            </td>
+
+            <td>@Html.DisplayFor(model => item.Department)</td>
+            <td>@Html.DisplayFor(model => item.Status)</td>
+            <td>@Html.DisplayFor(model => item.Date)</td>
+        </tr>
                 i++;
             }
         }

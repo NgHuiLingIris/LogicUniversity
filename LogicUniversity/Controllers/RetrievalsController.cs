@@ -38,7 +38,7 @@ namespace LogicUniversity.Controllers
             dList = dList.Distinct().ToList();
             foreach (Department d in dList)
             {
-                List<RequisitionDetails> rdList2 = InputRDList.Where(rd => rd.Status == null).Where(rd => rd.Requisition.Department == d.DeptName).ToList();
+                List<RequisitionDetails> rdList2 = InputRDList.Where(rd => rd.Requisition.Status == "APPROVED").Where(rd => rd.Requisition.Department == d.DeptName).ToList();
                 foreach (RequisitionDetails r in rdList2)
                 {
                     rdListAll.Add(r);

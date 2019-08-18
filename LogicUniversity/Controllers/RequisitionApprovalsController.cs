@@ -204,7 +204,6 @@ namespace LogicUniversity.Controllers
 
                 requisition.Status = status;
                 requisition.Remarks = Remarks;
-
                 db.Requisition.AddOrUpdate(requisition);
                 db.SaveChanges();
                 EmailService.SendNotification(requisition.EmployeeId, requisition.Status, "Your request is" + requisition.Status);
