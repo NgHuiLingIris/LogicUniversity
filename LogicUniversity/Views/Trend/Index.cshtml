@@ -1,6 +1,19 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+
     string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
+}
+@if (Role == "STORE_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+else if (Role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
+else if (Role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 
 <!DOCTYPE HTML>
@@ -40,8 +53,8 @@ var chart_1 = new CanvasJS.Chart("chartContainer_1", {
 	}]
 });
 chart_3.render();
- 
-    
+
+
 
 var chart_2 = new CanvasJS.Chart("chartContainer_2", {
 	animationEnabled: true,
@@ -63,7 +76,7 @@ var chart_2 = new CanvasJS.Chart("chartContainer_2", {
 </head>
 <body>
 
-    @Html.ActionLink("Compare Results", "TwoMonthsCompare",new { sessionId =sessionId})
+    @Html.ActionLink("Compare Results", "TwoMonthsCompare", new { sessionId = sessionId })
 
     <div class="card shadow">
 

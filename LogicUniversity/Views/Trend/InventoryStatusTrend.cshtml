@@ -1,6 +1,21 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
+    string sessionId = (string)ViewData["sessionId"];
+    string Role = (string)ViewData["Role"];
 }
+@if (Role == "STORE_MNGR")
+{
+    Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+else if (Role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
+else if (Role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
+}
+
 
 <html>
 <head>
@@ -60,7 +75,7 @@
     <form>
         </br>
         Select the Category:
-        <select name="myDropDownList" >
+        <select name="myDropDownList">
             <option value="Clip">Clip</option>
             <option value="Envolope">Envolope</option>
             <option value="Eraser">Eraser</option>
@@ -80,6 +95,7 @@
             <option value="Tray">Tray</option>
         </select>
         <input type="submit" value="Submit" class="btn btn-primary" />
+        <input type="hidden" value=@sessionId name="sessionId" />
         <br />
     </form>
 
