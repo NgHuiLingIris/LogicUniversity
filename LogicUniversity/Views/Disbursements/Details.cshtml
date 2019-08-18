@@ -1,5 +1,7 @@
 ﻿@model LogicUniversity.Models.Disbursement
-
+@{
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     ViewBag.Title = "Details";
 }
@@ -53,6 +55,6 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.DisbursementId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DisbursementId, sessionId=sessionId}) |
+    @Html.ActionLink("Back to List", "Index",new { sessionId = sessionId })
 </p>

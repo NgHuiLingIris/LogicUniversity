@@ -1,5 +1,7 @@
 ﻿@model LogicUniversity.Models.Disbursement
-
+@{
+    string sessionId = (string)ViewData["sessionId"];
+}
 @{
     ViewBag.Title = "Edit";
 }
@@ -9,7 +11,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+    <input type="hidden" value="@sessionId" name="sessionId" />
     <div class="form-horizontal">
         <h4>Disbursement</h4>
         <hr />
@@ -65,5 +67,5 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index",new { sessionId = sessionId })
 </div>

@@ -18,12 +18,20 @@ namespace LogicUniversity.Controllers
         private LogicUniversityContext db = new LogicUniversityContext();
 
         // GET: Disbursements
-        public ActionResult Index()
+        public ActionResult Index(string sessionId)
         {
-            var disbursements = db.Disbursements.Include(d => d.CollectionPoint).Include(d => d.Representative);
-            List<Disbursement> dList = disbursements.ToList();
-            ViewData["dList"] = dList;
-            return View(dList);
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                var disbursements = db.Disbursements.Include(d => d.CollectionPoint).Include(d => d.Representative);
+                List<Disbursement> dList = disbursements.ToList();
+                ViewData["dList"] = dList;
+                return View(dList);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         public List<Department> splitDString(string deptstring)
         {
@@ -285,7 +293,7 @@ namespace LogicUniversity.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Disbursements");
+                    return RedirectToAction("Index", "Disbursements",new { sessionId = sessionId });
                 }
             }
             else
@@ -404,18 +412,26 @@ namespace LogicUniversity.Controllers
 
         //-------------------------UNUSED METHODS------------------------
         // GET: Disbursements/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Disbursement disbursement = db.Disbursements.Find(id);
+                if (disbursement == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(disbursement);
             }
-            Disbursement disbursement = db.Disbursements.Find(id);
-            if (disbursement == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(disbursement);
         }
 
         // GET: Disbursements/Create
@@ -446,20 +462,28 @@ namespace LogicUniversity.Controllers
         }
 
         // GET: Disbursements/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Disbursement disbursement = db.Disbursements.Find(id);
+                if (disbursement == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
+                ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
+                return View(disbursement);
             }
-            Disbursement disbursement = db.Disbursements.Find(id);
-            if (disbursement == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
-            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
-            return View(disbursement);
         }
 
         // POST: Disbursements/Edit/5
@@ -467,43 +491,75 @@ namespace LogicUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DisbursementId,RepresentativeId,DateCreated,DateDisbursed,Status,CollectionPointId")] Disbursement disbursement)
+        public ActionResult Edit([Bind(Include = "DisbursementId,RepresentativeId,DateCreated,DateDisbursed,Status,CollectionPointId")] Disbursement disbursement,string sessionId)
         {
-            if (ModelState.IsValid)
+            if (sessionId == null)
             {
-                db.Entry(disbursement).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                sessionId = Request["sessionId"];
             }
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
-            ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
-            return View(disbursement);
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                if (ModelState.IsValid)
+                {
+                    db.Entry(disbursement).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index",new { sessionId = sessionId });
+                }
+                ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "LocationName", disbursement.CollectionPointId);
+                ViewBag.RepresentativeId = new SelectList(db.Employees, "EmployeeId", "EmployeeName", disbursement.RepresentativeId);
+                return View(disbursement);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: Disbursements/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id,string sessionId)
         {
-            if (id == null)
+            if (Sessions.IsValidSession(sessionId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewData["sessionId"] = sessionId;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Disbursement disbursement = db.Disbursements.Find(id);
+                if (disbursement == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(disbursement);
             }
-            Disbursement disbursement = db.Disbursements.Find(id);
-            if (disbursement == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Login");
             }
-            return View(disbursement);
         }
 
         // POST: Disbursements/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id,string sessionId)
         {
-            Disbursement disbursement = db.Disbursements.Find(id);
-            db.Disbursements.Remove(disbursement);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (sessionId == null)
+            {
+                sessionId = Request["sessionId"];
+            }
+            if (Sessions.IsValidSession(sessionId))
+            {
+                ViewData["sessionId"] = sessionId;
+                Disbursement disbursement = db.Disbursements.Find(id);
+                db.Disbursements.Remove(disbursement);
+                db.SaveChanges();
+                return RedirectToAction("Index",new { sessionId = sessionId });
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         protected override void Dispose(bool disposing)
