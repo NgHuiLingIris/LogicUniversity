@@ -1,5 +1,18 @@
 ﻿@{
+ 
+    string Role = (string)ViewData["Role"];
+}
+@if (Role == "STORE_MNGR")
+{
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
+}
+else if (Role == "STORE_SUP")
+{
+    Layout = "~/Views/Shared/_Layout_SS.cshtml";
+}
+else if (Role == "STORE_CLRK")
+{
+    Layout = "~/Views/Shared/_Layout_SC.cshtml";
 }
 
 <!DOCTYPE HTML>

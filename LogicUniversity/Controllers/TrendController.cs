@@ -20,6 +20,8 @@ namespace LogicUniversity.Controllers
         {
             if (Sessions.IsValidSession(sessionId))
             {
+                int empId = (int)Session["empId"];
+                ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
                 ViewData["sessionId"] = sessionId;
                 List<OrderDetail> orderDetails = db.OrderDetails.ToList();
                 List<RequisitionDetails> requisitionDetails = db.RequisitionDetails.ToList();
@@ -92,49 +94,60 @@ namespace LogicUniversity.Controllers
         // Inventory Trend based on Category
         public ActionResult InventoryStatusTrend(string myDropDownList,string sessionId)
         {
-            List<Products> products = db.Products.ToList();
-
-            List<DataPoint> dataPoints_1 = new List<DataPoint>();
-            List<DataPoint> dataPoints_2 = new List<DataPoint>();
-            
-
-            // Trend Logic - Category based Inventory Status
-            //if (value != null)
-            //{
-            var result_1 = products.Where(s => s.Category == myDropDownList).ToList();
-            //}
-            ////else
-            //    result_1 = products.Where(s => s.Category == "Clip").ToList();
-
-            foreach (var x in result_1)
+            if (Sessions.IsValidSession(sessionId))
             {
-                dataPoints_1.Add(new DataPoint(x.Description,(x.Balance-x.ReorderLevel)));
+                int empId = (int)Session["empId"];
+                ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
+                ViewData["sessionId"] = sessionId;
+                List<Products> products = db.Products.ToList();
 
+                List<DataPoint> dataPoints_1 = new List<DataPoint>();
+                List<DataPoint> dataPoints_2 = new List<DataPoint>();
+
+
+                // Trend Logic - Category based Inventory Status
+                //if (value != null)
+                //{
+                var result_1 = products.Where(s => s.Category == myDropDownList).ToList();
+                //}
+                ////else
+                //    result_1 = products.Where(s => s.Category == "Clip").ToList();
+
+                foreach (var x in result_1)
+                {
+                    dataPoints_1.Add(new DataPoint(x.Description, (x.Balance - x.ReorderLevel)));
+
+                }
+
+                foreach (var x in result_1)
+                {
+                    dataPoints_2.Add(new DataPoint(x.Description, x.ReorderLevel));
+
+                }
+
+                var category = db.Products.DistinctBy(x => x.Category).ToList();
+
+
+
+                //ViewData["dListAll"] = products;
+                //ViewBag.Category = new SelectList( category, "Category");
+
+                ViewBag.DataPoints_1 = JsonConvert.SerializeObject(dataPoints_1);
+                ViewBag.DataPoints_2 = JsonConvert.SerializeObject(dataPoints_2);
+                ViewData["sessionId"] = sessionId;
+
+                return View();
             }
-        
-            foreach (var x in result_1)
+            else
             {
-                dataPoints_2.Add(new DataPoint(x.Description, x.ReorderLevel));
-
-            }
-
-            var category = db.Products.DistinctBy(x => x.Category).ToList();
-
-
-
-            //ViewData["dListAll"] = products;
-            //ViewBag.Category = new SelectList( category, "Category");
-
-            ViewBag.DataPoints_1 = JsonConvert.SerializeObject(dataPoints_1);
-            ViewBag.DataPoints_2 = JsonConvert.SerializeObject(dataPoints_2);
-            ViewData["sessionId"] = sessionId;
-
-            return View();
+                return RedirectToAction("Login", "Login");
+            }          
         }
 
-        public ActionResult TwoMonthsCompare()
+        public ActionResult TwoMonthsCompare(string sessionId)
         {
-
+            int empId = (int)Session["empId"];
+            ViewData["Role"] = db.Employees.Where(r => r.EmployeeId == empId).Select(r => r.Role).SingleOrDefault();
             List<OrderDetail> orderDetails = db.OrderDetails.ToList();
             List<RequisitionDetails> requisitionDetails = db.RequisitionDetails.ToList();
             //List<Products> products = db.Products.ToList();
