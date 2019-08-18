@@ -26,9 +26,9 @@
 <a href="@Url.Action("Create","StockAdjustmentVouchers",new { sessionId = sessionId  }, null)" class="button">Adjustment Voucher</a>
 <a href="@Url.Action("Index","stockcards",new { sessionId = sessionId })" class="button">Stock Cards</a>
 <a href="@Url.Action("Index","Suppliers",new { sessionId = sessionId  }, null)" class="button">Supplier List</a>
-<a href="@Url.Action("Index","Tender",new { sessionId = sessionId  }, null)" class="button">View Tender</a>
+@*<a href="@Url.Action("Index","Tender",new { sessionId = sessionId  }, null)" class="button">View Tender</a>*@
 <a href="@Url.Action("ChargeBackDepartment","ChargeBackDepartment",new { sessionId = sessionId  }, null)" class="button">Charge Department</a>
-<a href="@Url.Action("Index","Department",new { sessionId = sessionId  }, null)" class="button">View Department</a>
+<a href="@Url.Action("Index","Departments",new { role ="StoreClerk",sessionId = sessionId  }, null)" class="button">View Department</a>
 
 
 

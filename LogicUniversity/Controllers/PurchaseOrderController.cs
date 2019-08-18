@@ -18,6 +18,7 @@ namespace LogicUniversity.Controllers
 
         public ActionResult Index()
         {
+            
             //Order order = new Order
             //{
             //    POnumber = 10000,
@@ -54,12 +55,28 @@ namespace LogicUniversity.Controllers
                     ViewData["maxPO"] = maxPO;
 
                 //fetch list of products from Supplier 
-                var quest = from a in db.Suppliers
-                            join b in db.Products
-                            on a.SupplierId equals b.Supplier1
-                            where a.SupplierName == supplier
-                            select b;
-                products = quest.ToList();
+                //var quest = from a in db.Suppliers
+                //            join b in db.Products
+                //            on a.SupplierId equals b.Supplier1
+                //            where a.SupplierName == supplier
+                //            select b;               
+                if (supplier == null)
+                {
+                    var quest = from a in db.Suppliers
+                                join b in db.Products
+                                on a.SupplierId equals b.SupplierId
+                                select b;
+                    products = quest.ToList();
+                }
+                else
+                {
+                    var quest = from a in db.Suppliers
+                                join b in db.Products
+                                on a.SupplierId equals b.SupplierId
+                                where a.SupplierId == supplier
+                                select b;
+                    products = quest.ToList();
+                }                
                 supplier1.Products = products;
 
                 using (var client = new HttpClient())
@@ -127,8 +144,8 @@ namespace LogicUniversity.Controllers
                 string supplier = form["Supplier"];
                 var quest = from a in db.Suppliers
                             join b in db.Products
-                            on a.SupplierId equals b.Supplier1
-                            where a.SupplierName == supplier
+                            on a.SupplierId equals b.SupplierId
+                            where a.SupplierId == supplier
                             select b;
                 List<Products> AllProducts = quest.ToList();
 

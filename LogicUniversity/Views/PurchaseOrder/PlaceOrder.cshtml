@@ -19,7 +19,7 @@
     string sessionId = (string)ViewData["sessionId"];
 }
 
-@*(Start)Somehow layout must be set to null in this page, so I just copied the share page content for StoreManager*@
+@*(Start)Somehow layout must be set to null in this page, so I just copied the share page content for StoreClerk*@
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,8 +35,8 @@
         <div class="topnav">
             @*    @Html.Action("Index", "SM")*@
             <label>
-                <button class="btn" onclick="window.location.href = '/Login/SMDashboard?sessionId=@sessionId';">Go to Dashboard</button>
-                <button class="btn" onclick="window.location.href = '/Products/Index?sessionId=@sessionId&Role=StoreManager';">Go to Product Catalogue</button>
+                <button class="btn" onclick="window.location.href = '/Login/SCDashboard?sessionId=@sessionId';">Go to Dashboard</button>
+                <button class="btn" onclick="window.location.href = '/Products/Index?sessionId=@sessionId';">Go to Product Catalogue</button>
 
 
             </label> <label style="float: right;">
@@ -57,7 +57,7 @@
         @*@RenderBody()*@
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            @*<p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>*@
         </footer>
     </div>
     @Scripts.Render("~/bundles/jquery")
@@ -68,29 +68,29 @@
 @*(End)Somehow layout must be set to null in this page, so I just copied the share page content for StoreManager*@
 
 <table style="width:100%">
-    <tr>
-        <td width="50%"><font size="4">Stationery Purchase Order Form</font></td>
-        <td width="50%" align="right"><font size="4">Purchase Order NO: @maxPO</font></td>
-    </tr>
+    @*<tr>
+            <td width="50%"><font size="4">Stationery Purchase Order Form</font></td>
+            <td width="50%" align="right"><font size="4">Purchase Order NO: @maxPO</font></td>
+        </tr>*@
 </table>
-<div align="center"><font size="7"><b>Logic University</b></font></div>
-<div align="center"><font size="4"><b>Stationery Purchase Center</b></font></div>
+<div align="center"><font size="7"><b>Stationery Purchase Order Form</b></font></div>
+@*<div align="center"><font size="4"><b>Stationery Purchase Center</b></font></div>*@
 
-<table style="width:100%">
+<table style="width:100%" class="table">
     <tr>
         <td width="50%">
             <font size="4">
                 <form action="/PurchaseOrder/PlaceOrder">
                     Supplier: <input type="text" name="supplier" id="supplier">
-                    <input type="submit" value="Search">
+                    <input type="submit" value="Search" class="btn btn-primary">
 
                     <input type="hidden" name="sessionId" id="sessionId" value=@sessionId />
                 </form>
             </font>
         </td>
-        <td width="50%" align="right">
-            <font size="4">Deliver to: </font>
-        </td>
+        @*<td width="50%" align="right">
+                <font size="4">Deliver to: </font>
+            </td>*@
     </tr>
 </table>
 
@@ -104,10 +104,10 @@
     <input type="hidden" name="Supplier" id="Supplier" value=@SupplierName />
     <input type="hidden" name="sessionId" id="sessionId" value=@sessionId />
 
-    <table border="1">
+    <table class="table">
 
-        <div>
-            <span style="display:inline-block;">
+        <tr>
+            <td style="display:inline-block;">
                 @*date picker:*@
                 <!DOCTYPE html>
                 <html>
@@ -122,7 +122,7 @@
                 <body>
                     @*<a href="https://github.com/Pikaday/Pikaday"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>*@
 
-                    <label for="datepicker">Expected delivery date and time:</label>
+                    <label for="datepicker">Delivery date:</label>
                     @*<br>*@
                     <input type="text" id="datepicker" name="datepicker">
 
@@ -140,9 +140,9 @@
                     </script>
                 </body>
             </html>
-        </span>
-
-        <span style="display:inline-block; ">
+        </td>
+        <td><b>Time:</b></td>
+        <td style="display:inline-block; ">
             @*time picker*@
             <!DOCTYPE html>
             <html>
@@ -170,8 +170,8 @@
                 <p>@Html.BootstrapTimePicker("SelectedTime").ContainerClass("TimePickerWidth")</p>
             </body>
         </html>
-    </span>
-</div>
+    </td>
+</tr>
 
 <tr>
     <th>Description</th>
