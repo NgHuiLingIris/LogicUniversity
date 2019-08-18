@@ -21,6 +21,7 @@ namespace LogicUniversity.Controllers
         {
             if (Sessions.IsValidSession(sessionId))
             {
+                ViewData["sessionId"] = sessionId;
                 ViewData["role"] = role;
                 return View(db.Departments.ToList());
             }
