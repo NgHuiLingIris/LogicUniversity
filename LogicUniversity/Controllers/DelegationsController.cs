@@ -647,7 +647,7 @@ namespace LogicUniversity.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                Delegation delegation = db.Delegations.Find(id);
+                Delegation delegation = db.Delegations.Include(d=>d.Employee).Where(d=>d.DelegationId==id).FirstOrDefault();
                 if (delegation == null)
                 {
                     return HttpNotFound();

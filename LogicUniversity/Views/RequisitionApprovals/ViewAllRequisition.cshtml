@@ -7,7 +7,7 @@
 {
     Layout = "~/Views/Shared/_Layout_SM.cshtml";
 }
-else if(Role == "DEP_MNGR")
+else if (Role == "DEP_MNGR")
 {
     Layout = "~/Views/Shared/_Layout_DH.cshtml";
 }
@@ -19,7 +19,9 @@ else if (Role == "DEP_STAFF")
     ViewBag.Title = "Index";
 }
 
-<h2>Track Requisition</h2>
+<br />
+<h4 class="text-center text-uppercase">track requisition</h4>
+<br />
 
 <form>
     <input type="hidden" value="@sessionId" name="sessionId" />

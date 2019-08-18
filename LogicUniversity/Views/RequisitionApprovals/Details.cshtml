@@ -19,13 +19,15 @@ else if (Role == "DEP_STAFF")
 
 <form>
     <div>
-        <h4>Requisition Details</h4>  @Html.ActionLink("Back to List", "ViewRequisition", new { sessionId = @sessionId })
-        <hr />
+        <br />
+        <h4 class="text-center text-uppercase">Requistion Details</h4>
+        @Html.ActionLink("Back to List", "ViewRequisition", new { sessionId = @sessionId })
+      
         <table class="table">
             <tr>
-                <td>@Html.DisplayNameFor(model => model.RequisitionId)</td>
-                <td>@Html.DisplayNameFor(model => model.Products.Description)</td>
-                <td>@Html.DisplayNameFor(model => model.Quantity)</td>
+                <th>@Html.DisplayNameFor(model => model.RequisitionId)</th>
+                <th>@Html.DisplayNameFor(model => model.Products.Description)</th>
+                <th>@Html.DisplayNameFor(model => model.Quantity)</th>
             </tr>
 
             @foreach (var item in Model)

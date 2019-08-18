@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<LogicUniversity.Models.Requisition>
 
 @{
-    
+
     string sessionId = (string)ViewData["sessionId"];
     string Role = (string)ViewData["Role"];
 }
-@{ 
-     if (Role == "DEP_MNGR")
+@{
+    if (Role == "DEP_MNGR")
     {
         Layout = "~/Views/Shared/_Layout_DH.cshtml";
     }
@@ -22,7 +22,10 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Track Requisition</h2>
+
+<br /><br />
+<h4 class="text-center text-uppercase">track requisition</h4>
+<br /><br />
 
 
 <table class="table">

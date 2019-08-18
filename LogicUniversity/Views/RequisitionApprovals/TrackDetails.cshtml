@@ -14,17 +14,18 @@ else if (Role == "DEP_STAFF")
     Layout = "~/Views/Shared/_Layout_DS.cshtml";
 }
 
+
 <br />
+      <h4 class="text-center text-uppercase">Requistion Details</h4>
 <br />
-<h3>Requistion Details</h3>
 <form>
     <div>
-        <hr />
+       
         <table class="table">
             <tr>
-                <td>@Html.DisplayNameFor(model => model.RequisitionId)</td>
-                <td>@Html.DisplayNameFor(model => model.Products.Description)</td>
-                <td>@Html.DisplayNameFor(model => model.Quantity)</td>
+                <th>@Html.DisplayNameFor(model => model.RequisitionId)</th>
+                <th>@Html.DisplayNameFor(model => model.Products.Description)</th>
+                <th>@Html.DisplayNameFor(model => model.Quantity)</th>
             </tr>
 
             @foreach (var item in Model)
