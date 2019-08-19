@@ -39,7 +39,12 @@ namespace LogicUniversity.Controllers
             foreach (Department d in dList)
             {
                 List<RequisitionDetails> rdList2 = InputRDList.Where(rd => rd.Requisition.Status == "APPROVED").Where(rd => rd.Requisition.Department == d.DeptName).ToList();
+                List<RequisitionDetails> rdList3 = InputRDList.Where(rd => rd.Requisition.Status == "OUTSTANDING" && rd.Status!="Retrieved").Where(rd => rd.Requisition.Department == d.DeptName).ToList();
                 foreach (RequisitionDetails r in rdList2)
+                {
+                    rdListAll.Add(r);
+                }
+                foreach (RequisitionDetails r in rdList3)
                 {
                     rdListAll.Add(r);
                 }
@@ -91,6 +96,18 @@ namespace LogicUniversity.Controllers
                 }
                 ICR.TotalNeeded = TotalNeeded;
                 ICR.DeptName = DeptName;
+                //List<ItemCodeRequisition> ICRToRemove = new List<ItemCodeRequisition>();
+                //foreach (ItemCodeRequisition ICRToRemove_Element in ICRList)
+                //{
+                //    if(ICRToRemove_Element.QtyInInventory < ICRToRemove_Element.TotalNeeded)
+                //    {
+                //        ICRToRemove.Add(ICRToRemove_Element);
+                //    }
+                //}
+                //foreach(ItemCodeRequisition ICRToRemove_Element in ICRToRemove)
+                //{
+                //    ICRList.Remove(ICRToRemove_Element);
+                //}
                 ICR.NeededList = NeededList;
                 ICRList.Add(ICR);
             }

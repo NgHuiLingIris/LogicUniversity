@@ -289,7 +289,8 @@ namespace LogicUniversity.Controllers
                 {
                     ViewData["s"] = s;
                     ViewData["count"] = sList.Count();
-                    return View("AdjustDisbursement", s);
+                    ViewData["sessionId"] = sessionId;
+                   return View("AdjustDisbursement", s);
                 }
                 else
                 {
@@ -301,8 +302,12 @@ namespace LogicUniversity.Controllers
                 return RedirectToAction("Login", "Login");
             }          
         }
-        public ActionResult AdjustDisbursement([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form)
+        public ActionResult AdjustDisbursement([Bind(Include = "Id,DateCreated")] StockAdjustmentVoucher stockAdjustmentVoucher, FormCollection form,string sessionId)
         {
+            if (sessionId == null)
+            {
+                sessionId = Request["sessionId"];
+            }
             int count = int.Parse(Request.Form["count"]);
             List<StockAdjustmentVoucherDetail> sList = new List<StockAdjustmentVoucherDetail>();
             for (int i = 0; i < count; i++)
@@ -337,7 +342,7 @@ namespace LogicUniversity.Controllers
             AllocateAuthorizer(stockAdjustmentVoucher);
 
             ViewData["count"] = count;
-            return RedirectToAction("Index");
+            return RedirectToAction("Index",new { sessionId = sessionId });
         }
         //Retrieval allocate authorizer comes here
         public StockAdjustmentVoucher AllocateAuthorizer(StockAdjustmentVoucher stockAdjustmentVoucher)

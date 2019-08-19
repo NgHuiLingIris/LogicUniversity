@@ -3,6 +3,7 @@
 @{
     var v0 = (StockAdjustmentVoucher)ViewData["s"];
     var count = (int)ViewData["count"];
+    string sessionId = (string)ViewData["sessionId"];
 }
 
 
@@ -29,6 +30,7 @@
 {
     @Html.AntiForgeryToken()
     <input type="hidden" value="@count" name="count" />
+    <input type="hidden" value="@sessionId" name="sessionId" />
     <div class="form-group" align="center">
         <table>
             <tr>

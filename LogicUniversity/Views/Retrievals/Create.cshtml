@@ -39,38 +39,45 @@
                 foreach (var item in ICRList)
                 {
 
-                    <tr>
-                        <td>
-                            @item.Product.Description
-                            <input type="hidden" name="ICR[@i].product" value="@item.Product.Description" />
-                        </td>
-                        <td>
-                            <input type="number" name="ICR[@i].retrieved" />
-                        </td>
-                        <td>
-                            @item.QtyInInventory
-                            <input type="hidden" name="ICR[@i].qtyininventory" value="@item.QtyInInventory" />
-                        </td>
-                        <td>
-                            @item.TotalNeeded
-                            <input type="hidden" name="ICR[@i].TotalNeeded" value="@item.TotalNeeded" />
-                        </td>
-                        <td>
-                            <table>
-                                <tr>
-                                    @foreach (Department j in item.DeptName)
-                                    {
-                                        int k = 0;
-                                    <tr>@j.DeptName</tr>
-                                    <br />
-                                    var deptname = j.DeptName;
-                                    dept = dept + "," + deptname;
+            <tr>
+                <td>
+                    @item.Product.Description
+                    <input type="hidden" name="ICR[@i].product" value="@item.Product.Description" />
+                </td>
+                <td>
+                    @if (item.QtyInInventory > item.TotalNeeded)
+                    {
+                        <input type="number" name="ICR[@i].retrieved" />
+                    }
+                    else
+                    {
+                        <p>NA</p>
+                    }
+                </td>
+                    <td>
+                        @item.QtyInInventory
+                        <input type="hidden" name="ICR[@i].qtyininventory" value="@item.QtyInInventory" />
+                    </td>
+                    <td>
+                        @item.TotalNeeded
+                        <input type="hidden" name="ICR[@i].TotalNeeded" value="@item.TotalNeeded" />
+                    </td>
+                    <td>
+                        <table>
+                            <tr>
+                                @foreach (Department j in item.DeptName)
+                                {
+                                    int k = 0;
+                                <tr>@j.DeptName</tr>
+                                <br />
+                                var deptname = j.DeptName;
+                                dept = dept + "," + deptname;
 
-                                    k++;
-                                }
-                                    <input type="hidden" name="ICR[@i].Dept" value="@dept" />
-                                    @{dept = "";}
-                        </tr>
+                                k++;
+                            }
+                                <input type="hidden" name="ICR[@i].Dept" value="@dept" />
+                                @{dept = "";}
+                    </tr>
                     </table>
                     </td>
                     <td>

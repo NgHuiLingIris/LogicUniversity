@@ -24,9 +24,10 @@
     <input type="hidden" value="@sessionId" name="sessionId" id="sessionId" />
         //make a unique id
         int j = 0;
-    <table class ="table" name="search">
+    <table class="table" name="search">
         <tr>
-            <td>Department :
+            <td>
+                Department :
                 <select name="SearchDeptName">
                     @foreach (Department dept in dListAll)
                     {
@@ -37,9 +38,10 @@
                 </select>
             </td>
             <td>
-                <input type="submit" name="SearchDept" value="Search" class=" btn btn-primary"/>
+                <input type="submit" name="SearchDept" value="Search" class=" btn btn-primary" />
             </td>
         </tr>
+        @*
         <tr>
             <td>
                 Collection Point :
@@ -56,6 +58,7 @@
                 <input type="submit" name="SearchCP" value="Search" class=" btn btn-primary"/>
             </td>
         </tr>
+        *@
     </table>
         
     <table class="table">
